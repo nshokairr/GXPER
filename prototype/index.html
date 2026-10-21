@@ -1,0 +1,1659 @@
+<title>GXPER Website Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: Figma "Desktop - 2" at 1440 is the source of truth. Flow sections use
+   1240px content columns with 100px gutters; absolute-built pieces (journey stage, orbit)
+   are scaled as a whole so their geometry never drifts. Single dark arena theme by design. */
+:root{
+  --ink:#0f0d0c; --ink2:#141110; --deep:#0a0908; --panel:#1a1716;
+  --lime:#fff400; --volt:#fff400; --fg:#f7f6f5; --fg2:#f7f6f5; --muted:#a8a4a1; --muted2:#a09c99; --dim:#7b7673;
+  --line:rgba(255,255,255,.14); --line2:rgba(255,255,255,.21); --line3:rgba(255,255,255,.22); --limeline:rgba(255,244,0,.31);
+  --display:'League Gothic','Oswald','Arial Narrow',Impact,sans-serif;
+  --body:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --grad:linear-gradient(90deg,#ff0ce1 0%,#ff945d 25%,#ffee06 45%,#d0e950 60%,#8ddac0 80%,#69d2ff 100%);
+  --magenta:#eb008b;--warm:hue-rotate(-20deg) saturate(1.08); --cyan:#69d2ff;
+  --pad:clamp(16px,6.944vw,100px);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--ink)}
+body{background:var(--ink);color:var(--fg);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-synthesis:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--ink)}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:6px}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- type ---------- */
+.eyebrow{font:600 11.5px/1.4 var(--body);letter-spacing:3px;color:var(--lime);text-transform:uppercase}
+.eyebrow.s12{font-size:11px}
+.d{font-family:var(--display);font-weight:900;letter-spacing:-1.1px;text-transform:uppercase}
+.lime{color:var(--lime)}
+.body16{font:400 16px/25px var(--body);color:var(--muted)}
+.body20{font:400 20px/30px var(--body);color:var(--fg)}
+
+/* ---------- gutters ---------- */
+.band{padding-left:max(var(--pad),env(safe-area-inset-left,0px));padding-right:max(var(--pad),env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin-inline:auto}
+
+/* ---------- buttons ---------- */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:56px;padding:0 24px;border-radius:16px;
+  font:600 15px/normal var(--body);white-space:nowrap;background:var(--lime);color:var(--ink);border:1px solid var(--lime);overflow:hidden;isolation:isolate;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .3s,background-color .3s}
+.btn svg{width:18px;height:18px;flex:none;transition:transform .35s var(--spring)}
+.btn::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--ease)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 14px 34px -10px rgba(255,244,0,.6)}
+.btn:hover::after{transform:translateX(120%)}
+.btn:hover svg{transform:translateX(4px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn.ghost{background:rgba(20,17,16,.72);color:var(--fg);border-color:rgba(255,255,255,.33)}
+.btn.ghost::after{background:linear-gradient(110deg,transparent 30%,rgba(255,244,0,.18) 50%,transparent 70%)}
+.btn.ghost:hover{border-color:var(--lime);box-shadow:0 14px 34px -14px rgba(255,244,0,.35)}
+.btn.sm{height:46px;padding:0 19px;border-radius:12px;font-size:13px}
+.btn.wide{width:100%}
+
+/* ---------- header ---------- */
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:82px;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding-left:max(clamp(16px,3.333vw,48px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,3.333vw,48px),env(safe-area-inset-right,0px));
+  background:rgba(15,13,12,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  animation:hdrIn .8s var(--ease) both}
+.hdr.inner{background:var(--ink)}
+@keyframes hdrIn{from{transform:translateY(-100%)}}
+.brand{height:32px;flex:none;display:block;transition:transform .4s var(--spring)}
+.brand img{height:100%;width:auto}
+.brand:hover{transform:scale(1.04)}
+.nav{display:flex;gap:34px;font:500 13px/normal var(--body);color:var(--fg)}
+.nav a{position:relative;padding-block:6px}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+.nav a:hover::after,.nav a[aria-current="true"]::after{transform:scaleX(1);transform-origin:left}
+.back{font:600 12px/normal var(--body);color:var(--lime);white-space:pre;display:inline-flex;gap:0;transition:transform .3s var(--ease)}
+.back:hover{transform:translateX(-4px)}
+.menu-btn{display:none;width:46px;height:46px;border:1px solid var(--line2);border-radius:12px;align-items:center;justify-content:center}
+.menu-btn span{display:block;width:18px;height:2px;background:var(--fg);position:relative;transition:background .2s}
+.menu-btn span::before,.menu-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--fg);transition:transform .35s var(--ease)}
+.menu-btn span::before{top:-6px}.menu-btn span::after{top:6px}
+.menu-open .menu-btn span{background:transparent}
+.menu-open .menu-btn span::before{transform:translateY(6px) rotate(45deg)}
+.menu-open .menu-btn span::after{transform:translateY(-6px) rotate(-45deg)}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.progress{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 82px);height:2px;z-index:49;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));pointer-events:none;box-shadow:0 0 12px rgba(255,140,120,.5)}
+.mnav{position:fixed;z-index:48;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 82px);background:rgba(15,13,12,.97);border-bottom:1px solid var(--line);
+  padding:18px max(16px,env(safe-area-inset-right,0px)) 26px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:4px;
+  transform:translateY(-12px);opacity:0;visibility:hidden;transition:transform .4s var(--ease),opacity .3s,visibility .3s}
+.menu-open .mnav{transform:none;opacity:1;visibility:visible}
+.mnav{bottom:0;overflow-y:auto;background:var(--ink);padding-top:34px;padding-bottom:max(30px,env(safe-area-inset-bottom,0px))}
+.mn-main{display:flex;flex-direction:column;margin-top:12px}
+.mn-main a{font:400 44px/1.12 var(--display);text-transform:uppercase;color:var(--fg);transition:color .25s,transform .35s var(--ease)}
+.mn-main a:hover,.mn-main a[aria-current="true"]{color:var(--lime)}
+.mn-main a:hover{transform:translateX(6px)}
+.menu-open .mn-main a{animation:mnIn .55s var(--ease) both}
+.menu-open .mn-main a:nth-child(2){animation-delay:.05s}.menu-open .mn-main a:nth-child(3){animation-delay:.1s}.menu-open .mn-main a:nth-child(4){animation-delay:.15s}
+@keyframes mnIn{from{opacity:0;transform:translateY(16px)}}
+.mnav .mn-cta{margin-top:30px;width:100%;justify-content:center}
+.mn-div{height:1px;background:var(--line);margin-top:28px}
+.mn-sub{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font:500 12px/normal var(--body);color:var(--muted)}
+.mn-sub a:hover,.mn-sub a[aria-current="true"]{color:var(--lime)}
+.mnav .mn-mail{margin-top:auto;padding-top:40px;align-self:flex-start}
+
+/* ---------- page wipe ---------- */
+.wipe{position:fixed;inset:0;z-index:200;pointer-events:none;background:var(--grad);transform:scaleX(0);transform-origin:left}
+.wipe.go{animation:wipe .9s var(--ease) both}
+@keyframes wipe{0%{transform:scaleX(0);transform-origin:left}45%{transform:scaleX(1);transform-origin:left}55%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+.wipe::after{content:"";position:absolute;left:50%;top:50%;width:180px;height:118px;margin:-59px 0 0 -90px;background:url(assets/brand/gxper-v-black.svg) center/contain no-repeat;opacity:0}
+.wipe.go::after{animation:wipeMark .9s var(--ease) both}
+@keyframes wipeMark{35%,60%{opacity:.9;transform:scale(1)}0%,100%{opacity:0;transform:scale(.6)}}
+
+/* ---------- reveal system (visible at rest; only below-the-fold items pre-hide) ---------- */
+.rv{transition:opacity .9s var(--ease),transform .9s var(--ease),clip-path 1s var(--ease);transition-delay:var(--dl,0s)}
+.rv.pre{opacity:0;transform:translateY(34px)}
+.rv.mask.pre{opacity:1;transform:translateY(24px);clip-path:inset(0 0 97% 0)}
+.rv.mask{clip-path:inset(-10% -5% -10% -5%)}
+.rv.line-draw.pre{opacity:1;transform:scaleX(0)}
+.rv.line-draw{transform-origin:left}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;height:900px;overflow:hidden;background:var(--ink2)}
+.hero-bg{position:absolute;inset:-2%;background-size:cover;background-position:center;animation:kb 2.6s var(--ease) both;will-change:transform}
+.hero-bg.has-img{background-image:var(--hero-img)}
+#heroBg{--hero-img:url(assets/hero-arena.jpg)}
+.hero-bg.ph-hold{background:
+  radial-gradient(ellipse 34% 58% at 66% 38%,rgba(255,244,0,.30),transparent 62%),
+  radial-gradient(ellipse 22% 40% at 82% 30%,rgba(255,244,0,.22),transparent 70%),
+  radial-gradient(ellipse 60% 22% at 70% 100%,rgba(255,244,0,.22),transparent 70%),
+  repeating-linear-gradient(90deg,rgba(247,246,245,.035) 0 1px,transparent 1px 120px),
+  repeating-linear-gradient(0deg,rgba(247,246,245,.03) 0 1px,transparent 1px 77px),#100e0d}
+@keyframes kb{from{transform:scale(1.12)}to{transform:scale(1)}}
+.hero-vig{position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,13,12,.94) 0%,rgba(15,13,12,.28) 55%,rgba(15,13,12,.08) 100%)}
+.hero-sweep{position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,244,0,.10) 48%,rgba(255,244,0,.02) 52%,transparent 60%);background-size:250% 100%;animation:sweep 7s ease-in-out 1.6s infinite}
+@keyframes sweep{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
+#sparks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.ph-chip{position:absolute;right:max(24px,var(--pad));bottom:56px;font:500 11px/1 var(--body);letter-spacing:1px;color:var(--dim);border:1px dashed rgba(255,255,255,.18);padding:8px 10px;border-radius:8px;text-transform:uppercase}
+.hero-content{position:absolute;left:max(clamp(16px,4.444vw,64px),env(safe-area-inset-left,0px));top:168px;width:min(650px,calc(100% - 32px));display:flex;flex-direction:column;gap:22px;align-items:flex-start;will-change:transform}
+.hero h1{margin:0;font-size:clamp(54px,6.667vw,96px);line-height:.875;display:flex;flex-direction:column}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.02em}
+.hero h1 .ln>span{display:block;animation:lineUp 1s var(--ease) both}
+.hero h1 .ln:nth-child(1)>span{animation-delay:.35s}
+.hero h1 .ln:nth-child(2)>span{animation-delay:.5s}
+@keyframes lineUp{from{transform:translateY(105%)}}
+.hero .eyebrow{animation:trackIn 1.2s var(--ease) .2s both}
+@keyframes trackIn{from{letter-spacing:14px;opacity:0}}
+.hero-lead{max-width:560px;animation:fadeUp .9s var(--ease) .75s both}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .9s var(--ease) .9s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}}
+.hero-rule{position:absolute;left:clamp(16px,4.444vw,64px);right:clamp(16px,4.444vw,64px);bottom:26px;height:2px;background:var(--grad);transform-origin:left;animation:draw 1.6s var(--ease) .7s both;box-shadow:0 0 18px rgba(255,140,120,.35)}
+@keyframes draw{from{transform:scaleX(0)}}
+.hero-rule::after{content:"";position:absolute;top:-3px;width:90px;height:8px;border-radius:8px;background:radial-gradient(closest-side,#fff,rgba(255,244,0,.8),transparent);animation:runner 4.5s linear 2.4s infinite;opacity:.9}
+@keyframes runner{from{left:-90px}to{left:100%}}
+
+/* ---------- APP SHOWCASE ---------- */
+.app{background:var(--ink);padding-block:112px;overflow:hidden}
+.app .row{display:flex;align-items:flex-start}
+.app-copy{flex:0 0 460px;margin-right:-36px;display:flex;flex-direction:column;gap:18px;position:relative;z-index:2}
+.h68{font-size:clamp(44px,4.722vw,68px);line-height:.8824}
+.app-copy .body16{max-width:430px}
+.badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge{display:block;width:174px;height:58px;border-radius:8px;transition:transform .35s var(--spring),box-shadow .35s}
+.badge img{width:174px;height:58px}
+.badge:hover{transform:translateY(-3px);box-shadow:0 10px 26px -10px rgba(255,244,0,.45)}
+.phones{display:flex;gap:28px;align-items:center;flex:none;width:min(860px,calc(100vw - var(--pad) - 424px))}
+.ph{flex:1 1 0;min-width:0}
+.ph .px{transform:translateY(var(--py,0px))}
+.ph .fl{animation:bob 6s ease-in-out infinite}
+.ph:nth-child(2) .fl{animation-delay:-2s}
+.ph:nth-child(3) .fl{animation-delay:-4s}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.ph img{width:100%;height:auto;aspect-ratio:269/533;object-fit:cover;transition:transform .5s var(--ease),filter .5s var(--ease)}
+.ph:hover img{transform:translateY(-10px) scale(1.025);filter:drop-shadow(0 22px 40px rgba(255,244,0,.28))}
+.ph.rv.pre{opacity:0;transform:translateY(90px) rotate(-5deg)}
+
+/* ---------- ABOUT ---------- */
+.about{background:var(--ink);padding-block:110px}
+.about .grid{display:grid;grid-template-columns:minmax(0,620px) minmax(0,520px);gap:clamp(40px,6.25vw,90px);align-items:start}
+.about-h{display:flex;flex-direction:column;gap:14px}
+.h76{font-size:clamp(46px,5.278vw,76px);line-height:.8816;margin:0}
+.about-copy{display:flex;flex-direction:column;gap:18px}
+.divider{height:1px;background:var(--line);width:100%}
+.markets{font:500 11.5px/1.5 var(--body);letter-spacing:1.6px;color:var(--muted);white-space:pre-wrap}
+.markets .dot{color:var(--lime);display:inline-block;animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- MISSION / VISION ---------- */
+.mission{background:var(--ink2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:110px}
+.idx-grid{display:grid;grid-template-columns:110px minmax(0,960px);gap:clamp(28px,4.444vw,64px);align-items:start}
+.idx{display:flex;flex-direction:column;gap:8px;color:var(--lime)}
+.idx .num{font:400 90px/normal var(--display);overflow:hidden;height:1.2em;display:block}
+.idx .num span{display:block;transition:transform 1s var(--ease)}
+.idx .lbl{font:600 11px/1.4 var(--body);letter-spacing:2.6px;width:110px}
+.h62{font-size:clamp(36px,4.306vw,62px);line-height:.887;margin:0}
+.mission-copy{display:flex;flex-direction:column;gap:32px}
+.paras{display:flex;gap:24px}
+.paras p{width:430px;max-width:100%}
+.vision{background:var(--ink);padding-block:110px}
+.vision .idx-grid{grid-template-columns:110px minmax(0,800px);gap:clamp(28px,6.25vw,90px)}
+.vision-copy{display:flex;flex-direction:column;gap:22px}
+.vision-copy .body16{max-width:760px}
+
+/* ---------- JOURNEY ---------- */
+.journey{position:relative;background:var(--deep);height:calc(549px * var(--k,1));overflow:hidden}
+.j-bg{position:absolute;inset:0;background:url(assets/journey-arena.jpg) center/cover no-repeat;animation:spot 5.2s ease-in-out infinite;transform-origin:70% 0}
+@keyframes spot{0%,100%{filter:var(--warm) brightness(1)}42%{filter:var(--warm) brightness(1.12) saturate(1.1)}46%{filter:var(--warm) brightness(.92)}50%{filter:var(--warm) brightness(1.08)}}
+.j-vis[data-v="0"],.req-bg,.map-frame>img,.ov-bg,#lmapImg{filter:var(--warm)}
+.j-stage{position:absolute;left:50%;top:0;width:1440px;height:549px;transform:translateX(-50%) scale(var(--k,1));transform-origin:top center}
+.j-read{position:absolute;left:0;top:0;width:920px;height:390px;background:linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.62) 58%,rgba(0,0,0,0) 100%)}
+.j-grid{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 24px,rgba(247,246,245,.05) 24px 25px,transparent 25px 120px),
+             linear-gradient(transparent 48px,rgba(247,246,245,.05) 48px 49px,transparent 49px 125px,rgba(247,246,245,.05) 125px 126px,transparent 126px 202px,rgba(247,246,245,.05) 202px 203px,transparent 203px 279px,rgba(247,246,245,.05) 279px 280px,transparent 280px 356px,rgba(247,246,245,.05) 356px 357px,transparent 357px 433px,rgba(247,246,245,.05) 433px 434px,transparent 434px 510px,rgba(247,246,245,.05) 510px 511px,transparent 511px)}
+.j-grid::after{content:"";position:absolute;left:0;right:0;height:120px;top:-120px;background:linear-gradient(180deg,transparent,rgba(255,244,0,.06),transparent);animation:scan 6.5s linear infinite}
+@keyframes scan{to{top:549px}}
+.j-ghost{position:absolute;left:18px;top:35px;height:310px;overflow:hidden;font:400 310px/310px var(--display);
+  background:linear-gradient(90deg,rgba(255,244,0,.12) 0%,rgba(255,170,40,.05) 62%,rgba(80,10,60,.01) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.j-ghost span{display:block;transition:transform .9s var(--ease)}
+.j-eyebrow{position:absolute;left:235px;top:164px;width:350px;height:26px;font:600 13px/22px var(--body);letter-spacing:4px;color:var(--volt)}
+.j-rule{position:absolute;left:585px;top:176px;width:48px;height:2px;background:var(--volt);transform-origin:left;animation:rulePulse 5.2s var(--ease) infinite}
+@keyframes rulePulse{0%{transform:scaleX(0)}18%,100%{transform:scaleX(1)}}
+.j-title{position:absolute;left:235px;top:195px;width:560px;height:76px;font:400 64px/70px var(--display);letter-spacing:.2px;color:var(--fg2);text-transform:uppercase;white-space:nowrap}
+.j-desc{position:absolute;left:235px;top:287px;width:470px;font:400 22px/29px var(--body);color:var(--muted2)}
+.j-swap{transition:opacity .5s var(--ease),transform .7s var(--ease),clip-path .7s var(--ease)}
+.j-swap.out{opacity:0;transform:translateY(16px)}
+.j-title.j-swap.out{opacity:1;clip-path:inset(0 100% 0 0);transform:none}
+.j-title{clip-path:inset(-20% -2% -20% 0)}
+.j-arena{position:absolute;left:775px;top:56px;width:585px;height:318px}
+.j-glow{position:absolute;left:115px;top:30px;width:390px;height:250px;animation:glow 3.2s ease-in-out infinite}
+@keyframes glow{50%{transform:scale(1.08);opacity:.8}}
+.j-vis{position:absolute;inset:0;transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.j-vis.off{opacity:0;transform:scale(.86) translateY(14px);pointer-events:none}
+.j-set{position:absolute;left:15px;top:48px;width:555px;height:211px;object-fit:contain;animation:hover 4s ease-in-out infinite}
+@keyframes hover{50%{transform:translateY(-8px)}}
+.j-vis.flick .j-set,.j-vis.flick .j-icon{animation:neon .9s steps(1) both,hover 4s ease-in-out .9s infinite}
+@keyframes neon{0%{opacity:.2}10%{opacity:1}18%{opacity:.35}26%{opacity:1}40%{opacity:.6}48%,100%{opacity:1}}
+.j-orb{position:absolute;left:50%;top:50%;transform:translate(-50%,-56%);width:300px;height:220px}
+.j-orb .ringA,.j-orb .ringB{position:absolute;left:50%;top:50%;border-radius:50%;border:1.4px solid rgba(255,244,0,.42)}
+.j-orb .ringA{width:300px;height:180px;margin:-90px 0 0 -150px;animation:tilt 9s linear infinite}
+.j-orb .ringB{width:240px;height:212px;margin:-106px 0 0 -120px;border-color:rgba(255,244,0,.24);animation:tilt 12s linear infinite reverse}
+@keyframes tilt{to{transform:rotate(360deg)}}
+.j-orb .podium{position:absolute;left:50%;bottom:-34px;width:256px;height:34px;margin-left:-128px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,244,0,.45),rgba(255,244,0,.08) 70%,transparent);border:1px solid rgba(255,244,0,.35)}
+.j-icon{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;display:flex;align-items:center;justify-content:center;animation:hover 4s ease-in-out infinite}
+.j-icon svg{width:auto;height:118px;overflow:visible}
+.j-tl{position:absolute;left:0;top:385px;width:1440px;height:164px}
+.j-fade{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.j-div{position:absolute;left:0;top:0;width:1440px;height:1px;background:rgba(247,246,245,.11)}
+.j-track{position:absolute;left:92px;top:86px;width:1260px;height:2px;background:rgba(136,132,129,.72)}
+.j-prog{position:absolute;left:92px;top:86px;height:3px;width:var(--w,222px);background:var(--grad);background-size:1260px 100%;box-shadow:0 0 14px rgba(255,140,120,.45)}
+.j-prog::after{content:"";position:absolute;right:-4px;top:-3px;width:9px;height:9px;border-radius:50%;background:#fffbb4;box-shadow:0 0 12px 3px rgba(255,244,0,.85)}
+.j-step{position:absolute;top:0;height:164px;width:270px;text-align:left;cursor:pointer}
+.j-step .n{position:absolute;left:0;top:34px;width:45px;height:38px;font:400 27px/32px var(--display);color:rgba(143,139,136,.78);transition:color .5s}
+.j-step .l{position:absolute;left:50px;top:41px;width:205px;font:400 19px/22px var(--display);letter-spacing:1px;color:rgba(161,157,154,.78);text-transform:uppercase;transition:color .5s,transform .5s var(--ease)}
+.j-step .node{position:absolute;left:2px;top:78px;width:18px;height:18px}
+.j-step .node svg{position:absolute}
+.j-step .idle{inset:0;transition:opacity .4s}
+.j-step .halo{left:-5px;top:-6px;width:30px;height:30px;opacity:0;transform:scale(.4);transition:opacity .4s,transform .6s var(--spring)}
+.j-step .act{left:-11px;top:-11px;width:40px;height:40px;opacity:0;transform:scale(.3);transition:opacity .4s,transform .6s var(--spring)}
+.j-step.on .n{color:var(--volt)}
+.j-step.on .l{color:var(--fg2)}
+.j-step.on .idle{opacity:0}
+.j-step.on .halo{opacity:1;transform:scale(1);animation:haloPulse 1.8s ease-out .6s infinite}
+.j-step.on .act{opacity:1;transform:scale(1)}
+.j-step.done .node .idle circle:last-child{stroke:var(--volt)}
+@keyframes haloPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(1.9);opacity:0}}
+.j-step:hover .l{transform:translateX(4px);color:var(--fg2)}
+.j-step:focus-visible{outline-offset:-6px}
+
+/* ---------- CAPABILITIES ---------- */
+.caps{background:var(--ink);padding-block:110px}
+.caps-head{display:grid;grid-template-columns:minmax(0,660px) minmax(0,360px);gap:clamp(32px,6.25vw,90px);margin-bottom:32px;align-items:start}
+.caps-title{display:flex;flex-direction:column;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,612px));gap:16px}
+.card{position:relative;min-height:340px;padding:28px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(114.23deg,#211c1a 0%,#141110 100%);
+  display:flex;flex-direction:column;justify-content:space-between;gap:24px;overflow:hidden;isolation:isolate;
+  transition:border-color .4s,transform .5s var(--ease),opacity .9s var(--ease),clip-path 1s var(--ease)}
+.card::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .4s;background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(255,244,0,.13),transparent 60%)}
+.card:hover{border-color:var(--limeline);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-top{display:flex;align-items:center;justify-content:space-between;height:42px}
+.card-top .no{font:400 16px/normal var(--display);letter-spacing:2px;color:var(--lime)}
+.card-top svg{width:34px;height:34px;transition:transform .6s var(--spring)}
+.card:hover .card-top svg{transform:rotate(-10deg) scale(1.15)}
+.card-body{display:flex;flex-direction:column;gap:12px;max-width:504px;min-height:190px}
+.card .tag{font:600 10.5px/1.4 var(--body);letter-spacing:1.8px;color:var(--lime)}
+.card h3{margin:0;font-size:clamp(32px,2.917vw,42px);line-height:.881}
+.card p.b{font:400 16px/23px var(--body);color:var(--muted)}
+.card .bar{position:absolute;left:28px;right:28px;bottom:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease)}
+.card:hover .bar{transform:scaleX(1)}
+
+/* ---------- PHILOSOPHY ---------- */
+.philo{position:relative;background:var(--ink);min-height:820px;overflow:hidden}
+.radar{position:absolute;top:0;left:50%;width:720px;height:820px;pointer-events:none}
+.radar img{width:720px;height:820px}
+.philo-in{position:relative;max-width:1440px;margin-inline:auto;padding:94px max(clamp(16px,4.167vw,60px),env(safe-area-inset-right,0px)) 76px max(clamp(16px,4.167vw,60px),env(safe-area-inset-left,0px));
+  display:grid;grid-template-columns:minmax(0,590px) minmax(0,670px);gap:70px;align-items:start}
+.philo-copy{display:flex;flex-direction:column;gap:22px}
+.h92{font-size:clamp(52px,6.389vw,92px);line-height:.8804;margin:0}
+.philo .lead{font:600 20px/normal var(--body);color:var(--fg);max-width:560px}
+.philo .b18{font:400 18px/30px var(--body);color:var(--muted);max-width:570px}
+.orbit-box{position:relative;width:100%;max-width:670px;aspect-ratio:670/650}
+.orbit{position:absolute;left:0;top:0;width:670px;height:650px;transform:scale(var(--os,1));transform-origin:top left}
+.orbit>*{position:absolute}
+.o-sweep{left:335px;top:325px;width:1100px;height:1100px;margin:-550px 0 0 -550px;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(255,244,0,.16),rgba(255,244,0,0) 50deg,transparent 360deg);
+  -webkit-mask:radial-gradient(closest-side,#000 40%,transparent 100%);mask:radial-gradient(closest-side,#000 40%,transparent 100%);animation:spin 9s linear infinite}
+.o-r1{left:25px;top:15px;width:620px;height:620px}
+.o-r2{left:120px;top:110px;width:430px;height:430px;animation:spin 70s linear infinite}
+.o-r3{left:220px;top:210px;width:230px;height:230px}
+.o-halo{left:170px;top:160px;width:330px;height:330px;animation:breathe 4.5s ease-in-out infinite}
+.o-hub{left:247px;top:237px;width:176px;height:176px}
+.o-ping{left:247px;top:237px;width:176px;height:176px;border-radius:50%;border:1.5px solid rgba(255,244,0,.55);animation:ping 3.2s ease-out infinite;opacity:0}
+.o-ping.b{animation-delay:1.6s}
+@keyframes ping{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.1);opacity:0}}
+.o-mark{left:277px;top:287px;width:116px;height:76px;animation:markGlow 4.5s ease-in-out infinite}
+@keyframes markGlow{50%{filter:drop-shadow(0 0 14px rgba(235,0,139,.45))}}
+@keyframes breathe{50%{transform:scale(1.08);opacity:.75}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.o-path{left:335px;top:325px;width:0;height:0;transform:rotate(74.5deg);animation:orbitT 16s linear infinite}
+.o-target{left:123px;top:-27px;width:54px;height:54px;border-radius:999px;background:rgba(26,23,22,.95);border:1px solid var(--limeline);transform:rotate(-74.5deg);animation:orbitC 16s linear infinite;box-shadow:0 0 22px rgba(255,244,0,.18)}
+.o-target svg{position:absolute;left:12px;top:12px;width:28px;height:28px}
+@keyframes orbitT{from{transform:rotate(74.5deg)}to{transform:rotate(434.5deg)}}
+@keyframes orbitC{from{transform:rotate(-74.5deg)}to{transform:rotate(-434.5deg)}}
+.o-label{width:130px;height:70px;background:rgba(15,13,12,.78);overflow:hidden;transition:opacity .8s var(--ease),transform .9s var(--ease);transition-delay:var(--dl,0s)}
+.o-label i{position:absolute;left:0;top:6px;width:3px;height:58px;background:var(--lime);transform-origin:top;transition:transform .8s var(--ease);transition-delay:calc(var(--dl,0s) + .25s)}
+.o-label .k{position:absolute;left:18px;top:8px;font:600 8px/normal var(--body);letter-spacing:1.6px;color:var(--muted);white-space:nowrap}
+.o-label .v{position:absolute;left:18px;top:32px;font:400 19px/normal var(--display);color:var(--fg);white-space:nowrap}
+.orbit.pre .o-label{opacity:0;transform:translate(var(--tx),var(--ty))}
+.orbit.pre .o-label i{transform:scaleY(0)}
+
+/* ---------- METRICS ---------- */
+.metrics{background:var(--ink2);border-top:1px solid var(--line)}
+.m-grid{display:grid;grid-template-columns:repeat(4,1fr);max-width:1440px;margin-inline:auto}
+.m-tile{position:relative;height:180px;padding:24px;border:1px solid var(--line);background:var(--ink2);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;isolation:isolate;
+  font-family:var(--display);font-weight:700;transition:color .45s var(--ease),opacity .9s var(--ease) var(--dl,0s),transform .9s var(--ease) var(--dl,0s)}
+.m-tile::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--lime);transform:translateY(101%);transition:transform .55s var(--ease)}
+.m-tile .no{font-size:20px;letter-spacing:2px;color:var(--lime);transition:color .45s}
+.m-tile .t{font-size:26px;line-height:26px;letter-spacing:.3px;color:var(--fg);text-transform:uppercase;width:240px;max-width:100%;transition:color .45s,transform .5s var(--ease)}
+.m-tile:hover::before{transform:none}
+.m-tile:hover .no,.m-tile:hover .t{color:var(--ink)}
+.m-tile:hover .t{transform:translateX(6px)}
+
+/* ---------- REQUEST ---------- */
+.request{position:relative;min-height:900px;overflow:hidden;background:var(--ink);
+  padding:110px max(clamp(16px,8.611vw,124px),env(safe-area-inset-right,0px)) 92px max(clamp(16px,6.667vw,96px),env(safe-area-inset-left,0px))}
+.req-bg{position:absolute;inset:0;background:url(assets/map-contact.jpg) center/cover no-repeat;animation:slowpan 26s ease-in-out infinite alternate}
+.req-bg.has-img{background-image:var(--req-img)}
+@keyframes slowpan{to{transform:scale(1.08) translateX(-1.5%)}}
+.req-shade{position:absolute;inset:0;background:linear-gradient(90deg,#0f0d0c 0%,rgba(15,13,12,.84) 50%,rgba(15,13,12,.12) 100%)}
+.req-in{position:relative;max-width:1220px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,590px) minmax(0,560px);gap:70px;align-items:start}
+.req-copy{display:flex;flex-direction:column;gap:24px}
+.h104{font-size:clamp(58px,7.222vw,104px);line-height:.8846;margin:0;display:flex;flex-direction:column;gap:24px}
+.req-copy .body21{font:400 21px/35px var(--body);color:var(--fg);max-width:550px}
+.lime-bar{width:94px;height:4px;background:var(--grad)}
+.perks{display:flex;gap:38px;flex-wrap:wrap}
+.perk{width:126px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.perk .ring{position:relative;border:1.5px solid var(--lime);border-radius:999px;padding:28px;display:flex;align-items:center;justify-content:center;transition:transform .5s var(--spring),background-color .4s}
+.perk .ring::after{content:"";position:absolute;inset:-1.5px;border-radius:50%;border:1.5px solid var(--lime);animation:ping 3s ease-out infinite;animation-delay:var(--pd,0s);opacity:0}
+.perk .ring svg{display:block}
+.perk:hover .ring{transform:scale(1.08);background:rgba(255,244,0,.08)}
+.perk .lbl{font:500 14px/20px var(--body);color:var(--fg);text-align:center}
+.form{background:rgba(26,23,22,.93);border:1px solid var(--line2);border-radius:18px;box-shadow:0 24px 54px -8px rgba(0,0,0,.46);padding:22px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.form::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,#ff0ce1,#ffee06,#69d2ff,transparent);transform:translateX(-100%);animation:topRun 5s ease-in-out infinite}
+@keyframes topRun{60%,100%{transform:translateX(100%)}}
+.f-title{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.f-title .bolt{font:400 30px/normal var(--display);color:var(--lime);display:inline-block;animation:zap 3.6s steps(1) infinite}
+@keyframes zap{0%,100%{opacity:1}91%{opacity:.25}93%{opacity:1}95%{opacity:.4}}
+.f-title .t{font:400 20px/normal var(--display);color:var(--fg)}
+.field{position:relative;display:flex;flex-direction:column;gap:6px;height:62px;padding:10px 14px;background:rgba(15,13,12,.66);border:1px solid var(--line3);border-radius:10px;transition:border-color .3s,box-shadow .3s,background-color .3s}
+.field label{font:500 10px/normal var(--body);color:var(--muted);transition:color .3s}
+.field input,.field select{all:unset;font:400 14px/normal var(--body);color:var(--fg);width:100%;cursor:text}
+.field select{cursor:pointer}
+.field select option{background:#1a1716;color:var(--fg)}
+.field input::placeholder{color:var(--fg);opacity:1}
+.field:focus-within{border-color:var(--lime);box-shadow:0 0 0 3px rgba(255,244,0,.12);background:rgba(15,13,12,.82)}
+.field:focus-within label{color:var(--lime)}
+.field.err{border-color:#ff6b5b;animation:shake .4s}
+.field.err label{color:#ff9a8f}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.loc{display:flex;gap:10px;align-items:flex-start;height:62px;padding:12px;background:rgba(15,13,12,.62);border:1px solid var(--limeline);border-radius:10px;text-align:left;width:100%;transition:border-color .3s,background-color .3s}
+.loc:hover{border-color:var(--lime);background:rgba(255,244,0,.06)}
+.loc svg{flex:none;transition:transform .5s var(--spring)}
+.loc:hover svg{transform:translateY(-3px)}
+.loc .k{display:block;font:500 9px/normal var(--body);color:var(--muted)}
+.loc .v{display:block;font:500 13px/normal var(--body);color:var(--fg);margin-top:2px}
+.loc.set .k{color:var(--lime)}
+.fine{font:400 9px/normal var(--body);color:var(--dim);text-align:center;white-space:pre-wrap}
+.btn .load{position:absolute;left:0;bottom:0;height:3px;background:var(--ink);width:0}
+.btn.busy .load{animation:loadbar .9s var(--ease) forwards}
+@keyframes loadbar{to{width:100%}}
+
+/* ---------- REGIONAL ---------- */
+.regional{background:var(--ink);padding-block:110px}
+.regional .in{max-width:1250px;display:grid;grid-template-columns:minmax(0,480px) minmax(0,690px);gap:80px;align-items:start}
+.reg-copy{display:flex;flex-direction:column;gap:17px}
+.h66{font-size:clamp(42px,4.583vw,66px);line-height:.8788;margin:0}
+.reg-copy .fg16{font:400 16px/25px var(--body);color:var(--fg);max-width:430px}
+.mail{font:600 15px/normal var(--body);color:var(--lime);white-space:pre-wrap;text-align:left;display:inline-flex;align-self:flex-start}
+.mail .arr{display:inline-block;transition:transform .35s var(--spring)}
+.mail:hover .arr{transform:translateX(6px)}
+.map-frame{position:relative;height:480px;border:1px solid var(--limeline);border-radius:22px;overflow:hidden;background:#000}
+.map-frame>img{width:100%;height:100%;object-fit:cover;animation:kenburns 22s ease-in-out infinite alternate}
+@keyframes kenburns{to{transform:scale(1.07) translate(-1%,-1%)}}
+.pin-ping{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:rgba(255,250,190,.9);box-shadow:0 0 14px 4px rgba(255,244,0,.7)}
+.pin-ping::before,.pin-ping::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:1.5px solid var(--lime);animation:ping 2.6s ease-out infinite}
+.pin-ping::after{animation-delay:1.3s}
+.pin-ping.sm{width:8px;height:8px;margin:-4px 0 0 -4px;opacity:.85}
+
+/* ---------- FINAL CTA ---------- */
+.final{background:var(--ink);padding-block:110px}
+.panel{position:relative;border:1px solid var(--limeline);border-radius:22px;padding:70px clamp(20px,5vw,70px);display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;overflow:hidden;isolation:isolate;
+  background:radial-gradient(1127px 377px at 50.9% 50.9%,#2a1322 0%,#141110 100%)}
+.panel::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity .5s;background:radial-gradient(520px circle at var(--mx,50%) var(--my,50%),rgba(255,244,0,.12),transparent 60%)}
+.panel:hover::before{opacity:1}
+.panel::after{content:"";position:absolute;inset:-1px;border-radius:22px;padding:1px;z-index:-1;pointer-events:none;
+  background:conic-gradient(from var(--ang,0deg),transparent 0deg,#ff0ce1 18deg,#ffee06 40deg,#69d2ff 62deg,transparent 84deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:ang 6s linear infinite}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes ang{to{--ang:360deg}}
+.panel .eyebrow{width:900px;max-width:100%}
+.h72{font-size:clamp(42px,5vw,72px);line-height:.875;margin:0;max-width:698px}
+.panel .b14{font:400 14px/23px var(--body);color:var(--muted);max-width:700px}
+.panel .acts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* ---------- FOOTER ---------- */
+.foot{background:var(--ink2);border-top:1px solid var(--line);padding:44px max(clamp(16px,3.333vw,48px),env(safe-area-inset-right,0px)) 28px max(clamp(16px,3.333vw,48px),env(safe-area-inset-left,0px))}
+.foot-in{max-width:1344px;margin-inline:auto;display:flex;flex-direction:column;gap:22px}
+.foot-main{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.foot-tag{padding:10px;font:400 48px/64px var(--display);color:var(--fg);text-transform:uppercase}
+.foot-tag span{display:block}
+.foot-app{display:flex;flex-direction:column;align-items:flex-end;gap:22px}
+.foot-app .t{font:400 24px/23px var(--display);color:var(--fg)}
+.foot-row{display:flex;align-items:center;gap:12px;min-height:36px;flex-wrap:wrap}
+.foot-logo{height:30px;flex:none}
+.foot-logo img{height:100%;width:auto}
+.socials{flex:1 0 0;display:flex;gap:19.62px;align-items:center;min-width:140px}
+.socials a{display:block;flex:none;transition:transform .35s var(--spring)}
+.socials a:hover{transform:translateY(-3px) scale(1.1)}
+.socials svg{display:block}
+.snap{width:25.88px;height:25.88px;border-radius:11px;overflow:hidden;background:#fffe00}
+.f-links{display:flex;gap:24px;font:500 12px/normal var(--body);color:var(--muted);flex-wrap:wrap}
+.f-links a{transition:color .25s}
+.f-links a:hover,.f-links a[aria-current="true"]{color:var(--lime)}
+.foot-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 9px/normal var(--body);letter-spacing:1px;color:var(--dim)}
+.foot-bottom a{text-decoration:underline}
+.foot-bottom a:hover{color:var(--lime)}
+
+/* ---------- LEGAL / INNER PAGES ---------- */
+.l-hero{position:relative;height:560px;background:var(--ink2);overflow:hidden}
+.l-grid{position:absolute;inset:0;background:radial-gradient(900px 520px at 22% 55%,rgba(235,0,139,.16) 0%,rgba(20,17,16,0) 70%),radial-gradient(700px 420px at 85% 20%,rgba(105,210,255,.10) 0%,rgba(20,17,16,0) 70%)}
+.l-grid::after{content:"";position:absolute;inset:0;opacity:.5;background:repeating-linear-gradient(90deg,rgba(255,244,0,.035) 0 1px,transparent 1px 80px);-webkit-mask:radial-gradient(60% 80% at 30% 50%,#000,transparent);mask:radial-gradient(60% 80% at 30% 50%,#000,transparent);animation:gridDrift 18s linear infinite}
+@keyframes gridDrift{to{background-position:80px 0}}
+.l-hero .band{position:relative;padding-top:105px}
+.l-hero-c{max-width:1240px;margin-inline:auto;display:flex;flex-direction:column;gap:18px}
+.l-hero-c .eyebrow{animation:trackIn 1.1s var(--ease) .15s both}
+.h94{font-size:clamp(50px,6.528vw,94px);line-height:.883;margin:0;max-width:1050px}
+.h94 .ln{display:block;overflow:hidden}
+.h94 .ln>span{display:block;animation:lineUp 1s var(--ease) both;animation-delay:var(--dl,.3s)}
+.l-hero-c .fg16{font:400 16px/26px var(--body);color:var(--fg);max-width:760px;animation:fadeUp .9s var(--ease) .6s both}
+.l-content{background:var(--ink);padding-block:70px 110px}
+.l-sections{max-width:1040px;margin-inline:auto}
+.l-sec{display:grid;grid-template-columns:70px minmax(0,920px);gap:30px;padding-block:38px;position:relative}
+.l-sec::after{content:"";position:absolute;left:0;right:20px;bottom:0;height:1px;background:var(--line);transform-origin:left;transition:transform 1.1s var(--ease) .15s}
+.l-sec.pre::after{transform:scaleX(0)}
+.l-sec .ix{font:600 11px/normal var(--body);letter-spacing:1.5px;color:var(--lime)}
+.l-sec .cp{display:flex;flex-direction:column;gap:12px}
+.l-sec h2{margin:0;font-size:clamp(30px,2.917vw,42px);line-height:.881}
+.l-sec .p{font:400 15px/25px var(--body);color:var(--muted);max-width:900px}
+.l-sec .li{font:400 15px/25px var(--body);color:var(--fg);max-width:900px;white-space:pre-wrap}
+.l-contact{background:var(--ink2);padding-block:75px;min-height:250px}
+.l-contact .in{display:flex;justify-content:space-between;align-items:center;gap:24px;min-height:100px;flex-wrap:wrap}
+.l-contact.top .in{min-height:80px}
+.l-contact .tt{display:flex;flex-direction:column;gap:10px;max-width:700px}
+.l-contact .h64{font-size:clamp(40px,4.444vw,64px);line-height:.875;margin:0}
+.l-contact .mail{width:300px;justify-content:flex-end;text-align:right;align-self:center}
+/* contact page */
+.c-body{background:var(--ink);padding-block:90px}
+.c-in{display:grid;grid-template-columns:minmax(0,520px) minmax(0,680px);gap:40px;align-items:start}
+.c-dir{display:flex;flex-direction:column;gap:14px}
+.c-card{background:rgba(26,23,22,.72);border:1px solid var(--line);border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .35s,transform .5s var(--ease),background-color .35s,opacity .9s var(--ease)}
+.c-card.hot{border-color:var(--limeline)}
+.c-card:hover{border-color:var(--lime);transform:translateX(6px);background:rgba(26,23,22,.9)}
+.c-card svg{width:30px;height:30px;transition:transform .5s var(--spring)}
+.c-card:hover svg{transform:scale(1.15) rotate(-8deg)}
+.c-card h3{margin:0;font-size:clamp(28px,2.361vw,34px);line-height:.882}
+.c-card .b{font:400 16px/21px var(--body);color:var(--muted)}
+.c-card button.h{all:unset;cursor:pointer}
+.c-map{height:700px}
+.c-cta{background:var(--ink2);padding-block:80px}
+.c-cta .in{display:grid;grid-template-columns:minmax(0,720px) minmax(0,420px);gap:70px;align-items:start;max-width:1210px;margin-inline:0}
+.c-cta .tt{display:flex;flex-direction:column;gap:12px}
+.c-cta .h64{font-size:clamp(40px,4.444vw,64px);line-height:.875;margin:0}
+.c-cta p.fg{font:400 16px/25px var(--body);color:var(--fg)}
+.c-cta p.fg a{color:var(--lime);border-bottom:1px solid transparent;transition:border-color .25s}
+.c-cta p.fg a:hover{border-color:var(--lime)}
+
+/* ---------- OVERLAYS ---------- */
+.ov{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.ov-bg{position:fixed;inset:0;background:#0f0d0c url(assets/map-contact.jpg) center/cover no-repeat}
+.ov-bg.has-img{background-image:var(--req-img)}
+.ov-shade{position:fixed;inset:0;background:rgba(15,13,12,.9)}
+.ov.succ .ov-shade{background:radial-gradient(1161px 726px at 51.6% 51.6%,rgba(70,8,48,.5) 0%,rgba(34,8,26,.72) 31%,rgba(15,13,12,.94) 62%,#0f0d0c 100%)}
+.ov{opacity:0;transition:opacity .45s var(--ease)}
+.ov.show{opacity:1}
+.ov .mdl{transform:translateY(30px) scale(.96);transition:transform .7s var(--spring)}
+.ov.show .mdl{transform:none}
+/* location modal */
+.loc-mdl{position:relative;width:1040px;max-width:100%;background:var(--panel);border:1px solid var(--line2);border-radius:26px;box-shadow:0 24px 70px rgba(255,244,0,.10);padding:29px 33px 59px 31px;display:flex;flex-direction:column;margin:auto}
+.loc-mdl .head{display:flex;flex-direction:column;gap:15px;padding-right:150px;min-height:78px}
+.loc-mdl h2{margin:0;font-size:clamp(36px,3.611vw,52px);line-height:.8846}
+.loc-ctrl{position:absolute;right:55px;top:29px;display:flex;gap:20px}
+.cbtn{width:58px;height:58px;border-radius:999px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;transition:transform .4s var(--spring),border-color .3s,background-color .3s}
+.cbtn svg{width:30px;height:30px}
+.cbtn.t{border-color:var(--limeline)}
+.cbtn:hover{transform:scale(1.08);border-color:var(--lime);background:rgba(255,244,0,.06)}
+.cbtn.x:hover svg{transform:rotate(90deg)}
+.cbtn svg{transition:transform .4s var(--ease)}
+.lmap{position:relative;margin-top:34px;height:355px;border:1px solid var(--limeline);border-radius:18px;overflow:hidden;cursor:crosshair;background:#000}
+.lmap>img{position:absolute;left:-1px;top:-1px;width:976px;height:355px;max-width:none;object-fit:cover;pointer-events:none}
+.lpin{position:absolute;left:0;top:0;width:0;height:0;transition:transform .7s var(--spring);will-change:transform}
+.lpin .glow{position:absolute;left:-54px;top:-54px;width:108px;height:108px}
+.lpin .icon{position:absolute;left:-20px;top:-20px;width:40px;height:40px}
+.lpin .drop{animation:drop .6s var(--spring)}
+@keyframes drop{from{transform:translateY(-26px) scale(.8)}}
+.lripple{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:2px solid var(--lime);animation:ripple .9s ease-out forwards;pointer-events:none}
+@keyframes ripple{to{transform:scale(7);opacity:0}}
+.ltip{position:absolute;left:17px;top:294px;height:46px;width:270px;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;background:rgba(15,13,12,.9);border:1px solid var(--line);border-radius:10px;font:500 12px/normal var(--body);color:var(--fg);white-space:nowrap;pointer-events:none}
+.lfoot{margin-top:31px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lsel{display:flex;align-items:center;gap:12px;height:64px;min-width:0}
+.lsel svg{flex:none}
+.lsel .k{font:600 12px/normal var(--body);color:var(--muted)}
+.lsel .v{font:600 17px/normal var(--body);color:var(--fg);margin-top:3px;display:block;overflow:hidden;height:21px}
+.lsel .v span{display:block;transition:transform .45s var(--ease),opacity .3s}
+.lsel .v span.out{transform:translateY(-100%);opacity:0}
+.lfoot .btn{width:200px}
+/* success modal */
+.succ-mdl{width:680px;max-width:100%;background:rgba(26,23,22,.96);border:1px solid var(--line2);border-radius:30px;box-shadow:0 28px 70px rgba(255,244,0,.15);padding:66px clamp(20px,5vw,70px);display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;position:relative;margin:auto}
+.succ-badge{width:112px;height:112px}
+.succ-badge .ring{transform-origin:56px 56px;animation:spinIn 1s var(--ease) both}
+.succ-badge circle{transform-origin:56px 56px;animation:pop .7s var(--spring) .2s both}
+.succ-badge path{stroke-dasharray:32;stroke-dashoffset:32;animation:check .6s var(--ease) .65s forwards}
+@keyframes spinIn{from{transform:rotate(-120deg) scale(.6);opacity:0}}
+@keyframes pop{from{transform:scale(0)}}
+@keyframes check{to{stroke-dashoffset:0}}
+.succ-mdl .eyebrow{width:540px;max-width:100%}
+.succ-mdl h2{margin:0;font-size:clamp(40px,4.444vw,64px);line-height:.875;max-width:560px}
+.succ-mdl .b18{font:400 18px/28px var(--body);color:var(--muted);max-width:520px}
+.succ-mdl .btn{width:290px;max-width:100%}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:130}
+.toast{position:fixed;left:50%;bottom:max(28px,calc(env(safe-area-inset-bottom,0px) + 16px));z-index:150;transform:translate(-50%,30px);opacity:0;background:var(--lime);color:var(--ink);font:600 13px/normal var(--body);padding:12px 18px;border-radius:12px;transition:transform .5s var(--spring),opacity .3s;pointer-events:none;box-shadow:0 14px 34px -10px rgba(255,244,0,.6)}
+.toast.show{transform:translate(-50%,0);opacity:1}
+body.lock{overflow:hidden}
+
+
+/* ---------- mobile-only blocks (Figma mobile layout) ---------- */
+.tip-m{display:none}
+@media (max-width:760px){
+  #page-home:not([hidden]){display:flex;flex-direction:column}
+  #page-home>.app{order:1}
+  #page-home>.request,#page-home>.regional,#page-home>.final{order:2}
+  .journey{background:var(--ink)}
+  .app{padding-block:82px}
+  .app .row{gap:44px}
+  body.sub .menu-btn{display:none!important}
+  #hdrBack:not([hidden]){display:inline-flex!important;width:46px;height:46px;align-items:center;justify-content:center}
+  #hdrBack .tx{display:none}
+  #hdrBack .ar{font-size:24px;line-height:1}
+  .tip-d{display:none}
+  .tip-m{display:inline}
+  .ltip{display:flex!important;left:14px;right:14px;top:auto;bottom:14px;width:auto}
+  .foot-in{gap:0}
+  .foot-main,.foot-row{display:contents}
+  .foot-app,.foot-row .socials,.foot-in>.foot-main+.divider{display:none}
+  .foot-row .foot-logo{order:1;height:30px;align-self:flex-start}
+  .foot-tag{order:2;margin-top:30px;font-size:30px;line-height:33px}
+  .f-links{order:3;flex-direction:column;gap:13px;margin-top:34px;font-size:13px}
+  .foot-in>.divider{order:4;margin-top:40px}
+  .foot-bottom{order:5;margin-top:22px;flex-direction:column;gap:8px}
+  .phones{display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:8px;align-items:start;overflow:visible;padding:0;width:100%}
+  .ph{flex:none;min-width:0}
+  .ph:nth-child(1),.ph:nth-child(3){margin-top:40px}
+  #heroBg{--hero-img:url(assets/hero-arena-m.jpg);background-position:72% center}
+  .hero-vig{background:linear-gradient(180deg,rgba(15,13,12,.5) 0%,rgba(15,13,12,.72) 45%,rgba(15,13,12,.55) 100%),linear-gradient(90deg,rgba(15,13,12,.75),rgba(15,13,12,.15))}
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1100px){
+  .app .row{flex-direction:column;gap:56px}
+  .app-copy{flex:none;margin-right:0;max-width:460px}
+  .phones{width:100%;overflow-x:auto;scroll-snap-type:x mandatory;padding-block:16px 18px}
+  .ph{flex:0 0 min(269px,72vw);scroll-snap-align:start}
+  .about .grid,.caps-head,.req-in,.regional .in,.c-in,.c-cta .in{grid-template-columns:minmax(0,1fr);gap:40px}
+  .philo-in{grid-template-columns:minmax(0,1fr);gap:56px}
+  .orbit-box{margin-inline:auto}
+  .radar{left:auto;right:-200px;top:auto;bottom:0}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .m-grid{grid-template-columns:repeat(2,1fr)}
+  .form{max-width:560px}
+  .map-frame{height:auto;aspect-ratio:690/480}
+  .c-map{aspect-ratio:680/700}
+}
+@media (max-width:900px){
+  .nav{display:none}
+  .menu-btn{display:flex}
+  .hero{height:auto;min-height:720px;padding-block:120px 110px}
+  .hero-content{position:relative;left:auto;top:auto;width:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .l-hero{height:auto;padding-bottom:90px}
+}
+@media (max-width:640px){
+  .foot-row .socials{flex:1 0 100%}
+  .foot-row .foot-logo{height:28px}
+  #hdrCta,#hdrBack{display:none!important}
+  .brand{height:26px}
+}
+@media (max-width:760px){
+  .journey{height:auto}
+  .j-stage{position:relative;left:auto;width:auto;height:auto;transform:none;padding:56px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column}
+  .j-read{width:100%;height:100%}
+  .j-ghost{left:4px;top:10px;font-size:180px;line-height:180px;height:180px}
+  .j-eyebrow,.j-title,.j-desc,.j-arena{position:relative;left:auto;top:auto;width:auto;max-width:100%}
+  .j-eyebrow{font-size:14px;letter-spacing:4px;height:auto;margin-top:40px}
+  .j-rule{display:none}
+  .j-title{font-size:44px;line-height:48px;height:auto;margin-top:8px;white-space:normal}
+  .j-desc{font-size:18px;line-height:26px;margin-top:12px}
+  .j-desc br{display:none}
+  .j-arena{height:auto;aspect-ratio:585/318;margin-top:24px}
+  .j-arena .j-scale{position:absolute;left:0;top:0;width:585px;height:318px;transform:scale(var(--ak,.6));transform-origin:top left}
+  .j-tl{position:relative;top:auto;left:auto;width:auto;height:auto;margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));display:grid;grid-template-columns:repeat(4,1fr)}
+  .j-div{width:100%}
+  .j-track,.j-prog{display:none}
+  .j-step{position:relative;left:auto!important;width:auto;height:96px;padding:0 8px}
+  .j-step .n{left:12px;top:18px;font-size:22px}
+  .j-step .l{left:12px;top:48px;width:calc(100% - 16px);font-size:12px;line-height:15px;letter-spacing:.4px}
+  .j-step .node{display:none}
+  .j-step::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--grad);transform:scaleX(0);transform-origin:left}
+  .j-step.on::after{transform:scaleX(var(--sp,0))}
+  .idx-grid,.vision .idx-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+  .idx .num{font-size:72px}
+  .paras{flex-direction:column}
+  .m-grid{grid-template-columns:minmax(0,1fr)}
+  .m-tile{height:140px}
+  .foot-tag{font-size:36px;line-height:46px;padding:0}
+  .foot-app{align-items:flex-start}
+  .card{min-height:0}
+  .card-body{min-height:0}
+  .request{padding-top:80px;padding-bottom:72px}
+  .h104{gap:0}
+  .f-row{grid-template-columns:minmax(0,1fr)}
+  .f-row .field{width:auto}
+  .loc-mdl{padding:22px 16px 26px}
+  .loc-mdl .head{padding-right:0;min-height:0}
+  .loc-ctrl{position:static;order:-1;align-self:flex-end;margin-bottom:-6px;gap:10px}
+  .cbtn{width:48px;height:48px}
+  .lmap{height:300px}
+  .lmap>img{width:825px;height:300px;left:50%;margin-left:-412px;top:0}
+  .lfoot .btn{width:100%}
+  .l-sec{grid-template-columns:minmax(0,1fr);gap:10px;padding-block:28px}
+  .l-contact .mail{width:auto;justify-content:flex-start}
+  .succ-mdl{padding-block:44px}
+  .hero-content{gap:18px}
+  .body20{font-size:17px;line-height:27px}
+}
+
+/* ==========================================================================
+   MOBILE — matches Figma "04 Mobile / Mobile / Home" (390 wide).
+   Values below are taken straight from the Figma frames.
+   ========================================================================== */
+.tno{display:none}
+@media (max-width:760px){
+  /* type scale */
+  .eyebrow,.eyebrow.s12{font-size:9.5px;letter-spacing:1.52px;line-height:14px}
+  .band{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+  /* header */
+  .hdr{height:83px;padding-inline:20px}
+  .brand{height:26px}
+  .menu-btn{width:42px;height:42px;border-radius:12px}
+  .progress,.mnav{top:calc(env(safe-area-inset-top,0px) + 83px)}
+
+  /* hero (744 tall) */
+  .hero{height:744px;min-height:0;padding:0}
+  .hero-content{position:absolute;left:max(20px,env(safe-area-inset-left,0px));right:20px;top:134px;width:auto;padding:0;gap:18px}
+  .d{letter-spacing:0}
+  .hero h1{font-size:62px;line-height:59px}
+  .hero-lead,.body20.hero-lead{font-size:14px;line-height:25px;max-width:340px}
+  .hero-actions{flex-direction:column;align-items:flex-start;gap:12px}
+  .hero-actions .btn{height:46px;padding:0 19px;border-radius:12px;font-size:13px}
+  .hero-rule{left:20px;right:20px;bottom:37px}
+
+  /* about */
+  .about{padding-block:40px 30px}
+  .about .grid{gap:36px}
+  .about-h{gap:14px}
+  .h76{font-size:52px;line-height:55px}
+  .about-copy{gap:18px}
+  .about-copy .body20{font-size:15px;line-height:26px}
+  .about-copy .body16{font-size:14px;line-height:25px}
+  .markets{font-size:9px;letter-spacing:1.44px}
+
+  /* mission + vision: "01" inline with the label */
+  .mission,.vision{padding-block:40px}
+  .idx-grid,.vision .idx-grid{grid-template-columns:minmax(0,1fr);gap:30px}
+  .idx{flex-direction:row;align-items:center;gap:8px}
+  .idx .num{font-size:48px;line-height:48px;height:48px}
+  .idx .lbl{font-size:9.5px;letter-spacing:1.52px;width:auto}
+  .h62{font-size:48px;line-height:50px}
+  .mission-copy{gap:32px}
+  .paras{gap:24px}
+  .paras p{font-size:14px;line-height:25px}
+  .vision-copy{gap:22px}
+  .vision .h68{font-size:50px;line-height:53px}
+  .vision-copy .body16{font-size:14px;line-height:25px}
+
+  /* journey — Figma "Journey / Steps Mobile" (390 × 560) */
+  .journey{height:560px;background:#0a0908}
+  .j-bg{display:block;background-position:72% center}
+  .j-stage{position:absolute;inset:0;left:0;top:0;width:100%;height:560px;transform:none;padding:0;display:block}
+  .j-read{left:0;top:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(10,9,8,.88) 0%,rgba(10,9,8,.55) 36%,rgba(10,9,8,.15) 60%,rgba(10,9,8,.85) 80%,#0a0908 100%)}
+  .j-grid{display:block;opacity:.7}
+  .j-ghost{left:auto;right:8px;top:-6px;height:150px;font-size:150px;line-height:150px;background:linear-gradient(180deg,rgba(255,244,0,.16) 0%,rgba(255,170,40,.06) 100%);-webkit-background-clip:text;background-clip:text}
+  .j-eyebrow{position:absolute;left:20px;top:66px;width:auto;height:auto;margin:0;font-size:9.5px;line-height:14px;letter-spacing:1.52px}
+  .j-rule{display:block;position:absolute;left:var(--rx,214px);top:72px;width:32px;height:2px}
+  .j-title{position:absolute;left:20px;right:20px;top:86px;width:auto;height:auto;margin:0;font-size:44px;line-height:48px;white-space:nowrap}
+  .j-desc{position:absolute;left:20px;top:142px;width:330px;max-width:calc(100% - 40px);margin:0;font-size:15px;line-height:23px;color:var(--muted)}
+  .j-arena{position:absolute;left:50%;top:212px;width:351px;height:191px;margin:0 0 0 -175.5px;aspect-ratio:auto}
+  .j-arena .j-scale{position:absolute;left:0;top:0;width:585px;height:318px;transform:scale(.6);transform-origin:top left}
+  .j-tl{position:absolute;left:0;right:0;top:430px;width:auto;height:130px;margin:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(10,9,8,.55)}
+  .j-fade,.j-div{display:none}
+  .j-track{display:block;left:0;top:0;width:100%;height:2px;background:rgba(136,132,127,.5)}
+  .j-prog{display:block;left:0;top:0;height:3px;width:calc(var(--jp,0) * 100%);background-size:100vw 100%;box-shadow:0 0 10px rgba(255,140,120,.4)}
+  .j-prog::after{display:block;right:-4px;top:-3px}
+  .j-step{position:relative;left:auto!important;width:auto;height:130px;padding:0}
+  .j-step::after{display:none}
+  .j-step .n{left:14px;top:22px;width:auto;height:28px;font-size:24px;line-height:28px}
+  .j-step .l{left:14px;top:56px;width:74px;font:600 8.5px/13px var(--body);letter-spacing:1px}
+  .j-step .node{display:block;left:6px;top:-8px}
+
+  /* capabilities — list rows */
+  .caps{padding-block:40px 0}
+  .caps-head{gap:20px;margin-bottom:12px}
+  .caps-title{gap:10px}
+  .caps .h68{font-size:52px;line-height:55px}
+  .caps-head .body16{font-size:14px;line-height:25px}
+  .cards{grid-template-columns:minmax(0,1fr);gap:0;padding-top:14px}
+  .card{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start;min-height:0;padding:20px 0;border-radius:0;border:0;border-top:1px solid var(--line);background:none;overflow:visible}
+  .card:last-child{border-bottom:1px solid var(--line)}
+  .card .bar{left:66px;right:0}
+  .card:hover{transform:translateX(4px);border-color:var(--line)}
+  .card-top{height:auto}
+  .card-top .no{display:none}
+  .card-top svg{width:52px;height:52px;padding:9px;border-radius:14px;border:1px solid rgba(255,244,0,.35);background:rgba(255,244,0,.05);animation:capGlow 2.4s ease-in-out infinite}
+  .card:nth-child(2) .card-top svg{animation-delay:.3s}
+  .card:nth-child(3) .card-top svg{animation-delay:.6s}
+  .card:nth-child(4) .card-top svg{animation-delay:.9s}
+  .card:hover .card-top svg{transform:rotate(-10deg) scale(1.08)}
+  .card-top svg{transition:transform .6s var(--spring)}
+  .card-body{gap:4px;min-height:0}
+  .card .tag{font-size:8px;letter-spacing:1.28px;line-height:12px}
+  .tno{display:inline}
+  .card h3{font-size:26px;line-height:28px}
+  .card p.b{font-size:12px;line-height:20px}
+
+  /* philosophy + orbit (mobile composition 350 × 510) */
+  .philo{min-height:0}
+  .philo-in{padding:72px 20px 48px;gap:46px}
+  .philo-copy{gap:18px}
+  .h92{font-size:58px;line-height:61px}
+  .philo .lead{font-size:16px}
+  .philo .b18{font-size:14px;line-height:25px}
+  .radar{left:-60px;right:auto;top:auto;bottom:40px;width:510px;height:580px;overflow:hidden}
+  .radar img{width:510px;height:580px}
+  .orbit-box{max-width:none;width:100%;aspect-ratio:350/510}
+  .orbit{width:350px;height:510px}
+  .o-sweep{left:175px;top:255px;width:620px;height:620px;margin:-310px 0 0 -310px}
+  .o-r1{left:9px;top:89px;width:332px;height:332px}
+  .o-r2{left:50px;top:130px;width:250px;height:250px}
+  .o-r3{left:100px;top:180px;width:150px;height:150px}
+  .o-halo{left:70px;top:150px;width:210px;height:210px}
+  .o-hub,.o-ping{left:117px;top:197px;width:116px;height:116px}
+  .o-mark{left:136.5px;top:229.5px;width:77px;height:51px}
+  .o-path{left:175px;top:255px}
+  .o-target{left:111px;top:-23px;width:46px;height:46px}
+  .o-target svg{left:9px;top:9px}
+  .o-label{width:112px;height:60px}
+  .o-label i{top:6px;height:48px}
+  .o-label .k{left:14px;top:8px;font-size:7px}
+  .o-label .v{left:14px;top:27px}
+  .o-label.ol1{left:8px!important;top:82px!important}
+  .o-label.ol2{left:246px!important;top:130px!important}
+  .o-label.ol3{left:8px!important;top:366px!important}
+  .o-label.ol4{left:226px!important;top:410px!important}
+
+  /* metrics */
+  .m-tile{height:180px}
+  .m-tile .no{font-size:14px;letter-spacing:1px}
+
+  /* app showcase */
+  .app{padding:40px 0 40px max(20px,env(safe-area-inset-left,0px))}
+  .app .row{gap:44px}
+  .app-copy{max-width:none;padding-right:20px;gap:18px}
+  .app .h68{font-size:52px;line-height:55px}
+  .app-copy .body16{font-size:14px;line-height:25px}
+  .badges{gap:10px;flex-wrap:nowrap}
+  .badge,.badge img{width:168px;height:56px}
+  .phones{display:flex;gap:16px;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 6px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .phones::-webkit-scrollbar{display:none}
+  .ph{flex:0 0 200px;margin:0;scroll-snap-align:start}
+  .ph:nth-child(1),.ph:nth-child(3){margin-top:0}
+
+  /* request */
+  .request{padding:78px 20px 72px}
+  .req-in{gap:44px}
+  .req-copy{gap:18px}
+  .h104{font-size:58px;line-height:61px;gap:18px}
+  .req-copy .body21{font-size:15px;line-height:26px}
+  .lime-bar{width:88px}
+  .perks{gap:14px;flex-wrap:nowrap}
+  .perk{width:98px;gap:12px}
+  .perk .ring{padding:22px}
+  .perk .lbl{font-size:13px;line-height:18px}
+  .form{padding:18px}
+  .f-title .t{font-size:24px}
+  .f-row{grid-template-columns:1fr 1fr}
+
+  /* regional */
+  .regional{padding-block:40px}
+  .regional .in{gap:40px}
+  .reg-copy{gap:17px}
+  .h66{font-size:52px;line-height:55px}
+  .reg-copy .fg16{font-size:14px;line-height:25px}
+  .reg-copy .mail{font-size:14px}
+  .map-frame{aspect-ratio:350/360}
+
+  /* final CTA */
+  .final{padding-block:40px}
+  .panel{padding:44px 20px;gap:18px}
+  .h72{font-size:48px;line-height:50px}
+  .panel .b14{font-size:13px;line-height:23px}
+  .panel .acts{flex-direction:column;align-items:center;gap:12px}
+  .panel .acts .btn{width:198px;height:46px;padding:0 19px;border-radius:12px;font-size:13px;justify-content:space-between}
+
+  /* contact + legal pages */
+  .c-card h3{font-size:27px;line-height:30px}
+  .c-card .b{font-size:13px;line-height:21px}
+
+  /* footer — logo, motto, store badges, links, divider, credits */
+  .foot{padding:34px 20px 28px}
+  .foot-tag{order:2;margin-top:28px;font-size:24px;line-height:25px}
+  .foot-app{display:flex;order:3;margin-top:28px;align-items:flex-start}
+  .foot-app .t{display:none}
+  .foot-app .badges{gap:7.5px}
+  .foot-app .badge,.foot-app .badge img{width:128px;height:44px}
+  .f-links{order:4;gap:12px;margin-top:28px;font-size:11.5px}
+  .foot-in>.divider{order:5;margin-top:22px}
+  .foot-bottom{order:6;margin-top:22px;gap:6px;font-size:8.5px}
+}
+@keyframes capGlow{50%{box-shadow:0 0 16px rgba(255,244,0,.4);border-color:rgba(255,244,0,.8);background-color:rgba(255,244,0,.12)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .rv.pre,.ph.rv.pre,.orbit.pre .o-label{opacity:1!important;transform:none!important;clip-path:none!important}
+  .o-sweep,.hero-sweep,.j-grid::after,.hero-rule::after,.form::before{display:none}
+}
+</style>
+
+<!-- icon sprite (vectors exported from Figma) -->
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 18 18"><path d="M3.75 9H14.25M9.75 13.5L14.25 9L9.75 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-game34" viewBox="0 0 34 34"><path d="M11.3334 12.75H22.6667C23.8039 12.7505 24.9242 13.0248 25.933 13.5496C26.9418 14.0745 27.8095 14.8345 28.4625 15.7655C29.1156 16.6965 29.5349 17.771 29.685 18.8982C29.8352 20.0254 29.7117 21.1722 29.325 22.2417L27.9084 25.925C27.7187 26.4004 27.4037 26.8155 26.997 27.1263C26.5903 27.437 26.1071 27.6318 25.5985 27.6899C25.09 27.748 24.5752 27.6673 24.1089 27.4563C23.6426 27.2454 23.2421 26.912 22.95 26.4917L20.5417 24.0833H13.4584L11.05 26.4917C10.758 26.912 10.3575 27.2454 9.89118 27.4563C9.42485 27.6673 8.91007 27.748 8.40155 27.6899C7.89302 27.6318 7.40974 27.437 7.00303 27.1263C6.59633 26.8155 6.2814 26.4004 6.09171 25.925L4.67504 22.2417C4.2884 21.1722 4.16492 20.0254 4.31505 18.8982C4.46518 17.771 4.8845 16.6965 5.53756 15.7655C6.19063 14.8345 7.05823 14.0745 8.06704 13.5496C9.07584 13.0248 10.1962 12.7505 11.3334 12.75Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.3333 17V22.6667M8.5 19.8333H14.1667M22.6667 18.4167H22.6808M25.5 21.25H25.5142" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pgame" viewBox="0 0 32 27"><path d="M10.6638 6H21.3305C22.4008 6.00046 23.4552 6.25859 24.4047 6.75259C25.3542 7.24659 26.1707 7.96192 26.7854 8.83812C27.4 9.71432 27.7947 10.7256 27.936 11.7865C28.0773 12.8475 27.9611 13.9268 27.5972 14.9333L26.2638 18.4C26.0853 18.8474 25.7889 19.2381 25.4061 19.5306C25.0233 19.8231 24.5685 20.0064 24.0899 20.0611C23.6113 20.1158 23.1268 20.0398 22.6879 19.8413C22.249 19.6427 21.8721 19.3289 21.5972 18.9333L19.3305 16.6667H12.6638L10.3972 18.9333C10.1223 19.3289 9.74537 19.6427 9.30647 19.8413C8.86757 20.0398 8.38308 20.1158 7.90447 20.0611C7.42585 20.0064 6.971 19.8231 6.58822 19.5306C6.20544 19.2381 5.90904 18.8474 5.7305 18.4L4.39717 14.9333C4.03327 13.9268 3.91706 12.8475 4.05835 11.7865C4.19965 10.7256 4.5943 9.71432 5.20895 8.83812C5.8236 7.96192 6.64017 7.24659 7.58963 6.75259C8.5391 6.25859 9.59354 6.00046 10.6638 6Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.6637 10V15.3333M7.99707 12.6667H13.3304M21.3304 11.3333H21.3437M23.9971 14H24.0104" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin32" viewBox="0 0 32 32"><path d="M26.6666 13.3332C26.6666 19.9998 15.9999 29.3332 15.9999 29.3332C15.9999 29.3332 5.33325 19.9998 5.33325 13.3332C5.33325 10.5042 6.45706 7.79109 8.45745 5.7907C10.4578 3.79031 13.1709 2.6665 15.9999 2.6665C18.8289 2.6665 21.542 3.79031 23.5424 5.7907C25.5428 7.79109 26.6666 10.5042 26.6666 13.3332Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.9998 16.6667C17.8408 16.6667 19.3332 15.1743 19.3332 13.3333C19.3332 11.4924 17.8408 10 15.9998 10C14.1589 10 12.6665 11.4924 12.6665 13.3333C12.6665 15.1743 14.1589 16.6667 15.9998 16.6667Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 32 32"><path d="M5.33325 18.6668V16.0002C5.33325 13.1712 6.45706 10.4581 8.45745 8.45769C10.4578 6.4573 13.1709 5.3335 15.9999 5.3335C18.8289 5.3335 21.542 6.4573 23.5424 8.45769C25.5428 10.4581 26.6666 13.1712 26.6666 16.0002V18.6668" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33333 20.0002C9.33333 18.5274 8.13943 17.3335 6.66667 17.3335C5.19391 17.3335 4 18.5274 4 20.0002V22.6668C4 24.1396 5.19391 25.3335 6.66667 25.3335C8.13943 25.3335 9.33333 24.1396 9.33333 22.6668V20.0002Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M28.0001 20.0002C28.0001 18.5274 26.8062 17.3335 25.3334 17.3335C23.8607 17.3335 22.6667 18.5274 22.6667 20.0002V22.6668C22.6667 24.1396 23.8607 25.3335 25.3334 25.3335C26.8062 25.3335 28.0001 24.1396 28.0001 22.6668V20.0002Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin22" viewBox="0 0 22 22"><path d="M18.3333 9.16683C18.3333 13.7502 11 20.1668 11 20.1668C11 20.1668 3.66663 13.7502 3.66663 9.16683C3.66663 7.22191 4.43924 5.35665 5.81451 3.98138C7.18978 2.60611 9.05504 1.8335 11 1.8335C12.9449 1.8335 14.8101 2.60611 16.1854 3.98138C17.5607 5.35665 18.3333 7.22191 18.3333 9.16683Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.9999 11.4583C12.2656 11.4583 13.2916 10.4323 13.2916 9.16667C13.2916 7.90101 12.2656 6.875 10.9999 6.875C9.73427 6.875 8.70825 7.90101 8.70825 9.16667C8.70825 10.4323 9.73427 11.4583 10.9999 11.4583Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-target28" viewBox="0 0 28 28"><path d="M14 22.1668C18.5104 22.1668 22.1667 18.5105 22.1667 14.0002C22.1667 9.48984 18.5104 5.8335 14 5.8335C9.48972 5.8335 5.83337 9.48984 5.83337 14.0002C5.83337 18.5105 9.48972 22.1668 14 22.1668Z" fill="none" stroke="#fff400" stroke-width="1.7"/><path d="M14 16.9168C15.6109 16.9168 16.9167 15.611 16.9167 14.0002C16.9167 12.3893 15.6109 11.0835 14 11.0835C12.3892 11.0835 11.0834 12.3893 11.0834 14.0002C11.0834 15.611 12.3892 16.9168 14 16.9168Z" fill="none" stroke="#fff400" stroke-width="1.7"/><path d="M14 2.3335V5.8335M14 22.1668V25.6668M2.33337 14.0002H5.83337M22.1667 14.0002H25.6667" stroke="#fff400" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-target30" viewBox="0 0 30 30"><path d="M15 23.75C19.8325 23.75 23.75 19.8325 23.75 15C23.75 10.1675 19.8325 6.25 15 6.25C10.1675 6.25 6.25 10.1675 6.25 15C6.25 19.8325 10.1675 23.75 15 23.75Z" fill="none" stroke="#fff400" stroke-width="1.7"/><path d="M15 18.125C16.7259 18.125 18.125 16.7259 18.125 15C18.125 13.2741 16.7259 11.875 15 11.875C13.2741 11.875 11.875 13.2741 11.875 15C11.875 16.7259 13.2741 18.125 15 18.125Z" fill="none" stroke="#fff400" stroke-width="1.7"/><path d="M15 2.5V6.25M15 23.75V27.5M2.5 15H6.25M23.75 15H27.5" stroke="#fff400" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 30 30"><path d="M7.5 7.5L22.5 22.5M22.5 7.5L7.5 22.5" stroke="#f7f6f5" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-tip" viewBox="0 0 18 18"><path d="M9 14.25C11.8995 14.25 14.25 11.8995 14.25 9C14.25 6.10051 11.8995 3.75 9 3.75C6.10051 3.75 3.75 6.10051 3.75 9C3.75 11.8995 6.10051 14.25 9 14.25Z" fill="none" stroke="#f7f6f5" stroke-width="1.7"/><path d="M9 10.875C10.0355 10.875 10.875 10.0355 10.875 9C10.875 7.96447 10.0355 7.125 9 7.125C7.96447 7.125 7.125 7.96447 7.125 9C7.125 10.0355 7.96447 10.875 9 10.875Z" fill="none" stroke="#f7f6f5" stroke-width="1.7"/><path d="M9 1.5V3.75M9 14.25V16.5M1.5 9H3.75M14.25 9H16.5" stroke="#f7f6f5" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-lpin" viewBox="0 0 40 40"><path d="M33.3334 16.6666C33.3334 25 20.0001 36.6666 20.0001 36.6666C20.0001 36.6666 6.66675 25 6.66675 16.6666C6.66675 13.1304 8.07151 9.73904 10.572 7.23856C13.0725 4.73807 16.4639 3.33331 20.0001 3.33331C23.5363 3.33331 26.9277 4.73807 29.4282 7.23856C31.9287 9.73904 33.3334 13.1304 33.3334 16.6666Z" fill="none" stroke="#0f0d0c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.0002 20.8333C22.3013 20.8333 24.1668 18.9679 24.1668 16.6667C24.1668 14.3655 22.3013 12.5 20.0002 12.5C17.699 12.5 15.8335 14.3655 15.8335 16.6667C15.8335 18.9679 17.699 20.8333 20.0002 20.8333Z" fill="none" stroke="#0f0d0c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 30 30"><path d="M8.75 3.75H12.5L14.375 10L11.875 11.875C13.4305 14.4266 15.5734 16.5695 18.125 18.125L20 15.625L26.25 17.5V21.25C26.25 22.5761 25.7232 23.8479 24.7855 24.7855C23.8479 25.7232 22.5761 26.25 21.25 26.25C11.25 25 5 18.75 3.75 8.75C3.75 7.42392 4.27678 6.15215 5.21447 5.21447C6.15215 4.27678 7.42392 3.75 8.75 3.75Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 30 30"><path d="M23.75 6.25H6.25C4.86929 6.25 3.75 7.36929 3.75 8.75V21.25C3.75 22.6307 4.86929 23.75 6.25 23.75H23.75C25.1307 23.75 26.25 22.6307 26.25 21.25V8.75C26.25 7.36929 25.1307 6.25 23.75 6.25Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 8.75L15 16.25L25 8.75" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cpin" viewBox="0 0 30 30"><path d="M25 12.5C25 18.75 15 27.5 15 27.5C15 27.5 5 18.75 5 12.5C5 9.84784 6.05357 7.3043 7.92893 5.42893C9.8043 3.55357 12.3478 2.5 15 2.5C17.6522 2.5 20.1957 3.55357 22.0711 5.42893C23.9464 7.3043 25 9.84784 25 12.5Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 15.625C16.7259 15.625 18.125 14.2259 18.125 12.5C18.125 10.7741 16.7259 9.375 15 9.375C13.2741 9.375 11.875 10.7741 11.875 12.5C11.875 14.2259 13.2741 15.625 15 15.625Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-insta" viewBox="0 0 26 26"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.6051 0.077639C8.98495 0.0141162 9.42491 0 12.9398 0C16.4548 0 16.8947 0.0152925 18.2734 0.077639C19.6521 0.139986 20.5932 0.359963 21.4166 0.678753C22.2789 1.0046 23.0611 1.51396 23.7081 2.17272C24.3669 2.81853 24.8751 3.59963 25.1997 4.46307C25.5197 5.28651 25.7385 6.22759 25.802 7.60392C25.8656 8.98613 25.8797 9.42608 25.8797 12.9398C25.8797 16.4548 25.8644 16.8947 25.802 18.2746C25.7397 19.6509 25.5197 20.592 25.1997 21.4154C24.8751 22.279 24.366 23.0614 23.7081 23.7081C23.0611 24.3669 22.2789 24.8751 21.4166 25.1997C20.5932 25.5197 19.6521 25.7385 18.2758 25.802C16.8947 25.8656 16.4548 25.8797 12.9398 25.8797C9.42491 25.8797 8.98495 25.8644 7.6051 25.802C6.22877 25.7397 5.28769 25.5197 4.46424 25.1997C3.60071 24.875 2.81832 24.366 2.17154 23.7081C1.51323 23.0619 1.0038 22.2799 0.678753 21.4166C0.359963 20.5932 0.141162 19.6521 0.077639 18.2758C0.0141162 16.8935 0 16.4536 0 12.9398C0 9.42491 0.0152925 8.98495 0.077639 7.60627C0.139986 6.22759 0.359963 5.28651 0.678753 4.46307C1.00428 3.59972 1.5141 2.81772 2.17272 2.17154C2.81858 1.51337 3.60018 1.00395 4.46307 0.678753C5.28651 0.359963 6.22759 0.141162 7.60392 0.077639H7.6051ZM18.1687 2.40681C16.8041 2.34446 16.3948 2.33152 12.9398 2.33152C9.4849 2.33152 9.07553 2.34446 7.71097 2.40681C6.44874 2.46445 5.76411 2.67502 5.30769 2.85265C4.70422 3.08792 4.2725 3.36671 3.81961 3.81961C3.39029 4.23727 3.0599 4.74572 2.85265 5.30769C2.67502 5.76411 2.46445 6.44874 2.40681 7.71097C2.34446 9.07553 2.33152 9.4849 2.33152 12.9398C2.33152 16.3948 2.34446 16.8041 2.40681 18.1687C2.46445 19.4309 2.67502 20.1156 2.85265 20.572C3.05968 21.1331 3.39024 21.6425 3.81961 22.0601C4.23721 22.4894 4.74657 22.82 5.30769 23.027C5.76411 23.2047 6.44874 23.4152 7.71097 23.4729C9.07553 23.5352 9.48373 23.5482 12.9398 23.5482C16.396 23.5482 16.8041 23.5352 18.1687 23.4729C19.4309 23.4152 20.1156 23.2047 20.572 23.027C21.1755 22.7918 21.6072 22.513 22.0601 22.0601C22.4894 21.6425 22.82 21.1331 23.027 20.572C23.2047 20.1156 23.4152 19.4309 23.4729 18.1687C23.5352 16.8041 23.5482 16.3948 23.5482 12.9398C23.5482 9.4849 23.5352 9.07553 23.4729 7.71097C23.4152 6.44874 23.2047 5.76411 23.027 5.30769C22.7918 4.70422 22.513 4.2725 22.0601 3.81961C21.6424 3.39032 21.1339 3.05993 20.572 2.85265C20.1156 2.67502 19.4309 2.46445 18.1687 2.40681ZM11.2871 16.9288C12.2101 17.3131 13.2379 17.3649 14.1949 17.0756C15.1519 16.7862 15.9788 16.1735 16.5343 15.3422C17.0898 14.5109 17.3394 13.5126 17.2406 12.5177C17.1418 11.5227 16.7006 10.593 15.9925 9.88721C15.541 9.43606 14.9952 9.0906 14.3942 8.87573C13.7932 8.66085 13.1521 8.58189 12.5169 8.64454C11.8818 8.70718 11.2684 8.90987 10.721 9.23802C10.1736 9.56617 9.70575 10.0116 9.35115 10.5423C8.99655 11.0729 8.76402 11.6756 8.6703 12.3069C8.57658 12.9382 8.62399 13.5825 8.80914 14.1933C8.99428 14.804 9.31254 15.3662 9.74102 15.8392C10.1695 16.3122 10.6975 16.6844 11.2871 16.9288ZM8.23679 8.23679C8.85441 7.61918 9.58762 7.12927 10.3946 6.79502C11.2015 6.46077 12.0664 6.28873 12.9398 6.28873C13.8133 6.28873 14.6782 6.46077 15.4851 6.79502C16.2921 7.12927 17.0253 7.61918 17.6429 8.23679C18.2605 8.85441 18.7504 9.58762 19.0847 10.3946C19.4189 11.2015 19.5909 12.0664 19.5909 12.9398C19.5909 13.8133 19.4189 14.6782 19.0847 15.4851C18.7504 16.2921 18.2605 17.0253 17.6429 17.6429C16.3956 18.8902 14.7038 19.5909 12.9398 19.5909C11.1759 19.5909 9.48412 18.8902 8.23679 17.6429C6.98947 16.3956 6.28873 14.7038 6.28873 12.9398C6.28873 11.1759 6.98947 9.48412 8.23679 8.23679ZM21.0661 7.27925C21.2191 7.13487 21.3416 6.96126 21.4264 6.76868C21.5111 6.5761 21.5564 6.36848 21.5594 6.1581C21.5625 5.94773 21.5233 5.73887 21.4442 5.54391C21.3651 5.34894 21.2477 5.17183 21.0989 5.02306C20.9502 4.87428 20.7731 4.75687 20.5781 4.67777C20.3831 4.59867 20.1743 4.5595 19.9639 4.56257C19.7535 4.56563 19.5459 4.61088 19.3533 4.69563C19.1607 4.78038 18.9871 4.9029 18.8428 5.05595C18.562 5.3536 18.4083 5.74896 18.4142 6.1581C18.4202 6.56725 18.5854 6.95796 18.8747 7.2473C19.164 7.53664 19.5548 7.70182 19.9639 7.70779C20.373 7.71375 20.7684 7.56003 21.0661 7.27925Z" fill="white"/></symbol>
+  <symbol id="i-snap" viewBox="0 0 26 26"><rect width="25.8797" height="25.8797" rx="5.39518" fill="#FFFE00"/><path d="M12.9308 4.68567C14.8382 4.68567 16.7762 5.68867 17.6486 7.69934C17.8977 8.27397 17.9584 9.02453 17.9611 9.72864C17.9631 10.2518 17.9309 10.7955 17.9015 11.2794C17.9486 11.2627 17.9971 11.2441 18.0519 11.2228C18.1057 11.2018 18.1678 11.1773 18.2296 11.1554C18.3456 11.1143 18.5134 11.0616 18.6925 11.0616C18.9704 11.0617 19.277 11.1538 19.5245 11.3224C19.7752 11.4932 20.0256 11.7894 20.0333 12.2062L20.0294 12.3273C19.9744 12.9195 19.4327 13.2831 18.8907 13.5031C18.7955 13.5418 18.6713 13.581 18.5734 13.6134C18.4645 13.6494 18.3599 13.6846 18.2638 13.7257C18.1662 13.7675 18.0934 13.8085 18.0441 13.8458C18.0259 13.8596 18.0148 13.8718 18.007 13.88C18.0079 13.8908 18.0088 13.905 18.0118 13.923C18.0252 14.0007 18.0575 14.1121 18.1163 14.2521C18.2336 14.5311 18.4364 14.8783 18.715 15.2267C19.2786 15.9317 20.0895 16.5676 21.0157 16.7247L21.1661 16.7648C21.2626 16.8007 21.3513 16.8541 21.4279 16.922L21.5323 17.0343L21.6154 17.1632C21.6856 17.2982 21.7183 17.45 21.7101 17.6027V17.6036C21.6898 17.9702 21.4732 18.2334 21.255 18.4054C21.0376 18.5767 20.7681 18.7005 20.5128 18.7921C20.1316 18.9289 19.7109 19.0182 19.3839 19.0773C19.3541 19.2119 19.3142 19.4049 19.2657 19.5743L19.2667 19.5753C19.2221 19.7332 19.142 19.8845 19.0118 20.004C18.8813 20.1238 18.7309 20.1829 18.5929 20.2091C18.3471 20.2557 18.0852 20.2039 17.922 20.171C17.4504 20.0763 17.0505 20.0517 16.5851 20.131L16.5861 20.132C16.4512 20.155 16.283 20.2312 16.0509 20.3771C15.8045 20.5319 15.5928 20.6922 15.2775 20.9025C14.697 21.2896 13.9493 21.712 12.9904 21.712C11.9763 21.712 11.2154 21.2975 10.6222 20.9064C10.2976 20.6923 10.0969 20.5384 9.84387 20.38C9.61199 20.2348 9.43947 20.1569 9.29407 20.132C8.86513 20.059 8.5321 20.0817 8.26477 20.1222C8.12487 20.1434 8.0079 20.1679 7.88196 20.1925C7.76953 20.2144 7.62628 20.2413 7.48743 20.2413C7.24447 20.2413 7.03223 20.1606 6.87122 20.0118C6.75846 19.9076 6.69024 19.788 6.64856 19.6837L6.61438 19.5851C6.56568 19.4151 6.52534 19.2167 6.49524 19.0802C6.16666 19.0209 5.74567 18.9304 5.36438 18.7931C5.10942 18.7013 4.84006 18.5779 4.62317 18.4064C4.40525 18.234 4.18958 17.9703 4.16907 17.6046V17.6036C4.15805 17.3999 4.22023 17.1967 4.3468 17.0343L4.45227 16.923C4.567 16.8212 4.70855 16.7511 4.8634 16.7247H4.86438C5.80912 16.5647 6.61785 15.9257 7.17493 15.2218C7.45053 14.8735 7.64974 14.5272 7.76477 14.2491C7.82254 14.1095 7.8543 13.9984 7.86731 13.921C7.87033 13.903 7.8703 13.8887 7.87122 13.8781C7.8632 13.8699 7.85206 13.8587 7.83508 13.8458C7.78527 13.8082 7.71214 13.7675 7.61438 13.7257C7.5179 13.6844 7.4133 13.6482 7.30481 13.6124C7.20761 13.5803 7.08355 13.5413 6.98938 13.5031C6.56001 13.3287 6.25051 13.1161 6.05969 12.8566C5.85648 12.5801 5.81686 12.2898 5.86243 12.0441L5.89368 11.921C5.98178 11.6452 6.17694 11.4418 6.37415 11.3116C6.60046 11.1623 6.87955 11.0734 7.15051 11.0734C7.32484 11.0734 7.49314 11.1301 7.59973 11.1681C7.74846 11.2211 7.80749 11.2494 7.93274 11.2911C7.94818 11.2963 7.96364 11.2986 7.97766 11.3029C7.94782 10.8163 7.91612 10.2652 7.91809 9.7345C7.92072 9.02996 7.98115 8.27736 8.23059 7.70227C9.10882 5.67658 11.0336 4.68569 12.9308 4.68567Z" fill="white" stroke="black" stroke-width="0.980941"/></symbol>
+  <symbol id="i-x" viewBox="0 0 26 26"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.0191619 25.9949H2.24194L10.9414 15.9102L17.8589 25.9949H25.5045L15.1954 11.0397L24.6614 0H22.4003L14.1798 9.54994L7.58811 0H0L9.96418 14.4777L0.0191619 25.9949ZM3.0659 1.69989H6.49588L22.4194 24.3906H18.9511L3.0659 1.69989Z" fill="white"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 26 26"><path d="M18.2985 9.48592C19.8961 10.6321 21.8533 11.3064 23.9672 11.3064V7.22419C23.5672 7.22427 23.1681 7.18241 22.7767 7.09919V10.3125C20.663 10.3125 18.7061 9.63812 17.108 8.49208V16.8227C17.108 20.9901 13.7417 24.3682 9.58932 24.3682C8.03998 24.3682 6.59993 23.8982 5.40369 23.092C6.76901 24.493 8.67305 25.3621 10.7795 25.3621C14.9321 25.3621 18.2987 21.984 18.2987 17.8164V9.48592H18.2985ZM19.7671 5.36746C18.9506 4.47226 18.4145 3.31539 18.2985 2.03641V1.51135H17.1703C17.4543 3.13693 18.4229 4.52572 19.7671 5.36746ZM8.03005 19.894C7.57387 19.2938 7.32735 18.5595 7.32845 17.8045C7.32845 15.8984 8.86819 14.353 10.7678 14.353C11.1218 14.3529 11.4737 14.4073 11.8111 14.5148V10.3413C11.4169 10.2871 11.0189 10.2641 10.6212 10.2725V13.5209C10.2835 13.4135 9.93146 13.3589 9.57735 13.3593C7.67772 13.3593 6.13806 14.9045 6.13806 16.8108C6.13806 18.1586 6.90768 19.3256 8.03005 19.894Z" fill="#FF004F"/><path d="M17.108 8.49199C18.7061 9.63804 20.663 10.3124 22.7767 10.3124V7.0991C21.5969 6.84689 20.5524 6.22812 19.767 5.36746C18.4228 4.52564 17.4543 3.13684 17.1703 1.51135H14.207V17.8162C14.2003 19.717 12.6632 21.2561 10.7676 21.2561C9.65061 21.2561 8.65825 20.7218 8.02977 19.894C6.90748 19.3256 6.13787 18.1586 6.13787 16.8109C6.13787 14.9048 7.67753 13.3593 9.57715 13.3593C9.94111 13.3593 10.2919 13.4162 10.621 13.521V10.2726C6.54157 10.3572 3.26074 13.7023 3.26074 17.8163C3.26074 19.87 4.07774 21.7318 5.40375 23.0921C6.59999 23.8982 8.04004 24.3683 9.58938 24.3683C13.7418 24.3683 17.1081 20.99 17.1081 16.8227V8.49199H17.108Z" fill="white"/><path d="M22.7768 7.09909V6.23024C21.7129 6.23186 20.6698 5.93284 19.7671 5.36736C20.5662 6.24533 21.6184 6.85072 22.7768 7.09909ZM17.1704 1.51134C17.1433 1.35599 17.1225 1.19961 17.1081 1.04264V0.517578H13.0165V16.8226C13.01 18.7232 11.473 20.2623 9.57723 20.2623C9.02068 20.2623 8.4952 20.1297 8.02985 19.8941C8.65833 20.7218 9.65069 21.2561 10.7677 21.2561C12.6631 21.2561 14.2005 19.7171 14.2071 17.8163V1.51134H17.1704ZM10.6212 10.2726V9.34761C10.2793 9.30072 9.93466 9.27718 9.58955 9.27735C5.43678 9.27727 2.07043 12.6556 2.07043 16.8226C2.07043 19.4351 3.39347 21.7375 5.40391 23.0919C4.07791 21.7317 3.26091 19.8698 3.26091 17.8162C3.26091 13.7023 6.54165 10.3571 10.6212 10.2726Z" fill="#00FFF7"/></symbol>
+</svg>
+
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="hdr" id="hdr">
+  <a class="brand" href="#home" aria-label="GXPER home"><img src="assets/brand/gxper-h-gradient.svg" alt="GXPER — Play, Earn, Rank" width="213" height="32"></a>
+  <nav class="nav" aria-label="Main">
+    <a href="#home" data-nav="home">Home</a>
+    <a href="#about" data-nav="about">About Us</a>
+    <a href="#app" data-nav="app">The App</a>
+    <a href="#contact" data-nav="contact">Contact Us</a>
+  </nav>
+  <div class="hdr-right">
+    <a class="btn sm" id="hdrCta" href="#request">Request a Tournament <svg><use href="#i-arrow"/></svg></a>
+    <a class="back" id="hdrBack" href="#home" hidden aria-label="Back to the arena"><span class="ar">←</span><span class="tx">  Back to the arena</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+<div class="mnav" id="mnav">
+  <p class="eyebrow">MENU</p>
+  <nav class="mn-main" aria-label="Menu"><a href="#home" data-nav="home">Home</a><a href="#about" data-nav="about">About Us</a><a href="#app" data-nav="app">The App</a><a href="#contact" data-nav="contact">Contact Us</a></nav>
+  <a class="btn mn-cta" href="#request">Request a Tournament <svg><use href="#i-arrow"/></svg></a>
+  <div class="mn-div"></div>
+  <nav class="mn-sub" aria-label="Legal"><a href="#privacy" data-nav="privacy">Privacy</a><a href="#marketing" data-nav="marketing">Marketing</a><a href="#support" data-nav="support">Support</a><a href="#copyright" data-nav="copyright">Copyright</a></nav>
+  <button class="mail copy mn-mail" data-copy="hello@scooring.com">✉  hello@scooring.com  <span class="arr">→</span></button>
+</div>
+
+<!-- ================= HOME ================= -->
+<main data-page="home" id="page-home">
+  <section class="hero" id="hero">
+    <div class="hero-bg has-img" id="heroBg"></div>
+    <canvas id="sparks"></canvas>
+    <div class="hero-vig"></div>
+    <div class="hero-sweep"></div>
+    <div class="hero-content" id="heroContent">
+      <p class="eyebrow" style="max-width:620px">COMPETITION, CONNECTED.</p>
+      <h1 class="d"><span class="ln"><span>BUILT FOR</span></span><span class="ln"><span class="lime">BETTER COMPETITION.</span></span></h1>
+      <p class="body20 hero-lead">We’re building a smarter way to run tournaments, connect players, and manage every stage of competition — from registration to the final result.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#journey">Explore Tournaments <svg><use href="#i-arrow"/></svg></a>
+        <a class="btn ghost" href="#request">Join the Competition <svg><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+    <div class="hero-rule"></div>
+  </section>
+
+  <section class="app band" id="app">
+    <div class="in row">
+      <div class="app-copy">
+        <p class="eyebrow rv">THE COMPETITION IN YOUR POCKET</p>
+        <p class="d h68 rv mask" style="--dl:.05s">ONE PROFILE.</p>
+        <p class="d h68 lime rv mask" style="--dl:.15s">EVERY MATCH.</p>
+        <p class="body16 rv" style="--dl:.2s">Discover tournaments, follow live brackets, and carry your competitive history wherever you play.</p>
+        <div class="badges rv" style="--dl:.3s">
+          <a class="badge" href="https://www.apple.com/app-store/" target="_blank" rel="noopener" aria-label="Download on the App Store"><img src="assets/badge-appstore.svg" alt="Download on the App Store" width="174" height="58"></a>
+          <a class="badge" href="https://play.google.com/store/apps" target="_blank" rel="noopener" aria-label="Get it on Google Play"><img src="assets/badge-googleplay.svg" alt="Get it on Google Play" width="174" height="58"></a>
+        </div>
+      </div>
+      <div class="phones" id="phones">
+        <div class="ph rv" data-speed="-0.06" style="--dl:.1s"><div class="px"><div class="fl"><img src="assets/phone-home.webp" alt="GXPER app home screen with featured tournaments" width="269" height="533"></div></div></div>
+        <div class="ph rv" data-speed="0.04" style="--dl:.25s"><div class="px"><div class="fl"><img src="assets/phone-leaderboard.webp" alt="GXPER leaderboard screen" width="270" height="533"></div></div></div>
+        <div class="ph rv" data-speed="-0.03" style="--dl:.4s"><div class="px"><div class="fl"><img src="assets/phone-profile.webp" alt="GXPER player profile screen" width="269" height="533"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about band" id="about">
+    <div class="in grid">
+      <div class="about-h">
+        <p class="eyebrow rv" style="max-width:540px">WHO WE ARE</p>
+        <h2 class="d h76 rv mask" style="display:flex;flex-direction:column"><span style="max-width:540px">MORE THAN A</span><span class="lime" style="max-width:620px">TOURNAMENT PLATFORM</span></h2>
+      </div>
+      <div class="about-copy">
+        <p class="body20 rv">We are a competitive gaming platform designed to bring players, organizers, referees, and partners together in one connected ecosystem.</p>
+        <p class="body16 rv" style="--dl:.1s">From discovering tournaments and registering players to managing matches, brackets, rankings, results, and rewards — everything is built to make competition simpler, faster, and more engaging.</p>
+        <div class="divider rv line-draw" style="--dl:.2s"></div>
+        <p class="markets rv" style="--dl:.3s">LAUNCHING ACROSS   SAUDI ARABIA   <span class="dot">•</span>   UNITED ARAB EMIRATES</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mission band">
+    <div class="in idx-grid">
+      <div class="idx"><span class="num" data-roll="01"><span>01</span></span><span class="lbl rv">OUR MISSION</span></div>
+      <div class="mission-copy">
+        <h2 class="d h62 rv mask" style="max-width:960px">MAKING EVERY COMPETITION EASIER TO RUN — AND BETTER TO PLAY.</h2>
+        <div class="paras body16">
+          <p class="rv" style="--dl:.1s">Our mission is to remove the complexity behind tournament management while creating an experience players actually enjoy.</p>
+          <p class="rv" style="--dl:.2s">We give organizers the tools to manage competitions efficiently and give players one place to compete, track their progress, build their ranking, and grow through every tournament.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey" id="journey" aria-label="The tournament journey">
+    <div class="j-bg"></div>
+    <div class="j-stage" id="jStage">
+      <div class="j-read"></div>
+      <div class="j-grid"></div>
+      <div class="j-ghost" aria-hidden="true"><span id="jGhost">01</span></div>
+      <p class="j-eyebrow">THE TOURNAMENT JOURNEY</p>
+      <div class="j-rule" id="jRule"></div>
+      <p class="j-title j-swap" id="jTitle">CHOOSE THE GAME</p>
+      <p class="j-desc j-swap" id="jDesc">Pick the game and format that fits <br>your community.</p>
+      <div class="j-arena" id="jArena"><div class="j-scale">
+        <svg class="j-glow" viewBox="0 0 390 250" width="390" height="250" aria-hidden="true"><ellipse cx="195" cy="125" rx="195" ry="125" fill="url(#jg)"/><defs><radialGradient id="jg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="scale(390 250)"><stop stop-color="#fff400" stop-opacity="0.34"/><stop offset="0.52" stop-color="#eb008b" stop-opacity="0.12"/><stop offset="1" stop-opacity="0"/></radialGradient></defs></svg>
+        <div class="j-vis" data-v="0"><img class="j-set" src="assets/gaming-set.webp" alt="Glowing game controller" width="555" height="211"></div>
+        <div class="j-vis off" data-v="1"><div class="j-orb"><i class="ringA"></i><i class="ringB"></i><i class="podium"></i></div><div class="j-icon"><svg viewBox="0 0 57 66" width="57" height="66"><g filter="url(#jf1)"><path d="M45.5166 28.1834C45.5166 39.0168 28.1833 54.1834 28.1833 54.1834C28.1833 54.1834 10.85 39.0168 10.85 28.1834C10.85 23.5863 12.6762 19.1775 15.9268 15.9269C19.1774 12.6763 23.5862 10.8501 28.1833 10.8501C32.7804 10.8501 37.1892 12.6763 40.4398 15.9269C43.6905 19.1775 45.5166 23.5863 45.5166 28.1834Z" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M28.1833 33.6002C31.1749 33.6002 33.6 31.1751 33.6 28.1835C33.6 25.192 31.1749 22.7668 28.1833 22.7668C25.1918 22.7668 22.7667 25.192 22.7667 28.1835C22.7667 31.1751 25.1918 33.6002 28.1833 33.6002Z" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g><defs><filter id="jf1" x="-7.8" y="-3.5" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+        <div class="j-vis off" data-v="2"><div class="j-orb"><i class="ringA"></i><i class="ringB"></i><i class="podium"></i></div><div class="j-icon"><svg viewBox="0 0 70 55" width="70" height="55"><g filter="url(#jf2)" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M34.6833 23.8501C38.2731 23.8501 41.1833 20.9399 41.1833 17.3501C41.1833 13.7602 38.2731 10.8501 34.6833 10.8501C31.0934 10.8501 28.1833 13.7602 28.1833 17.3501C28.1833 20.9399 31.0934 23.8501 34.6833 23.8501Z"/><path d="M19.5166 26.0168C21.9099 26.0168 23.85 24.0767 23.85 21.6834C23.85 19.2902 21.9099 17.3501 19.5166 17.3501C17.1234 17.3501 15.1833 19.2902 15.1833 21.6834C15.1833 24.0767 17.1234 26.0168 19.5166 26.0168Z"/><path d="M49.85 26.0168C52.2432 26.0168 54.1833 24.0767 54.1833 21.6834C54.1833 19.2902 52.2432 17.3501 49.85 17.3501C47.4568 17.3501 45.5167 19.2902 45.5167 21.6834C45.5167 24.0767 47.4568 26.0168 49.85 26.0168Z"/><path d="M21.6833 43.35C21.6833 34.6833 26.0166 28.1833 34.6833 28.1833C43.35 28.1833 47.6833 34.6833 47.6833 43.35M10.85 43.35C10.85 36.85 13.0166 32.5167 19.5166 30.35M58.5166 43.35C58.5166 36.85 56.35 32.5167 49.85 30.35"/></g><defs><filter id="jf2" x="-1.3" y="-10" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+        <div class="j-vis off" data-v="3"><div class="j-orb"><i class="ringA"></i><i class="ringB"></i><i class="podium"></i></div><div class="j-icon"><svg viewBox="0 0 57 59" width="57" height="59"><g filter="url(#jf3)" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5166 10.8501H36.8499V21.6834C36.8499 23.982 35.9368 26.1864 34.3115 27.8117C32.6862 29.437 30.4818 30.3501 28.1833 30.3501C25.8847 30.3501 23.6803 29.437 22.055 27.8117C20.4297 26.1864 19.5166 23.982 19.5166 21.6834V10.8501Z"/><path d="M19.5166 15.1833H10.85V19.5167C10.85 21.8152 11.7631 24.0196 13.3884 25.6449C15.0137 27.2703 17.2181 28.1834 19.5166 28.1834M36.85 15.1833H45.5166V19.5167C45.5166 21.8152 44.6035 24.0196 42.9782 25.6449C41.3529 27.2703 39.1485 28.1834 36.85 28.1834M28.1833 30.35V41.1834M19.5166 47.6834H36.85M21.6833 41.1834H34.6833"/></g><defs><filter id="jf3" x="-7.8" y="-7.8" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+      </div></div>
+      <div class="j-tl" id="jTl">
+        <div class="j-fade"></div><div class="j-div"></div><div class="j-track"></div><div class="j-prog" id="jProg"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="caps band">
+    <div class="in">
+      <div class="caps-head">
+        <div class="caps-title">
+          <p class="eyebrow rv">WHAT WE DO</p>
+          <p class="d h68 rv mask" style="--dl:.05s">ONE ECOSYSTEM.</p>
+          <p class="d h68 lime rv mask" style="--dl:.15s">EVERY SIDE OF PLAY.</p>
+        </div>
+        <p class="body16 rv" style="--dl:.2s;max-width:360px">Built to move a competition from first registration to final result—without losing the story in between.</p>
+      </div>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <section class="philo" id="philo">
+    <div class="radar"><img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='820' viewBox='0 0 720 820'%3E%3Cg opacity='0.13' stroke='%23fff400' stroke-width='0.55'%3E%3Cpath d='M0 0V820M80 0V820M160 0V820M240 0V820M320 0V820M400 0V820M480 0V820M560 0V820M640 0V820M720 0V820M0 0H720M0 74H720M0 148H720M0 222H720M0 296H720M0 370H720M0 444H720M0 518H720M0 592H720M0 666H720M0 740H720M0 814H720'/%3E%3C/g%3E%3C/svg%3E" alt="" width="720" height="820"></div>
+    <div class="philo-in">
+      <div class="philo-copy">
+        <p class="eyebrow rv" style="max-width:570px">PLATFORM PHILOSOPHY</p>
+        <h2 class="d h92 rv mask" style="max-width:590px">EVERY MATCH SHOULD MEAN SOMETHING.</h2>
+        <p class="lead rv">Winning a match is only part of the journey.</p>
+        <p class="b18 rv" style="--dl:.1s">Every tournament contributes to a player's record, ranking, XP, level, achievements, and competitive history — creating a persistent identity that grows with every competition.</p>
+      </div>
+      <div class="orbit-box" id="orbitBox">
+        <div class="orbit" id="orbit">
+          <div class="o-sweep"></div>
+          <svg class="o-r1" viewBox="0 0 620 620" aria-hidden="true"><circle cx="310" cy="310" r="309.5" fill="none" stroke="#fff400" stroke-opacity="0.2"/></svg>
+          <img class="o-r2" src="assets/orbit-ring2.png" alt="" width="430" height="430">
+          <svg class="o-r3" viewBox="0 0 230 230" aria-hidden="true"><circle cx="115" cy="115" r="114.5" fill="none" stroke="#fff400" stroke-opacity="0.28"/></svg>
+          <svg class="o-halo" viewBox="0 0 330 330" aria-hidden="true"><circle cx="165" cy="165" r="165" fill="url(#oh)"/><defs><radialGradient id="oh" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(165 165) scale(330)"><stop stop-color="#fff400" stop-opacity="0.34"/><stop offset="1" stop-color="#fff400" stop-opacity="0"/></radialGradient></defs></svg>
+          <i class="o-ping"></i><i class="o-ping b"></i>
+          <svg class="o-hub" viewBox="0 0 176 176" aria-hidden="true"><circle cx="88" cy="88" r="88" fill="#141110" fill-opacity="0.96"/><circle cx="88" cy="88" r="87.25" fill="none" stroke="#fff400" stroke-opacity="0.62" stroke-width="1.5"/></svg>
+          <img class="o-mark" src="assets/brand/gxper-v-gradient.svg" alt="GXPER" width="116" height="76">
+          <div class="o-path"><div class="o-target" style="position:absolute"><svg><use href="#i-target28"/></svg></div></div>
+          <div class="o-label ol1" style="left:70px;top:125px;--tx:80px;--ty:60px;--dl:.1s"><i></i><span class="k">RANK</span><span class="v">GROW</span></div>
+          <div class="o-label ol2" style="left:520px;top:185px;--tx:-80px;--ty:40px;--dl:.25s"><i></i><span class="k">XP</span><span class="v">EARN</span></div>
+          <div class="o-label ol3" style="left:20px;top:440px;--tx:80px;--ty:-40px;--dl:.4s"><i></i><span class="k">LEVEL</span><span class="v">CLIMB</span></div>
+          <div class="o-label ol4" style="left:490px;top:490px;--tx:-70px;--ty:-60px;--dl:.55s"><i></i><span class="k">HISTORY</span><span class="v">BUILD</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vision band">
+    <div class="in idx-grid" style="max-width:1240px">
+      <div class="idx"><span class="num" data-roll="01"><span>01</span></span><span class="lbl rv">OUR VISION</span></div>
+      <div class="vision-copy">
+        <h2 class="d h68 rv mask" style="max-width:800px;margin:0">BUILDING THE HOME OF COMPETITIVE GAMING.</h2>
+        <p class="body16 rv" style="--dl:.1s">Our vision is to create a connected competitive ecosystem where players can build their identity, organizations can run professional tournaments, and every competition becomes part of a bigger journey.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="metrics" aria-label="Metrics">
+    <div class="m-grid">
+      <div class="m-tile rv"><span class="no">01</span><span class="t">TOURNAMENTS HOSTED</span></div>
+      <div class="m-tile rv" style="--dl:.08s"><span class="no">02</span><span class="t">ACTIVE PLAYERS</span></div>
+      <div class="m-tile rv" style="--dl:.16s"><span class="no">03</span><span class="t">MATCHES PLAYED</span></div>
+      <div class="m-tile rv" style="--dl:.24s"><span class="no">04</span><span class="t">GAMES SUPPORTED</span></div>
+    </div>
+  </section>
+
+  <section class="request" id="request">
+    <div class="req-bg" id="reqBg"></div>
+    <div class="req-shade"></div>
+    <div class="req-in">
+      <div class="req-copy">
+        <p class="eyebrow s12 rv">BRING IT TO YOUR CITY</p>
+        <h2 class="d h104 rv mask"><span>REQUEST A</span><span>TOURNAMENT.</span></h2>
+        <p class="body21 rv">Tell us what you have in mind. From neighborhood meetups to city-wide events, we’ll help make it real.</p>
+        <div class="lime-bar rv line-draw"></div>
+        <div class="perks">
+          <div class="perk rv" style="--dl:.05s"><div class="ring" style="--pd:0s"><svg width="32" height="27" style="padding:0"><use href="#i-pgame"/></svg></div><p class="lbl">Flexible<br>formats</p></div>
+          <div class="perk rv" style="--dl:.15s"><div class="ring" style="--pd:1s"><svg width="32" height="32"><use href="#i-pin32"/></svg></div><p class="lbl">Saudi + UAE<br>cities</p></div>
+          <div class="perk rv" style="--dl:.25s"><div class="ring" style="--pd:2s"><svg width="32" height="32"><use href="#i-headset"/></svg></div><p class="lbl">A team that<br>backs you</p></div>
+        </div>
+      </div>
+      <form class="form rv" id="reqForm" novalidate style="--dl:.15s">
+        <div class="f-title"><span class="bolt">ϟ</span><span class="t">START YOUR REQUEST</span></div>
+        <div class="field"><label for="fNameEn">Tournament name (English)</label><input id="fNameEn" name="nameEn" placeholder="e.g. Riyadh City Cup" autocomplete="off"></div>
+        <div class="field"><label for="fNameAr">Tournament name (Arabic)</label><input id="fNameAr" name="nameAr" dir="rtl" placeholder="مثال: كأس مدينة الرياض" autocomplete="off" style="text-align:left"></div>
+        <div class="field"><label for="fGame">Select game</label><select id="fGame" name="game"><option>VALORANT</option><option>EA SPORTS FC 26</option><option>TEKKEN 8</option><option>ROCKET LEAGUE</option><option>FORTNITE</option></select></div>
+        <div class="f-row">
+          <div class="field"><label for="fCount">Expected participants</label><input id="fCount" name="count" inputmode="numeric" value="64"></div>
+          <div class="field"><label for="fCountry">Country</label><select id="fCountry" name="country"><option>Saudi Arabia</option><option>United Arab Emirates</option></select></div>
+        </div>
+        <div class="field"><label for="fCity">City</label><input id="fCity" name="city" value="Riyadh" autocomplete="off"></div>
+        <button type="button" class="loc" id="openMap"><svg width="22" height="22"><use href="#i-pin22"/></svg><span><span class="k" id="locK">SELECT LOCATION ON MAP</span><span class="v" id="locV">Open interactive map</span></span></button>
+        <button type="submit" class="btn wide" id="submitBtn"><span id="submitTxt">Request Tournament</span> <svg><use href="#i-arrow"/></svg><i class="load"></i></button>
+        <p class="fine">✓  Your details stay private and are only used to review this request.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="regional band">
+    <div class="in">
+      <div class="reg-copy">
+        <p class="eyebrow rv">CONTACT US</p>
+        <p class="d h66 rv mask" style="--dl:.05s">FROM THE GULF.</p>
+        <p class="d h66 lime rv mask" style="--dl:.15s">BUILT TO CONNECT.</p>
+        <p class="fg16 rv" style="--dl:.2s">Serving Saudi Arabia and the United Arab Emirates</p>
+        <button class="mail rv copy" data-copy="hello@scooring.com" style="--dl:.25s">✉  hello@scooring.com  <span class="arr">→</span></button>
+      </div>
+      <div class="map-frame rv">
+        <img src="assets/map-regional.jpg" alt="Night map of the Gulf with connected city lights" width="689" height="479">
+        <i class="pin-ping" style="left:57.6%;top:49.5%"></i>
+        <i class="pin-ping sm" style="left:26%;top:10.6%"></i>
+        <i class="pin-ping sm" style="left:51%;top:69%"></i>
+        <i class="pin-ping sm" style="left:84.8%;top:26.3%"></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="final band">
+    <div class="in">
+      <div class="panel rv" id="panel">
+        <p class="eyebrow s12">READY WHEN YOU ARE</p>
+        <h2 class="d h72">YOUR NEXT COMPETITION STARTS HERE.</h2>
+        <p class="b14">Discover tournaments. Compete against other players. Climb the rankings. Build your competitive journey.</p>
+        <div class="acts">
+          <a class="btn" href="#request">Join Now <svg><use href="#i-arrow"/></svg></a>
+          <a class="btn ghost" href="#journey">Explore Tournaments <svg><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= CONTACT ================= -->
+<main data-page="contact" id="page-contact" hidden>
+  <section class="l-hero"><div class="l-grid"></div><div class="band"><div class="l-hero-c">
+    <p class="eyebrow">CONTACT US</p>
+    <h1 class="d h94"><span class="ln"><span>LET’S BUILD THE NEXT</span></span><span class="ln"><span style="--dl:.42s">COMPETITION.</span></span></h1>
+    <p class="fg16">Talk to GXPER about tournaments, platform support, organizer partnerships, or competitive gaming opportunities across Saudi Arabia and the United Arab Emirates.</p>
+  </div></div></section>
+  <section class="c-body band"><div class="in c-in">
+    <div class="c-dir">
+      <div class="c-card rv"><svg><use href="#i-phone"/></svg><p class="eyebrow">CALL US</p><h3 class="d">NUMBER COMING SOON</h3><p class="b">The official GXPER telephone number will appear here once confirmed.</p></div>
+      <div class="c-card hot rv" style="--dl:.1s"><svg><use href="#i-mail"/></svg><p class="eyebrow">E-MAIL US</p><h3 class="d lime"><button class="h copy" data-copy="hello@scooring.com">HELLO@SCOORING.COM</button></h3><p class="b">For tournaments, partnerships, media, platform questions, and general enquiries.</p></div>
+      <div class="c-card rv" style="--dl:.2s"><svg><use href="#i-cpin"/></svg><p class="eyebrow">LOCATION</p><h3 class="d">SAUDI ARABIA + UAE</h3><p class="b">GXPER currently presents regional coverage rather than an unconfirmed office address.</p></div>
+    </div>
+    <div class="map-frame c-map rv" style="--dl:.1s">
+      <img src="assets/map-contact.jpg" alt="Night map of Saudi Arabia and the UAE with connected city lights" width="679" height="699">
+      <i class="pin-ping" style="left:60.2%;top:49.5%"></i>
+      <i class="pin-ping sm" style="left:17%;top:13%"></i>
+      <i class="pin-ping sm" style="left:51.5%;top:67%"></i>
+    </div>
+  </div></section>
+  <section class="c-cta band"><div class="in">
+    <div class="tt"><p class="eyebrow rv">NEED PLATFORM HELP?</p><h2 class="d h64 rv mask">COMPETITION SUPPORT, WHEN IT MATTERS.</h2></div>
+    <p class="fg rv">For account, registration, bracket, ranking, or match issues, visit the <a href="#support">dedicated support page</a>.</p>
+  </div></section>
+</main>
+
+<!-- ================= LEGAL PAGES (rendered from data) ================= -->
+<main data-page="privacy" id="page-privacy" hidden></main>
+<main data-page="marketing" id="page-marketing" hidden></main>
+<main data-page="support" id="page-support" hidden></main>
+<main data-page="copyright" id="page-copyright" hidden></main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-main">
+      <p class="foot-tag"><span>GAMES. PEOPLE.</span><span>BETTER TOGETHER.</span></p>
+      <div class="foot-app">
+        <p class="t">GET THE APP</p>
+        <div class="badges">
+          <a class="badge" href="https://www.apple.com/app-store/" target="_blank" rel="noopener" aria-label="Download on the App Store"><img src="assets/badge-appstore.svg" alt="Download on the App Store" width="174" height="58"></a>
+          <a class="badge" href="https://play.google.com/store/apps" target="_blank" rel="noopener" aria-label="Get it on Google Play"><img src="assets/badge-googleplay.svg" alt="Get it on Google Play" width="174" height="58"></a>
+        </div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="foot-row">
+      <a class="foot-logo" href="#home" aria-label="GXPER home"><img src="assets/brand/gxper-h-gradient.svg" alt="GXPER — Play, Earn, Rank" width="200" height="30"></a>
+      <div class="socials">
+        <a href="#home" aria-label="Instagram"><svg width="25.88" height="25.88"><use href="#i-insta"/></svg></a>
+        <a href="#home" aria-label="Snapchat" class="snap"><svg width="24.52" height="24.52"><use href="#i-snap"/></svg></a>
+        <a href="#home" aria-label="X"><svg width="25.5" height="26"><use href="#i-x"/></svg></a>
+        <a href="#home" aria-label="TikTok"><svg width="25.88" height="25.88"><use href="#i-tiktok"/></svg></a>
+      </div>
+      <nav class="f-links" aria-label="Footer">
+        <a href="#contact" data-nav="contact">Contact Us</a><a href="#privacy" data-nav="privacy">Privacy</a><a href="#marketing" data-nav="marketing">Marketing</a><a href="#support" data-nav="support">Support</a><a href="#copyright" data-nav="copyright">Copyright</a>
+      </nav>
+    </div>
+    <div class="divider"></div>
+    <div class="foot-bottom">
+      <p>DEVELOPED AND DESIGNED BY <a href="https://www.udtech-sa.com/ar/home" target="_blank" rel="noopener">UD-TECH</a></p>
+      <p>© 2026 GXPER. ALL RIGHTS RESERVED.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= CHOOSE LOCATION ================= -->
+<div class="ov" id="locOv" hidden role="dialog" aria-modal="true" aria-labelledby="locTitle">
+  <div class="ov-bg"></div><div class="ov-shade"></div>
+  <div class="loc-mdl mdl">
+    <div class="loc-ctrl">
+      <button class="cbtn t" id="locCenter" aria-label="Center the pin on the region hub"><svg><use href="#i-target30"/></svg></button>
+      <button class="cbtn x" id="locClose" aria-label="Close map"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div class="head">
+      <p class="eyebrow">PIN YOUR ARENA</p>
+      <h2 class="d" id="locTitle">CHOOSE A LOCATION</h2>
+    </div>
+    <div class="lmap" id="lmap" tabindex="0" aria-label="Map. Click anywhere to move the pin. Use arrow keys to nudge it.">
+      <img src="assets/map-location.jpg" alt="" width="976" height="355" id="lmapImg">
+      <div class="lpin" id="lpin"><div class="drop" id="lpinDrop">
+        <svg class="glow" viewBox="0 0 108 108"><g filter="url(#lg)"><circle cx="54" cy="54" r="36" fill="#fff400"/></g><defs><filter id="lg" x="0" y="0" width="108" height="108" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="9"/><feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.5 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+        <svg class="icon"><use href="#i-lpin"/></svg>
+      </div></div>
+      <div class="ltip"><svg width="18" height="18"><use href="#i-tip"/></svg><span class="tip-d">Click anywhere to move the pin</span><span class="tip-m">Tap a city to move the pin</span></div>
+    </div>
+    <div class="lfoot">
+      <div class="lsel"><svg width="32" height="32"><use href="#i-pin32"/></svg><div><p class="k">Selected location</p><p class="v"><span id="selCity">Jeddah, Saudi Arabia</span></p></div></div>
+      <button class="btn" id="locConfirm">Confirm pin <svg><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= REQUEST SUCCESS ================= -->
+<div class="ov succ" id="succOv" hidden role="dialog" aria-modal="true" aria-labelledby="succTitle">
+  <div class="ov-bg"></div><div class="ov-shade"></div>
+  <div class="succ-mdl mdl">
+    <svg class="succ-badge" viewBox="0 0 112 112" fill="none"><rect class="ring" x="0.75" y="0.75" width="110.5" height="110.5" rx="55.25" stroke="#fff400" stroke-opacity="0.313726" stroke-width="1.5"/><circle cx="56" cy="56" r="31" fill="#fff400"/><path d="M45.5 56.75L51.8 63.05L66.5 48.5" stroke="#0f0d0c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <p class="eyebrow">REQUEST RECEIVED</p>
+    <h2 class="d" id="succTitle">YOUR ARENA STARTS<br>HERE.</h2>
+    <p class="b18">We’ve received your tournament request. Our team will review the details and get in touch soon.</p>
+    <button class="btn" id="succClose">Perfect, thanks <svg><use href="#i-arrow"/></svg></button>
+  </div>
+</div>
+<canvas id="confetti" hidden></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const arrow = '<svg><use href="#i-arrow"/></svg>';
+
+/* ---------------- content data ---------------- */
+const CAPS = [
+  ['01','FORMAT / BRACKETS / RESULTS','RUN TOURNAMENTS','Create and manage tournaments, registrations, matches, brackets, standings, referees, and results from one platform.'],
+  ['02','PROFILE / MATCHES / HISTORY','CONNECT PLAYERS','Give players a central profile where they can join competitions, follow upcoming matches, and track their tournament history.'],
+  ['03','RANK / XP / ACHIEVEMENTS','TRACK PROGRESS',"Rankings, XP, levels, statistics, and achievements turn every competition into part of a player's journey."],
+  ['04','CONTROL / INSIGHT / SCALE','POWER ORGANIZATIONS','Give organizers and partners the visibility and control they need to manage tournaments at scale.']
+];
+$('#cards').innerHTML = CAPS.map((c, i) => `
+  <article class="card rv" style="--dl:${i * .08}s">
+    <div class="card-top"><span class="no">${c[0]}</span><svg aria-hidden="true"><use href="#i-game34"/></svg></div>
+    <div class="card-body"><p class="tag"><span class="tno">${c[0]}&nbsp;&nbsp;·&nbsp;&nbsp;</span>${c[1]}</p><h3 class="d">${c[2]}</h3><p class="b">${c[3]}</p></div>
+    <i class="bar"></i>
+  </article>`).join('');
+
+const STEPS = [
+  {t:'CHOOSE THE GAME', d:'Pick the game and format that fits <br>your community.', x:88},
+  {t:'SET THE LOCATION', d:'Choose your city and venue, or host it online.', x:438},
+  {t:'RALLY THE PLAYERS', d:'Open registration and bring your community together.', x:771},
+  {t:'ENTER THE ARENA', d:'Go live, compete, and create unforgettable moments.', x:1114}
+];
+
+const LEGAL = {
+  privacy: {eb:'TRUST AND TRANSPARENCY', ebs:14, h:['PRIVACY POLICY'], body:'GXPER respects your privacy. This policy explains how personal information may be collected, used, protected, and shared when you use our website, app, tournament services, or support channels.',
+    s:[
+      ['CONSENT',[['p','By using GXPER’s website, app, and tournament services, you acknowledge the privacy notice in effect at that time and the choices presented when information is collected. Where consent is the appropriate legal basis, you may withdraw it through the available settings or by contacting us.']],16],
+      ['WHAT IS PERSONAL DATA?',[['p','Personal data is information that identifies you directly or can reasonably be connected with you.'],['li','Name, username, and date of birth'],['li','Email address, telephone number, and location'],['li','Account, device, and login information'],['li','Tournament registrations, match records, rankings, and results'],['li','Transaction, support, and communication details']]],
+      ['INFORMATION WE COLLECT AND HOW WE USE IT',[['p','We may collect information you provide when creating an account, registering for a competition, requesting a tournament, contacting support, completing a transaction, responding to a survey, or applying to work with GXPER.'],['p','We use relevant information to deliver and improve the platform, manage registrations and eligibility, operate brackets and results, maintain player records, protect accounts, respond to support requests, process permitted transactions, and provide service updates.'],['li','Profile and contact details'],['li','Tournament participation and competitive history'],['li','Organizer, referee, and partner records'],['li','Device, diagnostic, analytics, and usage information'],['li','Support correspondence and communication preferences']]],
+      ['OPT OUT',[['p','You can opt out of direct marketing by using the unsubscribe control in a message, changing available notification preferences, or contacting GXPER. Operational messages about account security, active competitions, registrations, or important service changes are handled separately from marketing.']]],
+      ['COOKIE POLICY',[['p','GXPER may use cookies and similar technologies to maintain secure sessions, remember preferences, protect accounts, understand website activity, and improve performance. Browser controls may allow you to limit optional cookies, although disabling essential cookies can affect access to some features.']]],
+      ['THIRD PARTIES',[['p','The platform may link to or work with third-party hosting, payments, analytics, maps, messaging, identity, or tournament services. Those providers may have their own privacy notices. GXPER limits service-provider access to what is reasonably needed to perform the requested function.']]],
+      ['AGE RESTRICTIONS',[['p','GXPER is not intended for children below the minimum age permitted by the applicable service, tournament rules, or local law. Where a participant is a minor, organizer or guardian requirements may apply. If information is found to have been provided without the required authorization, we will take reasonable steps to remove it.']]],
+      ['DATA SECURITY AND RETENTION',[['p','No online transmission can be guaranteed to be completely secure. GXPER uses proportionate organizational and technical safeguards designed to reduce unauthorized access, loss, or misuse.'],['p','Information is retained only as long as reasonably necessary to provide the service, maintain accurate competitive records, meet legal or contractual obligations, resolve disputes, enforce rights, and protect the platform.']]],
+      ['DATA TRANSFER, SHARING AND DISCLOSURE',[['p','Information may be processed in Saudi Arabia, the United Arab Emirates, or other locations used by approved service providers, subject to appropriate safeguards. It may be shared when needed to operate a tournament or requested feature, comply with law, protect people or the platform, investigate misuse, or complete a business reorganization. GXPER does not treat the general sale of personal data as part of its business model.']]],
+      ['ACCESS TO YOUR DATA',[['p','Depending on applicable law, you may request access to, correction of, deletion of, restriction of, or information about the handling of your personal data. Some competition records may need to be retained for integrity, legal, fraud-prevention, or dispute-resolution reasons.']]],
+      ['CONTACT',[['p','For privacy questions, data requests, general enquiries, or marketing opt-outs, email hello@scooring.com. This prototype policy must be reviewed against the final company details, data flows, and applicable Saudi and UAE requirements before launch.']]]
+    ]},
+  marketing: {eb:'YOUR CHOICES', ebs:14, h:['MARKETING PREFERENCES'], top:true, body:'GXPER uses marketing to share relevant tournament opportunities, platform news, and competitive gaming updates while keeping your communication choices under your control.',
+    s:[
+      ['MARKETING COMMUNICATIONS',[['p','We may share tournament announcements, registration openings, competition reminders, product releases, rewards, community stories, partner campaigns, and invitations to participate in surveys or events.']]],
+      ['CONSENT AND PREFERENCES',[['p','Promotional communications are sent where you have asked to receive them or where otherwise permitted. Your available preferences will be shown at sign-up, within the app, or alongside the communication channel.']]],
+      ['COMMUNICATION CHANNELS',[['p','Depending on the features you enable, GXPER may communicate through email, in-app messages, push notifications, or other channels you choose. Account, security, and active-tournament notices are service communications rather than marketing.']]],
+      ['CAMPAIGN MEASUREMENT',[['p','We may measure message delivery, opens, clicks, campaign interactions, and broad audience performance to understand whether communications are useful and to improve future campaigns. Optional analytics remain subject to the privacy choices provided to you.']]],
+      ['PARTNERS AND PROMOTIONS',[['p','A campaign may feature an organizer, game publisher, venue, sponsor, or other competition partner. When a partner separately collects personal information, the collection point should identify that partner and the notice that applies.']]],
+      ['HOW TO OPT OUT',[['p','Use the unsubscribe control in a marketing email, change available app preferences, or email hello@scooring.com. A preference update may take a short period to apply across active systems, and it will not stop essential account or tournament communications.']]],
+      ['CONTACT',[['p','For questions about marketing preferences, campaign data, or a privacy request connected to marketing, contact hello@scooring.com.']]]
+    ]},
+  support: {eb:'WE ARE HERE TO HELP', ebs:12, h:['WELCOME TO GXPER','SUPPORT'], body:'Welcome to GXPER Support. Get help with your account, tournament participation, competitive record, organizer tools, or the GXPER experience across Saudi Arabia and the United Arab Emirates.',
+    s:[
+      ['PLAYER SUPPORT',[['p','We can help with account access, profile information, tournament discovery, registration status, upcoming matches, brackets, standings, results, rankings, XP, levels, and achievements.']]],
+      ['ORGANIZER AND REFEREE SUPPORT',[['p','Organizers and referees can request help with competition setup, registrations, formats, brackets, match administration, score reporting, standings, participant communication, and tournament completion.']]],
+      ['REPORT A PROBLEM',[['p','Email hello@scooring.com with a clear description, the affected account or tournament, the match or bracket reference where relevant, the device you used, and screenshots that help explain the issue. Never include your password or full payment credentials.']]],
+      ['FAIR PLAY AND SAFETY',[['p','Reports involving cheating, harassment, abuse, impersonation, unsafe conduct, or a disputed result should include enough detail for the competition organizer and GXPER team to review the concern fairly.']]],
+      ['REGIONAL COVERAGE',[['p','GXPER currently presents services for Saudi Arabia and the United Arab Emirates. The regional map represents platform coverage and does not claim a physical office location.']]],
+      ['CONTACT SUPPORT',[['p','For general support, email hello@scooring.com. An official support telephone number and operating hours will be added when they are confirmed by the client.']]]
+    ]},
+  copyright: {eb:'CONTENT AND OWNERSHIP', ebs:12, h:['COPYRIGHT NOTICE'], body:'The GXPER website, app, brand assets, software, and original platform content are protected works and remain the property of GXPER or their respective rights holders.',
+    s:[
+      ['OWNERSHIP',[['p','Unless clearly stated otherwise, GXPER owns or is authorized to use the text, interface designs, graphics, audiovisual material, files, databases, software, code, documentation, and other original material presented through the platform.']]],
+      ['PERMITTED USE',[['p','You may access the platform for its intended personal or organizational competition purposes. You may not copy, modify, republish, distribute, sell, scrape, reverse engineer, or create derivative works from protected content unless written permission or applicable law expressly allows it.']]],
+      ['PLAYER AND ORGANIZER CONTENT',[['p','You remain responsible for the content you upload or submit. By providing content required to operate or promote an entered tournament, you grant GXPER the limited permission needed to host, format, display, and process it for those purposes, subject to the platform terms and privacy notice.']]],
+      ['TRADEMARKS AND GAME RIGHTS',[['p','GXPER names, logos, marks, and distinctive graphics may not be used in a way that suggests endorsement or partnership without written authorization. Game names, artwork, logos, and publisher marks belong to their respective rights holders; reference to a game does not by itself imply sponsorship.']]],
+      ['NO TRANSFER OF RIGHTS',[['p','Accessing or using GXPER does not transfer ownership or grant a broader license in the platform, its content, brand, software, or other intellectual property.']]],
+      ['REPORTING INFRINGEMENT',[['p','To report possible infringement, email hello@scooring.com with your contact details, identification of the protected work, the location of the material in question, the reason you believe the use is unauthorized, and any supporting evidence.']]],
+      ['PERMISSIONS',[['p','For a permission or licensing request, contact hello@scooring.com and describe the material, proposed use, channels, audience, territory, and duration. No permission is granted until it is confirmed in writing.']]]
+    ]}
+};
+for (const [key, L] of Object.entries(LEGAL)) {
+  $('#page-' + key).innerHTML = `
+  <section class="l-hero"><div class="l-grid"></div><div class="band"><div class="l-hero-c">
+    <p class="eyebrow${L.ebs === 12 ? ' s12' : ''}">${L.eb}</p>
+    <h1 class="d h94">${L.h.map((l, i) => `<span class="ln"><span style="--dl:${.3 + i * .12}s">${l}</span></span>`).join('')}</h1>
+    <p class="fg16">${L.body}</p>
+  </div></div></section>
+  <section class="l-content band"><div class="l-sections">
+    ${L.s.map((s, i) => `<div class="l-sec rv"><p class="ix" ${s[2] ? `style="font-size:${s[2]}px"` : ''}>${String(i + 1).padStart(2, '0')}</p>
+      <div class="cp"><h2 class="d">${s[0]}</h2>${s[1].map(b => b[0] === 'li' ? `<p class="li">•  ${b[1]}</p>` : `<p class="p">${b[1]}</p>`).join('')}</div></div>`).join('')}
+  </div></section>
+  <section class="l-contact band${L.top ? ' top' : ''}"><div class="in">
+    <div class="tt"><p class="eyebrow s12">NEED CLARIFICATION?</p><h2 class="d h64">TALK TO GXPER.</h2></div>
+    <button class="mail copy" data-copy="hello@scooring.com">✉  hello@scooring.com  <span class="arr">→</span></button>
+  </div></section>`;
+}
+
+/* ---------------- journey timeline nodes ---------------- */
+const jTl = $('#jTl');
+STEPS.forEach((s, i) => {
+  const b = document.createElement('button');
+  b.className = 'j-step';
+  b.style.left = s.x + 'px';
+  b.setAttribute('aria-label', `Step ${i + 1}: ${s.t}`);
+  b.innerHTML = `<span class="n">0${i + 1}</span><span class="l">${s.t}</span>
+   <span class="node">
+     <svg class="idle" viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="9" fill="#0f0d0c"/><circle cx="9" cy="9" r="8" fill="none" stroke="#a09c99" stroke-opacity="0.72" stroke-width="2"/></svg>
+     <svg class="halo" viewBox="0 0 30 30" width="30" height="30"><circle cx="15" cy="15" r="14.5" fill="none" stroke="#fff400" stroke-opacity="0.65"/></svg>
+     <svg class="act" viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="10" fill="#fff400" opacity=".35" style="filter:blur(4px)"/><circle cx="20" cy="20" r="8" fill="#fff400"/></svg>
+   </span>`;
+  b.addEventListener('click', () => J.go(i));
+  jTl.appendChild(b);
+});
+
+/* ---------------- toast + copy ---------------- */
+const toast = $('#toast'); let tt;
+function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 2200); }
+document.addEventListener('click', e => {
+  const c = e.target.closest('.copy'); if (!c) return;
+  const v = c.dataset.copy;
+  const ok = () => say('Email copied: ' + v);
+  try { navigator.clipboard.writeText(v).then(ok, () => say(v)); } catch { say(v); }
+});
+
+/* ---------------- reveal ---------------- */
+let io;
+function armReveals(root) {
+  const vh = innerHeight;
+  if (io) io.disconnect();
+  io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const g = e.target.closest('.phones'); (g ? $$('.ph', g) : [e.target]).forEach(t => { t.classList.remove('pre'); io.unobserve(t); }); }), {rootMargin: '0px 0px -6% 0px', threshold: 0});
+  $$('.rv, .l-sec', root).forEach(el => {
+    if (RM) return el.classList.remove('pre');
+    const r = el.getBoundingClientRect();
+    if (r.top > vh * .92) { el.classList.add('pre'); io.observe(el); } else el.classList.remove('pre');
+  });
+  const orb = $('#orbit', root);
+  if (orb && !RM) {
+    const r = orb.getBoundingClientRect();
+    if (r.top > vh * .8) {
+      orb.classList.add('pre');
+      const o2 = new IntersectionObserver(es => { if (es[0].isIntersecting) { orb.classList.remove('pre'); o2.disconnect(); } }, {threshold: .3});
+      o2.observe(orb);
+    }
+  }
+  $$('.num[data-roll]', root).forEach(n => {
+    const s = n.firstElementChild;
+    if (RM || n.getBoundingClientRect().top < vh) return;
+    s.style.transform = 'translateY(100%)';
+    const o3 = new IntersectionObserver(es => { if (es[0].isIntersecting) { s.style.transform = ''; o3.disconnect(); } }, {threshold: .4});
+    o3.observe(n);
+  });
+}
+
+/* ---------------- router ---------------- */
+
+
+const PAGES = ['home', 'contact', 'privacy', 'marketing', 'support', 'copyright'];
+const SECTIONS = {about: 'about', app: 'app', request: 'request', journey: 'journey', home: null};
+let current = null;
+const hdr = $('#hdr'), wipe = $('#wipe');
+function setPage(p) {
+  PAGES.forEach(k => $('#page-' + k).hidden = k !== p);
+  const home = p === 'home';
+  hdr.classList.toggle('inner', !home);
+  $('#hdrCta').hidden = !home;
+  $('#hdrBack').hidden = home;
+  document.body.classList.toggle('sub', !home);
+  $$('[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === p && !home ? 'true' : 'false'));
+  $$('.mn-main [data-nav="home"]').forEach(a => a.setAttribute('aria-current', home ? 'true' : 'false'));
+  current = p;
+  J.active(home);
+}
+function scrollToSection(id) {
+  if (!id) { scrollTo({top: 0, behavior: RM ? 'auto' : 'smooth'}); return; }
+  const el = document.getElementById(id); if (!el) return;
+  const y = el.getBoundingClientRect().top + scrollY - 82;
+  scrollTo({top: Math.max(0, y), behavior: RM ? 'auto' : 'smooth'});
+}
+function route(first) {
+  const h = (location.hash || '#home').slice(1);
+  const page = PAGES.includes(h) ? h : 'home';
+  const sec = page === 'home' ? (SECTIONS[h] !== undefined ? SECTIONS[h] : null) : null;
+  closeMenu();
+  if (page === current) { scrollToSection(sec); return; }
+  if (first || RM) { setPage(page); armReveals($('#page-' + page)); if (sec) requestAnimationFrame(() => scrollToSection(sec)); return; }
+  wipe.classList.remove('go'); void wipe.offsetWidth; wipe.classList.add('go');
+  setTimeout(() => {
+    setPage(page);
+    document.documentElement.style.scrollBehavior = 'auto';
+    scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = '';
+    const pg = $('#page-' + page);
+    $$('.h94 .ln>span, .l-hero-c .eyebrow, .l-hero-c .fg16', pg).forEach(el => { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
+    armReveals(pg);
+    if (sec) setTimeout(() => scrollToSection(sec), 60);
+  }, 430);
+}
+addEventListener('hashchange', () => route(false));
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]'); if (!a) return;
+  if (a.getAttribute('href') === location.hash) { e.preventDefault(); route(false); }
+});
+
+/* ---------------- mobile menu ---------------- */
+const menuBtn = $('#menuBtn');
+function closeMenu() { document.body.classList.remove('menu-open'); menuBtn.setAttribute('aria-expanded', 'false'); }
+menuBtn.addEventListener('click', () => { const o = document.body.classList.toggle('menu-open'); menuBtn.setAttribute('aria-expanded', String(o)); });
+
+/* ---------------- scroll-linked motion ---------------- */
+const prog = $('#progress'), heroC = $('#heroContent'), heroBg = $('#heroBg');
+const phones = $$('.ph');
+let ticking = false;
+function onScroll() {
+  if (ticking) return; ticking = true;
+  requestAnimationFrame(() => {
+    ticking = false;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    prog.style.setProperty('--p', max > 0 ? (scrollY / max).toFixed(4) : 0);
+    if (RM || current !== 'home') return;
+    const y = scrollY;
+    if (y < 1000) {
+      heroC.style.transform = `translateY(${y * .22}px)`;
+      heroC.style.opacity = Math.max(0, 1 - y / 760).toFixed(3);
+      heroBg.style.translate = `0 ${y * .12}px`;
+    }
+    const vh = innerHeight;
+    phones.forEach(p => {
+      const r = p.getBoundingClientRect();
+      const c = (r.top + r.height / 2 - vh / 2);
+      p.firstElementChild.style.setProperty('--py', (c * parseFloat(p.dataset.speed)).toFixed(1) + 'px');
+    });
+  });
+}
+addEventListener('scroll', onScroll, {passive: true});
+
+/* ---------------- hero sparks ---------------- */
+(function sparks() {
+  const cv = $('#sparks'); if (RM) return;
+  const ctx = cv.getContext('2d'); let w, h, pts = [], vis = true, dpr = Math.min(2, devicePixelRatio || 1);
+  function size() { w = cv.clientWidth; h = cv.clientHeight; cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function seed() { pts = Array.from({length: Math.round(Math.min(70, w / 22))}, () => ({x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + .4, s: Math.random() * .35 + .12, a: Math.random() * .5 + .12, p: Math.random() * 6.28, c: ['255,12,225','255,238,6','105,210,255','255,238,6'][Math.random() * 4 | 0]})); }
+  size(); seed();
+  addEventListener('resize', () => { size(); seed(); });
+  new IntersectionObserver(es => vis = es[0].isIntersecting).observe(cv);
+  (function loop(t) {
+    requestAnimationFrame(loop);
+    if (!vis || current !== 'home') return;
+    ctx.clearRect(0, 0, w, h);
+    for (const p of pts) {
+      p.y -= p.s; p.x += Math.sin(t / 1600 + p.p) * .25;
+      if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+      const tw = .55 + .45 * Math.sin(t / 700 + p.p * 3);
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283);
+      ctx.fillStyle = `rgba(${p.c},${(p.a * tw).toFixed(3)})`; ctx.fill();
+    }
+  })(0);
+})();
+
+/* ---------------- journey controller ---------------- */
+const J = (() => {
+  const jsec = $('#journey'), DUR = 5200, steps = $$('.j-step'), vis = $$('.j-vis'), title = $('#jTitle'), desc = $('#jDesc'), ghost = $('#jGhost'), progEl = $('#jProg'), rule = $('#jRule');
+  const node = i => STEPS[i].x + 2 + 9;           // node centre in stage px
+  const TRACK0 = 92, TRACK1 = 92 + 1260;
+  let i = 0, elapsed = DUR * .62, last = performance.now(), paused = false, inView = false, on = true;
+  function render(idx, animate) {
+    steps.forEach((s, k) => { s.classList.toggle('on', k === idx); s.classList.toggle('done', k < idx); });
+    vis.forEach(v => v.classList.toggle('off', +v.dataset.v !== idx));
+    const v = vis[idx]; v.classList.remove('flick'); void v.offsetWidth; if (animate && !RM) v.classList.add('flick');
+    if (!animate || RM) { title.textContent = STEPS[idx].t; desc.innerHTML = STEPS[idx].d; ghost.textContent = '0' + (idx + 1); return; }
+    title.classList.add('out'); desc.classList.add('out');
+    ghost.style.transform = 'translateY(-100%)';
+    rule.style.animation = 'none'; void rule.offsetWidth; rule.style.animation = '';
+    setTimeout(() => {
+      title.textContent = STEPS[idx].t; desc.innerHTML = STEPS[idx].d; ghost.textContent = '0' + (idx + 1);
+      ghost.style.transition = 'none'; ghost.style.transform = 'translateY(100%)'; void ghost.offsetWidth;
+      ghost.style.transition = ''; ghost.style.transform = '';
+      title.classList.remove('out'); setTimeout(() => desc.classList.remove('out'), 120);
+    }, 380);
+  }
+  function go(idx) { if (i !== idx || elapsed) { i = (idx + STEPS.length) % STEPS.length; elapsed = 0; render(i, true); } }
+  function loop(now) {
+    requestAnimationFrame(loop);
+    const dt = Math.min(64, now - last); last = now;
+    if (on && inView && !paused && !RM) elapsed += dt;
+    const p = Math.min(1, elapsed / DUR);
+    const a = node(i) - TRACK0, b = (i < STEPS.length - 1 ? node(i + 1) : TRACK1) - TRACK0;
+    progEl.style.setProperty('--w', (a + (b - a) * p).toFixed(1) + 'px');
+    steps[i].style.setProperty('--sp', p.toFixed(3));
+    jsec.style.setProperty('--jp', ((i + p) / STEPS.length).toFixed(4));
+    if (p >= 1) go(i + 1);
+  }
+  render(0, false);
+  const sec = $('#journey');
+  new IntersectionObserver(es => inView = es[0].isIntersecting, {threshold: .35}).observe(sec);
+  sec.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') paused = true; });
+  sec.addEventListener('pointerleave', () => paused = false);
+  requestAnimationFrame(loop);
+  return {go, active: v => on = v};
+})();
+
+/* ---------------- scaling for absolute-built pieces ---------------- */
+function rescale() {
+  const w = document.documentElement.clientWidth;
+  $('#journey').style.setProperty('--k', Math.min(1, w / 1440).toFixed(4));
+  const ob = $('#orbitBox'), base = w <= 760 ? 350 : 670; $('#orbit').style.setProperty('--os', Math.min(w <= 760 ? 1.3 : 1, ob.clientWidth / base).toFixed(4));
+  const eb = $('.j-eyebrow'); if (w <= 760 && eb) $('#journey').style.setProperty('--rx', (20 + eb.offsetWidth + 12) + 'px');
+  const ar = $('#jArena'); if (ar) ar.style.setProperty('--ak', (ar.clientWidth / 585).toFixed(4));
+}
+addEventListener('resize', rescale); rescale();
+new ResizeObserver(rescale).observe($('#orbitBox'));
+
+/* ---------------- pointer spotlights ---------------- */
+function spotlight(el) {
+  el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+}
+$$('.card').forEach(spotlight); spotlight($('#panel'));
+
+/* ---------------- location modal ---------------- */
+const CITIES = [
+  ['Tabuk','Saudi Arabia',300,75],['Hail','Saudi Arabia',400,95],['Buraydah','Saudi Arabia',452,128],['Madinah','Saudi Arabia',372,150],
+  ['Jeddah','Saudi Arabia',395,232],['Makkah','Saudi Arabia',414,240],['Riyadh','Saudi Arabia',505,182],['Dammam','Saudi Arabia',560,128],
+  ['Al Ahsa','Saudi Arabia',562,160],['Abha','Saudi Arabia',447,305],['Jazan','Saudi Arabia',435,332],['Najran','Saudi Arabia',485,318],
+  ['Abu Dhabi','United Arab Emirates',642,178],['Dubai','United Arab Emirates',666,162],['Sharjah','United Arab Emirates',676,156],
+  ['Al Ain','United Arab Emirates',678,192],['Ras Al Khaimah','United Arab Emirates',692,140],['Fujairah','United Arab Emirates',704,170]
+];
+const lmap = $('#lmap'), lpin = $('#lpin'), selCity = $('#selCity'), locOv = $('#locOv'), succOv = $('#succOv');
+let pinPos = {x: 477.24, y: 183.6}, chosen = {name: 'Jeddah', country: 'Saudi Arabia'};
+function mapScale() { const img = $('#lmapImg'); return {sx: img.clientWidth / 976, ox: img.offsetLeft, sy: img.clientHeight / 355, oy: img.offsetTop}; }
+function placePin(x, y, animate) {
+  pinPos = {x, y};
+  const m = mapScale();
+  lpin.style.transition = animate ? '' : 'none';
+  lpin.style.transform = `translate(${m.ox + x * m.sx}px, ${m.oy + y * m.sy}px)`;
+}
+function nearest(x, y) { let best, bd = 1e9; for (const c of CITIES) { const d = (c[2] - x) ** 2 + (c[3] - y) ** 2; if (d < bd) { bd = d; best = c; } } return best; }
+function setCity(name, country) {
+  chosen = {name, country};
+  const txt = `${name}, ${country}`;
+  if (selCity.textContent === txt) return;
+  selCity.classList.add('out');
+  setTimeout(() => { selCity.textContent = txt; selCity.classList.remove('out'); }, RM ? 0 : 220);
+}
+function ripple(px, py) { const r = document.createElement('i'); r.className = 'lripple'; r.style.left = px + 'px'; r.style.top = py + 'px'; lmap.appendChild(r); setTimeout(() => r.remove(), 950); }
+function dropTo(x, y) {
+  placePin(x, y, true);
+  const d = $('#lpinDrop'); d.classList.remove('drop'); void d.offsetWidth; d.classList.add('drop');
+  const m = mapScale(); ripple(m.ox + x * m.sx, m.oy + y * m.sy);
+  const c = nearest(x, y); setCity(c[0], c[1]);
+}
+lmap.addEventListener('click', e => {
+  const r = lmap.getBoundingClientRect(), m = mapScale();
+  dropTo((e.clientX - r.left - m.ox) / m.sx, (e.clientY - r.top - m.oy) / m.sy);
+});
+lmap.addEventListener('keydown', e => {
+  const k = {ArrowLeft: [-12, 0], ArrowRight: [12, 0], ArrowUp: [0, -12], ArrowDown: [0, 12]}[e.key];
+  if (!k) return; e.preventDefault();
+  dropTo(Math.max(0, Math.min(976, pinPos.x + k[0])), Math.max(0, Math.min(355, pinPos.y + k[1])));
+});
+$('#locCenter').addEventListener('click', () => dropTo(505, 182));
+function openOv(ov) {
+  ov.hidden = false; document.body.classList.add('lock');
+  requestAnimationFrame(() => requestAnimationFrame(() => ov.classList.add('show')));
+}
+function closeOv(ov) {
+  ov.classList.remove('show'); document.body.classList.remove('lock');
+  setTimeout(() => ov.hidden = true, RM ? 0 : 420);
+}
+$('#openMap').addEventListener('click', () => { openOv(locOv); requestAnimationFrame(() => placePin(pinPos.x, pinPos.y, false)); setTimeout(() => lmap.focus({preventScroll: true}), 300); });
+$('#locClose').addEventListener('click', () => closeOv(locOv));
+$('#locConfirm').addEventListener('click', () => {
+  $('#openMap').classList.add('set');
+  $('#locK').textContent = 'LOCATION PINNED';
+  $('#locV').textContent = `${chosen.name}, ${chosen.country} · change`;
+  $('#fCity').value = chosen.name;
+  $('#fCountry').value = chosen.country;
+  closeOv(locOv);
+  say('Pinned ' + chosen.name);
+});
+addEventListener('resize', () => { if (!locOv.hidden) placePin(pinPos.x, pinPos.y, false); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!locOv.hidden) closeOv(locOv); else if (!succOv.hidden) closeOv(succOv); else closeMenu();
+});
+locOv.addEventListener('click', e => { if (e.target.classList.contains('ov-shade') || e.target === locOv) closeOv(locOv); });
+
+/* ---------------- request form ---------------- */
+const form = $('#reqForm'), submitBtn = $('#submitBtn');
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const count = $('#fCount');
+  const bad = !/^\d{1,5}$/.test(count.value.trim());
+  count.closest('.field').classList.toggle('err', bad);
+  if (bad) { say('Enter the expected number of participants'); count.focus(); return; }
+  submitBtn.classList.add('busy'); $('#submitTxt').textContent = 'Sending request…';
+  setTimeout(() => {
+    submitBtn.classList.remove('busy'); $('#submitTxt').textContent = 'Request Tournament';
+    openOv(succOv); burst();
+    setTimeout(() => $('#succClose').focus({preventScroll: true}), 400);
+  }, RM ? 0 : 950);
+});
+$('#fCount').addEventListener('input', e => e.target.closest('.field').classList.remove('err'));
+$('#succClose').addEventListener('click', () => { closeOv(succOv); form.reset(); $('#openMap').classList.remove('set'); $('#locK').textContent = 'SELECT LOCATION ON MAP'; $('#locV').textContent = 'Open interactive map'; });
+
+/* ---------------- confetti burst ---------------- */
+function burst() {
+  if (RM) return;
+  const cv = $('#confetti'); cv.hidden = false;
+  const ctx = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1);
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cx = innerWidth / 2, cy = innerHeight / 2 - 120;
+  const cols = ['#eb008b', '#fff400', '#69d2ff', '#f7f6f5'];
+  const ps = Array.from({length: 120}, () => { const a = Math.random() * 6.283, v = Math.random() * 9 + 4; return {x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: Math.random() * 6 + 3, r: Math.random() * 6.28, vr: (Math.random() - .5) * .4, c: cols[Math.random() * 4 | 0], l: 1}; });
+  const t0 = performance.now();
+  (function f(t) {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    const age = (t - t0) / 1000;
+    for (const p of ps) {
+      p.vy += .22; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.l = Math.max(0, 1 - age / 2.2);
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = p.l; ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    if (age < 2.3) requestAnimationFrame(f); else { ctx.clearRect(0, 0, innerWidth, innerHeight); cv.hidden = true; }
+  })(t0);
+}
+
+/* ---------------- boot ---------------- */
+route(true);
+onScroll();
+})();
+</script>

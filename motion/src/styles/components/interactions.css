@@ -1,0 +1,166 @@
+/* ==========================================================================
+   Interactions — buttons, links, header, scroll progress, mobile menu, toast
+   Catalogue IDs: G1–G5, G9, G10  (see docs/03-animation-catalogue.md)
+   Only motion-related rules live here. Colours, sizes and spacing come from
+   the Figma design system.
+   ========================================================================== */
+
+/* ---------- G1  Primary button -------------------------------------------
+   Hover: lifts 2px, yellow glow, a light sheen sweeps across, arrow nudges.
+   Press: settles back and shrinks to 98%.
+   Hover effects are NOT limited to mouse devices: on phones they play on
+   tap, so mobile web gets exactly the same feedback as desktop.            */
+.gx-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform var(--gx-dur-quick) var(--gx-ease-out),
+    box-shadow var(--gx-dur-quick) var(--gx-ease-out),
+    border-color var(--gx-dur-fast),
+    background-color var(--gx-dur-fast);
+}
+.gx-btn::after {                     /* the sheen */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform var(--gx-dur-slow) var(--gx-ease-out);
+}
+.gx-btn__icon { transition: transform var(--gx-dur-quick) var(--gx-ease-spring); }
+
+.gx-btn:hover { transform: translateY(calc(var(--gx-shift-xs) * -1)); box-shadow: 0 14px 34px -10px rgba(255, 244, 0, .6); }
+.gx-btn:hover::after { transform: translateX(120%); }
+.gx-btn:hover .gx-btn__icon { transform: translateX(var(--gx-shift-sm)); }
+.gx-btn:active { transform: translateY(0) scale(.98); }
+
+/* G1b  Ghost (secondary) button — same motion, softer yellow sheen */
+.gx-btn--ghost::after { background: linear-gradient(110deg, transparent 30%, rgba(255, 244, 0, .18) 50%, transparent 70%); }
+.gx-btn--ghost:hover { border-color: var(--gx-yellow); box-shadow: 0 14px 34px -14px rgba(255, 244, 0, .35); }
+
+/* Loading state used by the "Request Tournament" submit (R6) */
+.gx-btn__load { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--gx-ink); }
+.gx-btn.is-busy .gx-btn__load { animation: gx-load-bar var(--gx-dur-slower) var(--gx-ease-out) forwards; }
+
+/* ---------- G2  Nav link underline --------------------------------------
+   Grows in from the left on hover, leaves to the right on hover-out.       */
+.gx-nav-link { position: relative; }
+.gx-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--gx-yellow);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--gx-dur-base) var(--gx-ease-out);
+}
+.gx-nav-link:hover::after,
+.gx-nav-link[aria-current="true"]::after { transform: scaleX(1); transform-origin: left; }
+
+/* Small "text + arrow" links (email, back link) */
+.gx-arrow-link .gx-arrow { display: inline-block; transition: transform var(--gx-dur-quick) var(--gx-ease-spring); }
+.gx-arrow-link:hover .gx-arrow { transform: translateX(6px); }
+.gx-back-link { transition: transform var(--gx-dur-fast) var(--gx-ease-out); }
+.gx-back-link:hover { transform: translateX(-4px); }
+
+/* Simple colour links (footer, legal links) */
+.gx-color-link { transition: color 250ms; }
+.gx-color-link:hover, .gx-color-link[aria-current="true"] { color: var(--gx-yellow); }
+
+/* Social icons */
+.gx-social { display: block; transition: transform var(--gx-dur-quick) var(--gx-ease-spring); }
+.gx-social:hover { transform: translateY(-3px) scale(1.1); }
+
+/* Store badges */
+.gx-badge { display: block; border-radius: 8px; transition: transform var(--gx-dur-quick) var(--gx-ease-spring), box-shadow var(--gx-dur-quick); }
+.gx-badge:hover { transform: translateY(-3px); box-shadow: 0 10px 26px -10px rgba(255, 244, 0, .45); }
+
+/* ---------- G3  Header --------------------------------------------------
+   Slides down once on first load. Sticky, blurred background.             */
+.gx-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  height: var(--gx-header-h);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: gx-slide-down-in .8s var(--gx-ease-out) both;
+}
+.gx-logo { display: block; transition: transform 400ms var(--gx-ease-spring); }
+.gx-logo:hover { transform: scale(1.04); }
+
+/* ---------- G4  Scroll progress bar -------------------------------------
+   2px brand gradient under the header. Width = how far the page is
+   scrolled. JS (scroll-progress.js) writes --gx-progress from 0 to 1.      */
+.gx-progress {
+  position: fixed;
+  left: 0; right: 0;
+  top: calc(env(safe-area-inset-top, 0px) + var(--gx-header-h));
+  z-index: 49;
+  height: 2px;
+  background: var(--gx-gradient);
+  transform-origin: left;
+  transform: scaleX(var(--gx-progress, 0));
+  box-shadow: 0 0 12px rgba(255, 140, 120, .5);
+  pointer-events: none;
+}
+
+/* ---------- G10  Mobile menu --------------------------------------------
+   Hamburger morphs into an X; the full-screen panel fades in and drops
+   12px; the four big links rise in one after another (50ms apart).       */
+.gx-burger span,
+.gx-burger span::before,
+.gx-burger span::after { display: block; width: 18px; height: 2px; background: currentColor; position: relative; }
+.gx-burger span { transition: background var(--gx-dur-instant); }
+.gx-burger span::before,
+.gx-burger span::after { content: ""; position: absolute; left: 0; transition: transform var(--gx-dur-quick) var(--gx-ease-out); }
+.gx-burger span::before { top: -6px; }
+.gx-burger span::after { top: 6px; }
+.is-menu-open .gx-burger span { background: transparent; }
+.is-menu-open .gx-burger span::before { transform: translateY(6px) rotate(45deg); }
+.is-menu-open .gx-burger span::after { transform: translateY(-6px) rotate(-45deg); }
+
+.gx-menu {
+  position: fixed;
+  inset: calc(env(safe-area-inset-top, 0px) + var(--gx-header-h)) 0 0 0;
+  z-index: 48;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition: transform 400ms var(--gx-ease-out), opacity var(--gx-dur-fast), visibility var(--gx-dur-fast);
+}
+.is-menu-open .gx-menu { opacity: 1; visibility: visible; transform: none; }
+.gx-menu__link { display: block; transition: color 250ms, transform var(--gx-dur-quick) var(--gx-ease-out); }
+.gx-menu__link:hover, .gx-menu__link[aria-current="true"] { color: var(--gx-yellow); }
+.gx-menu__link:hover { transform: translateX(6px); }
+.is-menu-open .gx-menu__link { animation: gx-menu-item-in var(--gx-dur-medium) var(--gx-ease-out) both; }
+.is-menu-open .gx-menu__link:nth-child(2) { animation-delay: calc(var(--gx-stagger-tight) * 1); }
+.is-menu-open .gx-menu__link:nth-child(3) { animation-delay: calc(var(--gx-stagger-tight) * 2); }
+.is-menu-open .gx-menu__link:nth-child(4) { animation-delay: calc(var(--gx-stagger-tight) * 3); }
+.is-scroll-locked { overflow: hidden; }
+
+/* ---------- G9  Toast ------------------------------------------------------
+   Pops up from the bottom with a spring, disappears after 2.2s.          */
+.gx-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(28px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  z-index: 150;
+  opacity: 0;
+  transform: translate(-50%, 30px);
+  transition: transform 500ms var(--gx-ease-spring), opacity var(--gx-dur-fast);
+  pointer-events: none;
+}
+.gx-toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Form fields --------------------------------------------------
+   Focus: yellow border + soft 3px glow. Error: red border + short shake. */
+.gx-field { transition: border-color var(--gx-dur-fast), box-shadow var(--gx-dur-fast), background-color var(--gx-dur-fast); }
+.gx-field label { transition: color var(--gx-dur-fast); }
+.gx-field:focus-within { border-color: var(--gx-yellow); box-shadow: 0 0 0 3px rgba(255, 244, 0, .12); }
+.gx-field:focus-within label { color: var(--gx-yellow); }
+.gx-field.is-error { border-color: #ff6b5b; animation: gx-shake 400ms; }

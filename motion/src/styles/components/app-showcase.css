@@ -1,0 +1,50 @@
+/* ==========================================================================
+   App showcase — "One profile. Every match."
+   Catalogue IDs: A1–A6
+
+   Desktop (> 1100px)
+     A1  each phone floats up/down 12px, 6s loop, offset by -2s / -4s so
+         they never move together
+     A2  scroll parallax — each phone drifts at its own speed
+         (-0.06 / 0.04 / -0.03 × distance from viewport centre)  [JS]
+     A3  hover: phone lifts 10px, grows 2.5%, yellow glow        500ms
+     A4  entrance: rise 90px + un-tilt from -5°, 150ms stagger   900ms
+     A5  store badges lift 3px on hover (spring)                 350ms
+
+   Tablet + phone (≤ 1100px)
+     A6  phones become a horizontal swipe row with scroll-snap. The first
+         phone shows fully and the next one peeks in, so people know they
+         can swipe. Parallax is switched off; the float loop stays.
+   ========================================================================== */
+.gx-phones { display: flex; gap: 28px; align-items: center; }
+.gx-phone { flex: 1 1 0; min-width: 0; }
+.gx-phone__parallax { transform: translateY(var(--gx-py, 0px)); }        /* A2, written by JS */
+.gx-phone__float { animation: gx-bob var(--gx-loop-bob) var(--gx-ease-in-out) infinite; }   /* A1 */
+.gx-phone:nth-child(2) .gx-phone__float { animation-delay: -2s; }
+.gx-phone:nth-child(3) .gx-phone__float { animation-delay: -4s; }
+.gx-phone img {
+  width: 100%;
+  height: auto;
+  transition: transform 500ms var(--gx-ease-out), filter 500ms var(--gx-ease-out);
+}
+.gx-phone:hover img { transform: translateY(-10px) scale(1.025); filter: drop-shadow(0 22px 40px rgba(255, 244, 0, .28)); }  /* A3 */
+
+/* A6  swipe row */
+@media (max-width: 1100px) {
+  .gx-phones {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-block: 16px 18px;
+    margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));   /* row runs to the screen edge */
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .gx-phones::-webkit-scrollbar { display: none; }
+  .gx-phone { flex: 0 0 min(269px, 64vw); scroll-snap-align: start; }
+}
+@media (max-width: 760px) {
+  /* Figma mobile: 200px phones, 16px apart, next phone peeks in from the right */
+  .gx-phones { gap: 16px; padding-block: 0 6px; }
+  .gx-phone { flex: 0 0 200px; }
+}

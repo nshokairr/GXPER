@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Overlays — location map modal + request success
+   Catalogue IDs: V1–V9   ·   Controllers: overlay.js, map-pin.js, confetti.js
+
+   Open / close (V1)
+     backdrop fades in            450ms ease-out
+     panel rises 30px + grows from 96%   700ms spring
+     close = reverse; element is hidden 420ms after the fade starts
+
+   Map picker
+     V2  click/tap: pin glides to the spot (spring 700ms) and drops in
+         from 26px above (spring 600ms)
+     V3  a yellow ripple spreads from the click point (scale ×7, 900ms)
+     V4  "Selected location" text rolls up and is replaced (450ms)
+     V5  close (×) button turns 90° on hover; round buttons grow 8%
+
+   Success
+     V6  ring spins in from -120° and 60% size     1000ms ease-out
+     V7  yellow dot pops in                        700ms spring, 200ms delay
+     V8  check mark draws itself                   600ms ease-out, 650ms delay
+     V9  confetti: 120 pieces burst from above the badge, fall with gravity
+         and fade out over 2.2s (canvas, confetti.js)
+   ========================================================================== */
+.gx-overlay {
+  position: fixed; inset: 0; z-index: 120;
+  display: flex; align-items: center; justify-content: center;
+  overflow: auto;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  opacity: 0;
+  transition: opacity var(--gx-dur-base) var(--gx-ease-out);
+}
+.gx-overlay[hidden] { display: none; }   /* keep: display:flex above would otherwise override the hidden attribute */
+.gx-overlay.is-open { opacity: 1; }
+.gx-overlay__panel { transform: translateY(30px) scale(.96); transition: transform var(--gx-dur-slow) var(--gx-ease-spring); }
+.gx-overlay.is-open .gx-overlay__panel { transform: none; }
+
+.gx-round-btn { transition: transform 400ms var(--gx-ease-spring), border-color var(--gx-dur-fast), background-color var(--gx-dur-fast); }
+.gx-round-btn svg { transition: transform 400ms var(--gx-ease-out); }
+.gx-round-btn:hover { transform: scale(1.08); border-color: var(--gx-yellow); background: rgba(255, 244, 0, .06); }
+.gx-round-btn--close:hover svg { transform: rotate(90deg); }
+
+/* Map picker */
+.gx-map { position: relative; overflow: hidden; cursor: crosshair; }
+.gx-map__pin { position: absolute; left: 0; top: 0; width: 0; height: 0; transition: transform var(--gx-dur-slow) var(--gx-ease-spring); will-change: transform; }
+.gx-map__pin-drop.is-dropping { animation: gx-pin-drop 600ms var(--gx-ease-spring); }
+.gx-map__ripple {
+  position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%;
+  border: 2px solid var(--gx-yellow); pointer-events: none;
+  animation: gx-ripple var(--gx-dur-slower) ease-out forwards;
+}
+.gx-roll-text { display: block; overflow: hidden; }
+.gx-roll-text > span { display: block; transition: transform var(--gx-dur-base) var(--gx-ease-out), opacity var(--gx-dur-fast); }
+.gx-roll-text > span.is-out { transform: translateY(-100%); opacity: 0; }
+
+/* Success badge */
+.gx-success-badge .gx-ring { transform-origin: 56px 56px; animation: gx-spin-in var(--gx-dur-hero) var(--gx-ease-out) both; }
+.gx-success-badge .gx-dot { transform-origin: 56px 56px; animation: gx-pop var(--gx-dur-slow) var(--gx-ease-spring) .2s both; }
+.gx-success-badge .gx-check { stroke-dasharray: 32; stroke-dashoffset: 32; animation: gx-check 600ms var(--gx-ease-out) .65s forwards; }
+
+.gx-confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 130; }

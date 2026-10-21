@@ -1,0 +1,90 @@
+/* ==========================================================================
+   Smaller section motions
+   Metrics (M1), About (B1), Request (R1–R7), Regional map (P1–P3),
+   Final CTA (F1–F2), Contact cards (K1)
+   ========================================================================== */
+
+/* ---------- B1  About — "Launching across" dot blinks ---------- */
+.gx-blink { display: inline-block; animation: gx-blink var(--gx-loop-blink) var(--gx-ease-in-out) infinite; }
+
+/* ---------- M1  Metric tiles ---------------------------------------------
+   Hover: yellow fills the tile from the bottom, text turns dark, the title
+   nudges 6px right. On touch screens the fill plays on tap (:active).      */
+.gx-metric { position: relative; overflow: hidden; isolation: isolate; }
+.gx-metric::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: var(--gx-yellow);
+  transform: translateY(101%);
+  transition: transform var(--gx-dur-medium) var(--gx-ease-out);
+}
+.gx-metric__num, .gx-metric__title { transition: color var(--gx-dur-base) var(--gx-ease-out), transform 500ms var(--gx-ease-out); }
+.gx-metric:hover::before, .gx-metric:active::before { transform: none; }
+.gx-metric:hover .gx-metric__num, .gx-metric:hover .gx-metric__title,
+.gx-metric:active .gx-metric__num, .gx-metric:active .gx-metric__title { color: var(--gx-ink); }
+.gx-metric:hover .gx-metric__title { transform: translateX(6px); }
+
+/* ---------- R1  Request — background map drifts slowly ---------- */
+.gx-slow-pan { animation: gx-slow-pan var(--gx-loop-pan) var(--gx-ease-in-out) infinite alternate; }
+
+/* ---------- R2  Request — gradient line runs across the top of the form every 5s ---------- */
+.gx-form-glint { position: relative; overflow: hidden; }
+.gx-form-glint::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #ff0ce1, #ffee06, #69d2ff, transparent);
+  transform: translateX(-100%);
+  animation: gx-top-run 5s var(--gx-ease-in-out) infinite;
+}
+
+/* ---------- R3  Request — lightning bolt flickers like a faulty neon ---------- */
+.gx-zap { display: inline-block; animation: gx-zap 3.6s steps(1) infinite; }
+
+/* ---------- R4  Request — perk rings ping outwards, 1s apart ---------- */
+.gx-perk-ring { position: relative; transition: transform 500ms var(--gx-ease-spring), background-color 400ms; }
+.gx-perk-ring::after {
+  content: ""; position: absolute; inset: -1.5px; border-radius: 50%;
+  border: 1.5px solid var(--gx-yellow); opacity: 0;
+  animation: gx-ping 3s ease-out infinite;
+  animation-delay: var(--gx-ping-delay, 0s);           /* 0s · 1s · 2s */
+}
+.gx-perk:hover .gx-perk-ring { transform: scale(1.08); background: rgba(255, 244, 0, .08); }
+
+/* ---------- R5  Request — "Select location on map" button ---------- */
+.gx-loc-btn { transition: border-color var(--gx-dur-fast), background-color var(--gx-dur-fast); }
+.gx-loc-btn svg { transition: transform 500ms var(--gx-ease-spring); }
+.gx-loc-btn:hover { border-color: var(--gx-yellow); background: rgba(255, 244, 0, .06); }
+.gx-loc-btn:hover svg { transform: translateY(-3px); }
+
+/* ---------- P1–P3  Regional map ---------------------------------------------
+   P1 photo slowly zooms (Ken Burns) 22s alternate
+   P2 city pins ping, two rings 1.3s apart, 2.6s loop
+   P3 email link arrow nudges on hover (gx-arrow-link)                       */
+.gx-ken-burns { animation: gx-ken-burns 22s var(--gx-ease-in-out) infinite alternate; }
+.gx-pin-ping { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: rgba(255, 250, 190, .9); box-shadow: 0 0 14px 4px rgba(255, 244, 0, .7); }
+.gx-pin-ping::before, .gx-pin-ping::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 1.5px solid var(--gx-yellow); animation: gx-ping 2.6s ease-out infinite; }
+.gx-pin-ping::after { animation-delay: 1.3s; }
+.gx-pin-ping--sm { width: 8px; height: 8px; margin: -4px 0 0 -4px; opacity: .85; }
+
+/* ---------- F1–F2  Final CTA panel ------------------------------------------
+   F1 a short brand-gradient arc travels around the border forever (6s)
+   F2 hover: a soft yellow light follows the cursor (pointer-spotlight.js)   */
+.gx-cta-panel { position: relative; overflow: hidden; isolation: isolate; }
+.gx-cta-panel::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity 500ms;
+  background: radial-gradient(520px circle at var(--gx-mx, 50%) var(--gx-my, 50%), rgba(255, 244, 0, .12), transparent 60%);
+}
+.gx-cta-panel:hover::before { opacity: 1; }
+.gx-cta-panel::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; z-index: -1; pointer-events: none;
+  background: conic-gradient(from var(--gx-angle, 0deg), transparent 0deg, #ff0ce1 18deg, #ffee06 40deg, #69d2ff 62deg, transparent 84deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: gx-border-spin var(--gx-loop-border) linear infinite;
+}
+
+/* ---------- K1  Contact cards ---------------------------------------------
+   Hover: card slides 6px right, border turns yellow, icon pops + tilts.   */
+.gx-contact-card { transition: border-color 350ms, transform 500ms var(--gx-ease-out), background-color 350ms; }
+.gx-contact-card svg { transition: transform 500ms var(--gx-ease-spring); }
+.gx-contact-card:hover { border-color: var(--gx-yellow); transform: translateX(6px); }
+.gx-contact-card:hover svg { transform: scale(1.15) rotate(-8deg); }

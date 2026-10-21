@@ -1,0 +1,56 @@
+/* ==========================================================================
+   G6  Page transition — "gradient wipe"
+   When the visitor moves to another page (Contact, Privacy, …) a full-screen
+   bar in the brand gradient sweeps in from the left, the GXPER mark appears
+   in the middle, the page content is swapped while the screen is covered,
+   then the bar leaves to the right.
+
+   Timeline (900ms total, ease-out):
+     0ms ──── 405ms   bar grows left → right (screen covered at 405ms)
+     315ms ── 540ms   logo fades + scales in
+     405ms ── 495ms   hold — page swap happens at 430ms (JS)
+     495ms ── 900ms   bar shrinks out to the right, logo fades out
+   ========================================================================== */
+.gx-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background: var(--gx-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.gx-wipe.is-running { animation: gx-wipe var(--gx-dur-slower) var(--gx-ease-out) both; }
+
+.gx-wipe__logo {                     /* centred GXPER mark (black, vertical) — an <img> inside .gx-wipe */
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 180px; height: 118px;
+  margin: -59px 0 0 -90px;
+  object-fit: contain;
+  opacity: 0;
+}
+.gx-wipe.is-running .gx-wipe__logo { animation: gx-wipe-mark var(--gx-dur-slower) var(--gx-ease-out) both; }
+
+@media (max-width: 760px) {
+  .gx-wipe__logo { width: 140px; height: 92px; margin: -46px 0 0 -70px; }
+}
+
+/* Inner-page heroes replay their entrance after a wipe (JS restarts them):
+   eyebrow tracks in, title lines rise, intro text fades up.               */
+.gx-page-hero__eyebrow { animation: gx-track-in 1.1s var(--gx-ease-out) .15s both; }
+.gx-page-hero__line { display: block; overflow: hidden; }
+.gx-page-hero__line > span { display: block; animation: gx-line-up var(--gx-dur-hero) var(--gx-ease-out) both; animation-delay: var(--gx-delay, .3s); }
+.gx-page-hero__intro { animation: gx-fade-up var(--gx-dur-slower) var(--gx-ease-out) .6s both; }
+
+/* Inner-page hero background: soft magenta/cyan glow with a drifting grid */
+.gx-page-hero__grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .5;
+  background: repeating-linear-gradient(90deg, rgba(255, 244, 0, .035) 0 1px, transparent 1px 80px);
+  -webkit-mask: radial-gradient(60% 80% at 30% 50%, #000, transparent);
+  mask: radial-gradient(60% 80% at 30% 50%, #000, transparent);
+  animation: gx-grid-drift 18s linear infinite;
+}

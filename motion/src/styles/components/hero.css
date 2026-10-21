@@ -1,0 +1,77 @@
+/* ==========================================================================
+   Hero — "Built for better competition."
+   Catalogue IDs: H1–H8
+   On load the hero plays a short choreography (total ≈ 2.3s), then three
+   ambient loops keep it alive: a light sweep, a running light on the
+   gradient rule, and floating sparks (canvas, sparks.js).
+   Scrolling down: text drifts up and fades, the photo moves slower
+   (parallax, hero-parallax.js).
+
+   Load choreography
+     0.00s  photo zooms from 112% → 100%            2.6s ease-out   (H1)
+     0.20s  eyebrow letter-spacing 14px → normal     1.2s ease-out   (H2)
+     0.35s  headline line 1 rises from below         1.0s ease-out   (H3)
+     0.50s  headline line 2 rises from below         1.0s ease-out   (H3)
+     0.70s  gradient rule draws left → right         1.6s ease-out   (H5)
+     0.75s  lead paragraph fades up 22px             0.9s ease-out   (H4)
+     0.90s  buttons fade up 22px                     0.9s ease-out   (H4)
+     1.60s  light sweep loop starts (every 7s)                       (H6)
+     2.40s  runner light starts on the rule (every 4.5s)             (H5)
+   ========================================================================== */
+.gx-hero { position: relative; overflow: hidden; }
+
+/* The photo is a real <img>/<picture> (better for loading speed, srcset and
+   the mobile crop). Do NOT pass image URLs through CSS custom properties:
+   browsers resolve url() inside var() relative to the stylesheet that uses
+   it, which breaks paths once the CSS is bundled. */
+.gx-hero__photo {                                   /* H1 */
+  position: absolute;
+  inset: -2%;                                       /* extra bleed so parallax never shows an edge */
+  width: 104%; height: 104%;
+  object-fit: cover;
+  object-position: center;
+  animation: gx-zoom-settle 2.6s var(--gx-ease-out) both;
+  will-change: transform;
+}
+@media (max-width: 760px) {
+  .gx-hero__photo { object-position: 72% center; }  /* keep the trophy in frame on phones */
+}
+
+.gx-hero__sweep {                                   /* H6 */
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 244, 0, .10) 48%, rgba(255, 244, 0, .02) 52%, transparent 60%);
+  background-size: 250% 100%;
+  animation: gx-sweep var(--gx-loop-sweep) var(--gx-ease-in-out) 1.6s infinite;
+}
+
+.gx-hero__sparks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; } /* H7 */
+
+.gx-hero__content { will-change: transform, opacity; }   /* moved by hero-parallax.js (H8) */
+.gx-hero__eyebrow { animation: gx-track-in 1.2s var(--gx-ease-out) .2s both; }
+.gx-hero__line { display: block; overflow: hidden; padding-bottom: .02em; }
+.gx-hero__line > span { display: block; animation: gx-line-up var(--gx-dur-hero) var(--gx-ease-out) both; }
+.gx-hero__line:nth-child(1) > span { animation-delay: .35s; }
+.gx-hero__line:nth-child(2) > span { animation-delay: .5s; }
+.gx-hero__lead { animation: gx-fade-up var(--gx-dur-slower) var(--gx-ease-out) .75s both; }
+.gx-hero__actions { animation: gx-fade-up var(--gx-dur-slower) var(--gx-ease-out) .9s both; }
+
+.gx-hero__rule {                                    /* H5 */
+  position: absolute;
+  height: 2px;
+  background: var(--gx-gradient);
+  transform-origin: left;
+  box-shadow: 0 0 18px rgba(255, 140, 120, .35);
+  animation: gx-draw-x 1.6s var(--gx-ease-out) .7s both;
+}
+.gx-hero__rule::after {                             /* the travelling light */
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 90px; height: 8px;
+  border-radius: 8px;
+  background: radial-gradient(closest-side, #fff, rgba(255, 244, 0, .8), transparent);
+  opacity: .9;
+  animation: gx-runner var(--gx-loop-runner) linear 2.4s infinite;
+}

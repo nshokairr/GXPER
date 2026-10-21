@@ -1,0 +1,86 @@
+/* ==========================================================================
+   GXPER — Motion tokens
+   Single source of truth for every duration, easing curve, distance and
+   stagger used by the website animations. Never hard-code these values in
+   components; reference the custom properties instead.
+
+   The same values are exported for JavaScript in motion-tokens.js.
+   Keep both files in sync.
+   ========================================================================== */
+
+:root {
+  /* ---------- Easing curves ---------------------------------------------
+     ease-out   Signature curve. Fast start, long soft landing. Used for
+                almost everything that ENTERS or MOVES (reveals, swaps,
+                page wipe, hovers).
+     spring     Small overshoot (~6%) then settles. Used for playful
+                feedback: icon pops, badges, modal entrance, pin drop.
+     in-out     Symmetric. Used only for ambient loops (breathing, floating)
+                so the motion never feels like it "starts" or "stops".
+     linear     Constant speed. Used for rotations and light sweeps that
+                loop forever (radar, rings, runner light).                */
+  --gx-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --gx-ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --gx-ease-in-out: ease-in-out;
+  --gx-ease-linear: linear;
+
+  /* ---------- Durations: interaction ----------------------------------- */
+  --gx-dur-instant: 200ms;   /* colour changes, link colour              */
+  --gx-dur-fast: 300ms;      /* hover border/colour, menu fade           */
+  --gx-dur-quick: 350ms;     /* button lift, arrow nudge, social icons   */
+  --gx-dur-base: 450ms;      /* nav underline, overlay fade              */
+  --gx-dur-medium: 550ms;    /* metric tile fill, menu links             */
+  --gx-dur-slow: 700ms;      /* modal rise, button shine, card bar       */
+  --gx-dur-slower: 900ms;    /* scroll reveal, page wipe, ghost number   */
+  --gx-dur-hero: 1000ms;     /* headline line-up, number roll            */
+
+  /* ---------- Durations: ambient loops --------------------------------- */
+  --gx-loop-blink: 2.4s;     /* market dot                               */
+  --gx-loop-ping: 3.2s;      /* orbit ripple                             */
+  --gx-loop-glow: 3.2s;      /* journey glow                             */
+  --gx-loop-float: 4s;       /* journey visual hover                     */
+  --gx-loop-breathe: 4.5s;   /* orbit halo, logo glow                    */
+  --gx-loop-runner: 4.5s;    /* hero rule light                          */
+  --gx-loop-bob: 6s;         /* app phones                               */
+  --gx-loop-border: 6s;      /* final CTA rotating border                */
+  --gx-loop-sweep: 7s;       /* hero light sweep                         */
+  --gx-loop-radar: 9s;       /* orbit radar sweep                        */
+  --gx-loop-orbit: 16s;      /* orbit satellite                          */
+  --gx-loop-pan: 26s;        /* request map slow pan                     */
+
+  /* ---------- Journey ---------------------------------------------------- */
+  --gx-journey-step: 5200ms; /* time each step is shown before advancing  */
+  --gx-journey-swap: 380ms;  /* moment the new text is written in         */
+
+  /* ---------- Distances ------------------------------------------------- */
+  --gx-shift-xs: 2px;        /* button lift                               */
+  --gx-shift-sm: 4px;        /* card lift, arrow nudge                    */
+  --gx-shift-md: 16px;       /* menu links, journey description           */
+  --gx-shift-reveal: 34px;   /* scroll reveal travel                      */
+  --gx-shift-mask: 24px;     /* masked heading travel                     */
+  --gx-shift-phone: 90px;    /* phone mock entrance travel                */
+
+  /* ---------- Stagger --------------------------------------------------- */
+  --gx-stagger-tight: 50ms;  /* menu links                                */
+  --gx-stagger: 80ms;        /* cards, list rows                          */
+  --gx-stagger-loose: 150ms; /* phones, perks                             */
+
+  /* ---------- Brand values used by motion ------------------------------- */
+  --gx-yellow: #fff400;
+  --gx-magenta: #eb008b;
+  --gx-cyan: #69d2ff;
+  --gx-ink: #0f0d0c;
+  --gx-gradient: linear-gradient(90deg, #ff0ce1 0%, #ff945d 25%, #ffee06 45%, #d0e950 60%, #8ddac0 80%, #69d2ff 100%);
+
+  /* ---------- Layout values the motion depends on ----------------------- */
+  --gx-header-h: 82px;       /* anchor scroll offset + progress bar top   */
+}
+
+/* Phones get slightly shorter travel so motion never feels heavy on a small screen */
+@media (max-width: 760px) {
+  :root {
+    --gx-shift-reveal: 24px;
+    --gx-shift-phone: 48px;
+    --gx-header-h: 72px;
+  }
+}

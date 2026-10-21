@@ -1,0 +1,29 @@
+/* ==========================================================================
+   Reduced motion — REQUIRED, do not remove
+   Visitors who switched on "Reduce motion" in their phone / computer
+   settings get a calm version of the site:
+     • every animation and transition finishes instantly
+     • nothing is hidden waiting for a scroll reveal
+     • decorative loops (light sweeps, scan lines, radar, runner light,
+       form glint) are removed entirely
+     • the JS modules also skip parallax, sparks, confetti, the journey
+       auto-play and the page wipe (see src/js/core/env.js)
+   Hover colour changes still happen — they are feedback, not decoration.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-gx-reveal].is-pending,
+  [data-gx-roll].is-pending > span,
+  .gx-orbit.is-pending .gx-orbit__label { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .gx-orbit.is-pending .gx-orbit__label-bar { transform: none !important; }
+  .gx-hero__sweep,
+  .gx-hero__rule::after,
+  .gx-journey__grid::after,
+  .gx-orbit__sweep,
+  .gx-form-glint::before { display: none !important; }
+}

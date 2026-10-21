@@ -1,0 +1,57 @@
+/* ==========================================================================
+   G7  Scroll reveal system
+   Add data-gx-reveal to anything that should animate in when it scrolls
+   into view. reveal.js adds .is-pending to elements that start BELOW the
+   fold and removes it when they enter the viewport. Elements already on
+   screen at page load are never hidden (no flash, no layout jump).
+
+   Variants (value of data-gx-reveal):
+     (empty)  fade + rise 34px (24px on phones)            900ms ease-out
+     "mask"   headline wipes up from its baseline + 24px   900ms / 1000ms clip
+     "line"   horizontal line draws left → right           900ms
+     "phone"  phone mock rises 90px (48px on phones) and
+              un-tilts from -5°                            900ms
+     "divider" bottom border draws in (legal sections)     1100ms, 150ms delay
+
+   Stagger: set style="--gx-delay: .08s" (or use data-gx-stagger on a parent,
+   see reveal.js) — 80ms between siblings is the standard.
+   ========================================================================== */
+[data-gx-reveal] {
+  transition:
+    opacity var(--gx-dur-slower) var(--gx-ease-out),
+    transform var(--gx-dur-slower) var(--gx-ease-out),
+    clip-path var(--gx-dur-hero) var(--gx-ease-out);
+  transition-delay: var(--gx-delay, 0s);
+}
+[data-gx-reveal].is-pending { opacity: 0; transform: translateY(var(--gx-shift-reveal)); }
+
+/* Masked headline. The visible area is never fully 0 (97% clipped) so the
+   IntersectionObserver can still "see" the element — a fully clipped
+   element reports zero size and would never reveal. */
+[data-gx-reveal="mask"] { clip-path: inset(-10% -5% -10% -5%); }
+[data-gx-reveal="mask"].is-pending { opacity: 1; transform: translateY(var(--gx-shift-mask)); clip-path: inset(0 0 97% 0); }
+
+[data-gx-reveal="line"] { transform-origin: left; }
+/* scaleX(.02) not 0 — a zero-width element can never be "seen" by the observer */
+[data-gx-reveal="line"].is-pending { opacity: 1; transform: scaleX(.02); }
+
+[data-gx-reveal="phone"].is-pending { opacity: 0; transform: translateY(var(--gx-shift-phone)) rotate(-5deg); }
+
+[data-gx-reveal="divider"] { position: relative; transition: none; }
+[data-gx-reveal="divider"]::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, .14);
+  transform-origin: left;
+  transition: transform 1.1s var(--gx-ease-out) .15s;
+}
+[data-gx-reveal="divider"].is-pending { opacity: 1; transform: none; }
+[data-gx-reveal="divider"].is-pending::after { transform: scaleX(0); }
+
+/* G8  Number roll — the big "01" next to Mission / Vision rolls up into
+   its slot. Markup: <span data-gx-roll><span>01</span></span>            */
+[data-gx-roll] { display: block; overflow: hidden; height: 1.2em; }
+[data-gx-roll] > span { display: block; transition: transform var(--gx-dur-hero) var(--gx-ease-out); }
+[data-gx-roll].is-pending > span { transform: translateY(100%); }

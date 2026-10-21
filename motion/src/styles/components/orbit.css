@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Player identity orbit — "Every match should mean something."
+   Catalogue IDs: O1–O8
+
+   Built on a fixed 670 × 650 canvas and scaled as one piece so the geometry
+   never drifts (orbit.js sets --gx-orbit-scale = container width / 670).
+
+   Ambient loops (always running while visible)
+     O1  radar sweep: yellow cone rotates             9s   linear
+     O2  middle ring rotates                          70s  linear
+     O3  halo breathes (scale 1.08, fades to 75%)     4.5s ease-in-out
+     O4  two ripples ping out from the hub, 1.6s apart  3.2s ease-out
+     O5  GXPER mark glows magenta and back            4.5s ease-in-out
+     O6  target satellite orbits the hub; it counter-rotates so the icon
+         stays upright                                 16s  linear
+
+   Entrance (when 30% of the orbit is on screen)
+     O7  the four labels (GROW / EARN / CLIMB / BUILD) slide in from the
+         centre direction and fade up                 800ms / 900ms ease-out
+     O8  each label's yellow bar grows downward, 250ms after its label
+         stagger: 100ms · 250ms · 400ms · 550ms
+   ========================================================================== */
+.gx-orbit-box { position: relative; width: 100%; max-width: 670px; aspect-ratio: 670 / 650; margin-inline: auto; }
+.gx-orbit { position: absolute; left: 0; top: 0; width: 670px; height: 650px; transform: scale(var(--gx-orbit-scale, 1)); transform-origin: top left; }
+.gx-orbit > * { position: absolute; }
+
+.gx-orbit__sweep {                                                                       /* O1 */
+  left: 335px; top: 325px; width: 1100px; height: 1100px; margin: -550px 0 0 -550px; border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(255, 244, 0, .16), rgba(255, 244, 0, 0) 50deg, transparent 360deg);
+  -webkit-mask: radial-gradient(closest-side, #000 40%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 40%, transparent 100%);
+  animation: gx-spin var(--gx-loop-radar) linear infinite;
+}
+.gx-orbit__ring-mid { animation: gx-spin 70s linear infinite; }                         /* O2 */
+.gx-orbit__halo { animation: gx-breathe var(--gx-loop-breathe) var(--gx-ease-in-out) infinite; }   /* O3 */
+.gx-orbit__ping {                                                                        /* O4 */
+  border-radius: 50%; border: 1.5px solid rgba(255, 244, 0, .55); opacity: 0;
+  animation: gx-ping var(--gx-loop-ping) ease-out infinite;
+}
+.gx-orbit__ping--late { animation-delay: 1.6s; }
+.gx-orbit__mark { animation: gx-logo-glow var(--gx-loop-breathe) var(--gx-ease-in-out) infinite; }  /* O5 */
+.gx-orbit__path { left: 335px; top: 325px; width: 0; height: 0; animation: gx-orbit-path var(--gx-loop-orbit) linear infinite; }  /* O6 */
+.gx-orbit__satellite { position: absolute; left: 123px; top: -27px; animation: gx-orbit-badge var(--gx-loop-orbit) linear infinite; }
+
+.gx-orbit__label {                                                                       /* O7 */
+  overflow: hidden;
+  transition: opacity 800ms var(--gx-ease-out), transform 900ms var(--gx-ease-out);
+  transition-delay: var(--gx-delay, 0s);
+}
+.gx-orbit__label-bar {                                                                   /* O8 */
+  position: absolute; left: 0; top: 6px; width: 3px; height: 58px; background: var(--gx-yellow);
+  transform-origin: top;
+  transition: transform 800ms var(--gx-ease-out);
+  transition-delay: calc(var(--gx-delay, 0s) + 250ms);
+}
+.gx-orbit.is-pending .gx-orbit__label { opacity: 0; transform: translate(var(--gx-from-x, 0), var(--gx-from-y, 0)); }
+.gx-orbit.is-pending .gx-orbit__label-bar { transform: scaleY(0); }
+
+/* Pause loops when off-screen (set by orbit.js) */
+.gx-orbit.is-offscreen *, .gx-orbit.is-offscreen { animation-play-state: paused !important; }

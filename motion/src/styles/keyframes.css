@@ -1,0 +1,81 @@
+/* ==========================================================================
+   GXPER — Keyframes library
+   Every @keyframes used on the site lives here, named gx-<what-it-does>.
+   Components only reference them; they never define their own.
+   ========================================================================== */
+
+/* ---------- Entrances --------------------------------------------------- */
+@keyframes gx-slide-down-in { from { transform: translateY(-100%); } }                 /* header on load        */
+@keyframes gx-line-up       { from { transform: translateY(105%); } }                  /* headline lines        */
+@keyframes gx-fade-up       { from { opacity: 0; transform: translateY(22px); } }       /* hero lead + buttons   */
+@keyframes gx-track-in      { from { letter-spacing: 14px; opacity: 0; } }             /* eyebrow labels        */
+@keyframes gx-draw-x        { from { transform: scaleX(0); } }                         /* gradient rules        */
+@keyframes gx-zoom-settle   { from { transform: scale(1.12); } to { transform: scale(1); } } /* hero photo     */
+@keyframes gx-menu-item-in  { from { opacity: 0; transform: translateY(16px); } }      /* mobile menu links     */
+
+/* ---------- Page transition --------------------------------------------- */
+@keyframes gx-wipe {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  45%  { transform: scaleX(1); transform-origin: left; }   /* screen fully covered */
+  55%  { transform: scaleX(1); transform-origin: right; }  /* hold while page swaps */
+  100% { transform: scaleX(0); transform-origin: right; }  /* exits to the right    */
+}
+@keyframes gx-wipe-mark {
+  0%, 100% { opacity: 0; transform: scale(.6); }
+  35%, 60% { opacity: .9; transform: scale(1); }
+}
+
+/* ---------- Ambient loops ------------------------------------------------ */
+@keyframes gx-sweep       { 0% { background-position: 120% 0; } 60%, 100% { background-position: -60% 0; } }
+@keyframes gx-runner      { from { left: -90px; } to { left: 100%; } }
+@keyframes gx-bob         { 50% { transform: translateY(-12px); } }
+@keyframes gx-float       { 50% { transform: translateY(-8px); } }
+@keyframes gx-blink       { 50% { opacity: .25; } }
+@keyframes gx-glow-pulse  { 50% { transform: scale(1.08); opacity: .8; } }
+@keyframes gx-breathe     { 50% { transform: scale(1.08); opacity: .75; } }
+@keyframes gx-spin        { to { transform: rotate(360deg); } }
+@keyframes gx-ping        { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(2.1); opacity: 0; } }
+@keyframes gx-halo-pulse  { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes gx-scan        { to { top: 100%; } }
+@keyframes gx-slow-pan    { to { transform: scale(1.08) translateX(-1.5%); } }
+@keyframes gx-ken-burns   { to { transform: scale(1.07) translate(-1%, -1%); } }
+@keyframes gx-top-run     { 60%, 100% { transform: translateX(100%); } }
+@keyframes gx-grid-drift  { to { background-position: 80px 0; } }
+@keyframes gx-logo-glow   { 50% { filter: drop-shadow(0 0 14px rgba(235, 0, 139, .45)); } }
+@keyframes gx-icon-glow   { 50% { box-shadow: 0 0 16px rgba(255, 244, 0, .4); border-color: rgba(255, 244, 0, .8); background-color: rgba(255, 244, 0, .12); } }
+@keyframes gx-rule-redraw { 0% { transform: scaleX(0); } 18%, 100% { transform: scaleX(1); } }
+@keyframes gx-tilt        { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+
+/* Spotlight flicker on the journey background (the warm hue-rotate keeps
+   the photo on-brand yellow instead of the original lime) */
+@keyframes gx-spotlight {
+  0%, 100% { filter: hue-rotate(-20deg) saturate(1.08) brightness(1); }
+  42%      { filter: hue-rotate(-20deg) saturate(1.08) brightness(1.12) saturate(1.1); }
+  46%      { filter: hue-rotate(-20deg) saturate(1.08) brightness(.92); }
+  50%      { filter: hue-rotate(-20deg) saturate(1.08) brightness(1.08); }
+}
+
+/* Neon sign switching on — stepped so it feels electrical, not smooth */
+@keyframes gx-neon-on {
+  0% { opacity: .2; } 10% { opacity: 1; } 18% { opacity: .35; } 26% { opacity: 1; }
+  40% { opacity: .6; } 48%, 100% { opacity: 1; }
+}
+@keyframes gx-zap { 0%, 100% { opacity: 1; } 91% { opacity: .25; } 93% { opacity: 1; } 95% { opacity: .4; } }
+
+/* Orbit satellite: the path rotates one way, the badge counter-rotates so
+   the icon always stays upright */
+@keyframes gx-orbit-path  { from { transform: rotate(74.5deg); }  to { transform: rotate(434.5deg); } }
+@keyframes gx-orbit-badge { from { transform: rotate(-74.5deg); } to { transform: rotate(-434.5deg); } }
+
+/* Rotating conic border on the final CTA (needs @property --gx-angle) */
+@property --gx-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes gx-border-spin { to { --gx-angle: 360deg; } }
+
+/* ---------- Feedback ---------------------------------------------------- */
+@keyframes gx-shake    { 25% { transform: translateX(-6px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+@keyframes gx-load-bar { to { width: 100%; } }
+@keyframes gx-pin-drop { from { transform: translateY(-26px) scale(.8); } }
+@keyframes gx-ripple   { to { transform: scale(7); opacity: 0; } }
+@keyframes gx-spin-in  { from { transform: rotate(-120deg) scale(.6); opacity: 0; } }
+@keyframes gx-pop      { from { transform: scale(0); } }
+@keyframes gx-check    { to { stroke-dashoffset: 0; } }

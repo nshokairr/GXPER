@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GXPER Motion Demo</title>
+<!-- Demo layout first, motion styles second (motion media queries must win) -->
+<link rel="stylesheet" href="demo-layout.css">
+<link rel="stylesheet" href="../dist/gxper-motion.css">
+</head>
+<body>
+
+<!-- ============ HEADER  (G2 nav underline · G3 header slide · G4 progress · G10 menu) ============ -->
+<header class="gx-header" id="top">
+  <a class="gx-logo" href="#top" aria-label="GXPER home"><img src="assets/brand/gxper-h-gradient.svg" alt="GXPER — Play, Earn, Rank" width="213" height="32"></a>
+  <nav class="nav" aria-label="Main">
+    <a class="gx-nav-link" href="#top">Home</a>
+    <a class="gx-nav-link" href="#about">About Us</a>
+    <a class="gx-nav-link" href="#app">The App</a>
+    <a class="gx-nav-link" href="#contact" data-demo-page="contact">Contact Us</a>
+  </nav>
+  <a class="gx-btn gx-btn--sm hdr-cta" href="#request">Request a Tournament <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+  <button class="gx-burger" data-gx-menu-toggle aria-controls="menu" aria-expanded="false" aria-label="Menu"><span></span></button>
+</header>
+<div class="gx-progress" data-gx-progress></div>
+<nav class="gx-menu" id="menu" aria-label="Menu">
+  <p class="eyebrow">MENU</p>
+  <a class="gx-menu__link" href="#top" aria-current="true">Home</a>
+  <a class="gx-menu__link" href="#about">About Us</a>
+  <a class="gx-menu__link" href="#app">The App</a>
+  <a class="gx-menu__link" href="#contact" data-demo-page="contact">Contact Us</a>
+  <a class="gx-btn gx-btn--wide" href="#request">Request a Tournament <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+</nav>
+
+<main id="page-home">
+
+<!-- ============ HERO  (H1–H8) ============ -->
+<section class="gx-hero">
+  <span class="tag-id">H1–H8 · hero.css · sparks.js · scroll-effects.js</span>
+  <picture>
+    <source media="(max-width: 760px)" srcset="assets/hero-arena-m.jpg">
+    <img class="gx-hero__photo" data-gx-hero-photo src="assets/hero-arena.jpg" alt="" fetchpriority="high">
+  </picture>
+  <canvas class="gx-hero__sparks" data-gx-sparks></canvas>
+  <div class="hero-vig"></div>
+  <div class="gx-hero__sweep"></div>
+  <div class="gx-hero__content" data-gx-hero-content>
+    <p class="eyebrow gx-hero__eyebrow">COMPETITION, CONNECTED.</p>
+    <h1 class="d"><span class="gx-hero__line"><span>BUILT FOR</span></span><span class="gx-hero__line"><span class="y">BETTER COMPETITION.</span></span></h1>
+    <p class="gx-hero__lead">We’re building a smarter way to run tournaments, connect players, and manage every stage of competition — from registration to the final result.</p>
+    <div class="gx-hero__actions">
+      <a class="gx-btn" href="#journey">Explore Tournaments <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+      <a class="gx-btn gx-btn--ghost" href="#request">Join the Competition <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+  <div class="gx-hero__rule"></div>
+</section>
+
+<!-- ============ APP SHOWCASE  (A1–A6) ============ -->
+<section class="app band" id="app">
+  <span class="tag-id">A1–A6 · app-showcase.css</span>
+  <div class="in row">
+    <div class="app-copy">
+      <p class="eyebrow" data-gx-reveal>THE COMPETITION IN YOUR POCKET</p>
+      <p class="d h68" data-gx-reveal="mask">ONE PROFILE.</p>
+      <p class="d h68 y" data-gx-reveal="mask" style="--gx-delay:.1s">EVERY MATCH.</p>
+      <p class="muted" data-gx-reveal style="--gx-delay:.2s">Discover tournaments, follow live brackets, and carry your competitive history wherever you play.</p>
+      <div class="badges" data-gx-reveal style="--gx-delay:.3s">
+        <a class="gx-badge" href="https://www.apple.com/app-store/" target="_blank" rel="noopener"><img src="assets/badge-appstore.svg" alt="Download on the App Store"></a>
+        <a class="gx-badge" href="https://play.google.com/store/apps" target="_blank" rel="noopener"><img src="assets/badge-googleplay.svg" alt="Get it on Google Play"></a>
+      </div>
+    </div>
+    <div class="gx-phones" data-gx-stagger=".15">
+      <div class="gx-phone" data-gx-reveal="phone" data-gx-parallax="-0.06"><div class="gx-phone__parallax"><div class="gx-phone__float"><img src="assets/phone-home.webp" alt="App home screen" width="269" height="533"></div></div></div>
+      <div class="gx-phone" data-gx-reveal="phone" data-gx-parallax="0.04"><div class="gx-phone__parallax"><div class="gx-phone__float"><img src="assets/phone-leaderboard.webp" alt="Leaderboard screen" width="270" height="533"></div></div></div>
+      <div class="gx-phone" data-gx-reveal="phone" data-gx-parallax="-0.03"><div class="gx-phone__parallax"><div class="gx-phone__float"><img src="assets/phone-profile.webp" alt="Profile screen" width="269" height="533"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT  (G7 reveal · G8 number roll · B1 blink) ============ -->
+<section class="band" id="about" style="padding-block:110px">
+  <span class="tag-id">G7 · G8 · B1 · reveal.js</span>
+  <div class="in" style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:40px">
+    <div><span class="d y" style="font-size:90px" data-gx-roll><span>01</span></span><p class="eyebrow" style="font-size:11px">OUR MISSION</p></div>
+    <div>
+      <h2 class="d" style="font-size:clamp(36px,4.3vw,62px)" data-gx-reveal="mask">MAKING EVERY COMPETITION EASIER TO RUN — AND BETTER TO PLAY.</h2>
+      <div style="height:2px;width:120px;background:var(--gx-gradient);margin:24px 0" data-gx-reveal="line"></div>
+      <p class="muted" data-gx-reveal>Our mission is to remove the complexity behind tournament management while creating an experience players actually enjoy.</p>
+      <p class="muted" style="margin-top:16px;font-size:12px;letter-spacing:1.6px">LAUNCHING ACROSS &nbsp; SAUDI ARABIA <span class="gx-blink y">•</span> UNITED ARAB EMIRATES</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY  (J1–J8) ============ -->
+<section class="gx-journey" id="journey" data-gx-journey aria-label="The tournament journey">
+  <span class="tag-id">J1–J8 · journey.css · journey.js</span>
+  <img class="gx-journey__bg" src="assets/journey-arena.jpg" alt="">
+  <div class="gx-journey__shade"></div>
+  <div class="gx-journey__grid"></div>
+  <div class="j-body">
+    <div class="j-copy">
+      <div class="gx-journey__ghost" aria-hidden="true"><span data-gx-journey-ghost>01</span></div>
+      <p class="eyebrow j-eyebrow">THE TOURNAMENT JOURNEY <i class="gx-journey__rule"></i></p>
+      <p class="gx-journey__title" data-gx-journey-title aria-live="polite">CHOOSE THE GAME</p>
+      <p class="gx-journey__desc" data-gx-journey-desc>Pick the game and format that fits your community.</p>
+    </div>
+    <div class="gx-journey__stage">
+      <div class="gx-journey__glow"></div>
+      <div class="gx-journey__visual" data-gx-journey-visual><img class="j-set gx-journey__float" src="assets/gaming-set.webp" alt="" width="555" height="211"></div>
+      <div class="gx-journey__visual is-hidden" data-gx-journey-visual><i class="gx-journey__ring gx-journey__ring--a"></i><i class="gx-journey__ring gx-journey__ring--b"></i><div class="gx-journey__float"><svg viewBox="0 0 57 66" width="57" height="66"><g filter="url(#jf1)"><path d="M45.5166 28.1834C45.5166 39.0168 28.1833 54.1834 28.1833 54.1834C28.1833 54.1834 10.85 39.0168 10.85 28.1834C10.85 23.5863 12.6762 19.1775 15.9268 15.9269C19.1774 12.6763 23.5862 10.8501 28.1833 10.8501C32.7804 10.8501 37.1892 12.6763 40.4398 15.9269C43.6905 19.1775 45.5166 23.5863 45.5166 28.1834Z" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M28.1833 33.6002C31.1749 33.6002 33.6 31.1751 33.6 28.1835C33.6 25.192 31.1749 22.7668 28.1833 22.7668C25.1918 22.7668 22.7667 25.192 22.7667 28.1835C22.7667 31.1751 25.1918 33.6002 28.1833 33.6002Z" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g><defs><filter id="jf1" x="-7.8" y="-3.5" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+      <div class="gx-journey__visual is-hidden" data-gx-journey-visual><i class="gx-journey__ring gx-journey__ring--a"></i><i class="gx-journey__ring gx-journey__ring--b"></i><div class="gx-journey__float"><svg viewBox="0 0 70 55" width="70" height="55"><g filter="url(#jf2)" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M34.6833 23.8501C38.2731 23.8501 41.1833 20.9399 41.1833 17.3501C41.1833 13.7602 38.2731 10.8501 34.6833 10.8501C31.0934 10.8501 28.1833 13.7602 28.1833 17.3501C28.1833 20.9399 31.0934 23.8501 34.6833 23.8501Z"/><path d="M19.5166 26.0168C21.9099 26.0168 23.85 24.0767 23.85 21.6834C23.85 19.2902 21.9099 17.3501 19.5166 17.3501C17.1234 17.3501 15.1833 19.2902 15.1833 21.6834C15.1833 24.0767 17.1234 26.0168 19.5166 26.0168Z"/><path d="M49.85 26.0168C52.2432 26.0168 54.1833 24.0767 54.1833 21.6834C54.1833 19.2902 52.2432 17.3501 49.85 17.3501C47.4568 17.3501 45.5167 19.2902 45.5167 21.6834C45.5167 24.0767 47.4568 26.0168 49.85 26.0168Z"/><path d="M21.6833 43.35C21.6833 34.6833 26.0166 28.1833 34.6833 28.1833C43.35 28.1833 47.6833 34.6833 47.6833 43.35M10.85 43.35C10.85 36.85 13.0166 32.5167 19.5166 30.35M58.5166 43.35C58.5166 36.85 56.35 32.5167 49.85 30.35"/></g><defs><filter id="jf2" x="-1.3" y="-10" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+      <div class="gx-journey__visual is-hidden" data-gx-journey-visual><i class="gx-journey__ring gx-journey__ring--a"></i><i class="gx-journey__ring gx-journey__ring--b"></i><div class="gx-journey__float"><svg viewBox="0 0 57 59" width="57" height="59"><g filter="url(#jf3)" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5166 10.8501H36.8499V21.6834C36.8499 23.982 35.9368 26.1864 34.3115 27.8117C32.6862 29.437 30.4818 30.3501 28.1833 30.3501C25.8847 30.3501 23.6803 29.437 22.055 27.8117C20.4297 26.1864 19.5166 23.982 19.5166 21.6834V10.8501Z"/><path d="M19.5166 15.1833H10.85V19.5167C10.85 21.8152 11.7631 24.0196 13.3884 25.6449C15.0137 27.2703 17.2181 28.1834 19.5166 28.1834M36.85 15.1833H45.5166V19.5167C45.5166 21.8152 44.6035 24.0196 42.9782 25.6449C41.3529 27.2703 39.1485 28.1834 36.85 28.1834M28.1833 30.35V41.1834M19.5166 47.6834H36.85M21.6833 41.1834H34.6833"/></g><defs><filter id="jf3" x="-7.8" y="-7.8" width="72" height="72" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 1 0 0 0 0 0.957 0 0 0 0 0 0 0 0 0.9 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg></div></div>
+    </div>
+  </div>
+  <div class="j-tl-wrap">
+    <div class="gx-journey__timeline" role="tablist" aria-label="Journey steps">
+      <div class="gx-journey__track"><div class="gx-journey__progress" data-gx-journey-progress></div></div>
+      <button class="gx-journey__step" role="tab" data-gx-journey-step data-title="CHOOSE THE GAME" data-desc="Pick the game and format that fits your community."><span class="gx-journey__num">01</span><span class="gx-journey__label">Choose the game</span><span class="gx-journey__node"></span></button>
+      <button class="gx-journey__step" role="tab" data-gx-journey-step data-title="SET THE LOCATION" data-desc="Choose your city and venue, or host it online."><span class="gx-journey__num">02</span><span class="gx-journey__label">Set the location</span><span class="gx-journey__node"></span></button>
+      <button class="gx-journey__step" role="tab" data-gx-journey-step data-title="RALLY THE PLAYERS" data-desc="Open registration and bring your community together."><span class="gx-journey__num">03</span><span class="gx-journey__label">Rally the players</span><span class="gx-journey__node"></span></button>
+      <button class="gx-journey__step" role="tab" data-gx-journey-step data-title="ENTER THE ARENA" data-desc="Go live, compete, and create unforgettable moments."><span class="gx-journey__num">04</span><span class="gx-journey__label">Enter the arena</span><span class="gx-journey__node"></span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITIES  (C1–C4) ============ -->
+<section class="caps band">
+  <span class="tag-id">C1–C4 · capabilities.css · pointer-spotlight.js</span>
+  <div class="in">
+    <p class="eyebrow" data-gx-reveal>WHAT WE DO</p>
+    <p class="d h68" data-gx-reveal="mask">ONE ECOSYSTEM.</p>
+    <p class="d h68 y" data-gx-reveal="mask" style="--gx-delay:.1s">EVERY SIDE OF PLAY.</p>
+    <div class="cards" data-gx-stagger=".08">
+      <article class="gx-card" data-gx-reveal data-gx-spotlight style="--gx-row:0">
+        <div class="card-top"><span class="no">01</span><span class="gx-card__icon-box"><svg class="gx-card__icon"><use href="#i-game"/></svg></span></div>
+        <div><p class="tg">FORMAT / BRACKETS / RESULTS</p><h3 class="d">RUN TOURNAMENTS</h3><p class="b muted">Create and manage tournaments, registrations, matches, brackets, standings, referees, and results from one platform.</p></div>
+        <i class="gx-card__bar"></i>
+      </article>
+      <article class="gx-card" data-gx-reveal data-gx-spotlight style="--gx-row:1">
+        <div class="card-top"><span class="no">02</span><span class="gx-card__icon-box"><svg class="gx-card__icon"><use href="#i-game"/></svg></span></div>
+        <div><p class="tg">PROFILE / MATCHES / HISTORY</p><h3 class="d">CONNECT PLAYERS</h3><p class="b muted">Give players a central profile where they can join competitions, follow upcoming matches, and track their tournament history.</p></div>
+        <i class="gx-card__bar"></i>
+      </article>
+      <article class="gx-card" data-gx-reveal data-gx-spotlight style="--gx-row:2">
+        <div class="card-top"><span class="no">03</span><span class="gx-card__icon-box"><svg class="gx-card__icon"><use href="#i-game"/></svg></span></div>
+        <div><p class="tg">RANK / XP / ACHIEVEMENTS</p><h3 class="d">TRACK PROGRESS</h3><p class="b muted">Rankings, XP, levels, statistics, and achievements turn every competition into part of a player's journey.</p></div>
+        <i class="gx-card__bar"></i>
+      </article>
+      <article class="gx-card" data-gx-reveal data-gx-spotlight style="--gx-row:3">
+        <div class="card-top"><span class="no">04</span><span class="gx-card__icon-box"><svg class="gx-card__icon"><use href="#i-game"/></svg></span></div>
+        <div><p class="tg">CONTROL / INSIGHT / SCALE</p><h3 class="d">POWER ORGANIZATIONS</h3><p class="b muted">Give organizers and partners the visibility and control they need to manage tournaments at scale.</p></div>
+        <i class="gx-card__bar"></i>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ORBIT  (O1–O8) ============ -->
+<section class="philo">
+  <span class="tag-id">O1–O8 · orbit.css · orbit.js</span>
+  <div>
+    <p class="eyebrow" data-gx-reveal>PLATFORM PHILOSOPHY</p>
+    <h2 class="d" style="font-size:clamp(52px,6.4vw,92px);margin-top:12px" data-gx-reveal="mask">EVERY MATCH SHOULD MEAN SOMETHING.</h2>
+    <p class="muted" style="margin-top:20px" data-gx-reveal>Every tournament contributes to a player's record, ranking, XP, level and history.</p>
+  </div>
+  <div class="gx-orbit-box" data-gx-orbit-box>
+    <div class="gx-orbit" data-gx-orbit>
+      <div class="gx-orbit__sweep"></div>
+      <svg style="left:25px;top:15px;width:620px;height:620px" viewBox="0 0 620 620" aria-hidden="true"><circle cx="310" cy="310" r="309.5" fill="none" stroke="#fff400" stroke-opacity=".2"/></svg>
+      <img class="gx-orbit__ring-mid" style="left:120px;top:110px;width:430px;height:430px" src="assets/orbit-ring2.png" alt="">
+      <svg style="left:220px;top:210px;width:230px;height:230px" viewBox="0 0 230 230" aria-hidden="true"><circle cx="115" cy="115" r="114.5" fill="none" stroke="#fff400" stroke-opacity=".28"/></svg>
+      <svg class="gx-orbit__halo" style="left:170px;top:160px;width:330px;height:330px" viewBox="0 0 330 330" aria-hidden="true"><circle cx="165" cy="165" r="165" fill="url(#oh)"/><defs><radialGradient id="oh" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(165 165) scale(330)"><stop stop-color="#fff400" stop-opacity="0.34"/><stop offset="1" stop-color="#fff400" stop-opacity="0"/></radialGradient></defs></svg>
+      <i class="gx-orbit__ping" style="left:247px;top:237px;width:176px;height:176px"></i>
+      <i class="gx-orbit__ping gx-orbit__ping--late" style="left:247px;top:237px;width:176px;height:176px"></i>
+      <svg style="left:247px;top:237px;width:176px;height:176px" viewBox="0 0 176 176" aria-hidden="true"><circle cx="88" cy="88" r="88" fill="#141110" fill-opacity=".96"/><circle cx="88" cy="88" r="87.25" fill="none" stroke="#fff400" stroke-opacity=".62" stroke-width="1.5"/></svg>
+      <img class="gx-orbit__mark" style="left:277px;top:287px;width:116px;height:76px" src="assets/brand/gxper-v-gradient.svg" alt="GXPER">
+      <div class="gx-orbit__path"><div class="gx-orbit__satellite"><svg width="28" height="28"><use href="#i-target"/></svg></div></div>
+      <div class="gx-orbit__label" style="left:70px;top:125px;--gx-from-x:80px;--gx-from-y:60px;--gx-delay:.1s"><i class="gx-orbit__label-bar"></i><span class="k">RANK</span><span class="v">GROW</span></div>
+      <div class="gx-orbit__label" style="left:520px;top:185px;--gx-from-x:-80px;--gx-from-y:40px;--gx-delay:.25s"><i class="gx-orbit__label-bar"></i><span class="k">XP</span><span class="v">EARN</span></div>
+      <div class="gx-orbit__label" style="left:20px;top:440px;--gx-from-x:80px;--gx-from-y:-40px;--gx-delay:.4s"><i class="gx-orbit__label-bar"></i><span class="k">LEVEL</span><span class="v">CLIMB</span></div>
+      <div class="gx-orbit__label" style="left:480px;top:470px;--gx-from-x:-80px;--gx-from-y:-60px;--gx-delay:.55s"><i class="gx-orbit__label-bar"></i><span class="k">HISTORY</span><span class="v">BUILD</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METRICS  (M1) ============ -->
+<section class="m-grid">
+  <div class="gx-metric" data-gx-reveal><span class="gx-metric__num">01</span><span class="gx-metric__title">Tournaments hosted</span></div>
+  <div class="gx-metric" data-gx-reveal style="--gx-delay:.08s"><span class="gx-metric__num">02</span><span class="gx-metric__title">Active players</span></div>
+  <div class="gx-metric" data-gx-reveal style="--gx-delay:.16s"><span class="gx-metric__num">03</span><span class="gx-metric__title">Matches played</span></div>
+  <div class="gx-metric" data-gx-reveal style="--gx-delay:.24s"><span class="gx-metric__num">04</span><span class="gx-metric__title">Games supported</span></div>
+</section>
+
+<!-- ============ REQUEST  (R1–R6 · V1–V9) ============ -->
+<section class="request" id="request">
+  <span class="tag-id">R1–R6 · V1–V9 · sections.css · overlays.css</span>
+  <div class="req-bg gx-slow-pan"></div><div class="req-shade"></div>
+  <div class="req-in">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <p class="eyebrow" data-gx-reveal>BRING IT TO YOUR CITY</p>
+      <h2 class="d h104" data-gx-reveal="mask">REQUEST A<br>TOURNAMENT.</h2>
+      <p data-gx-reveal>Tell us what you have in mind. From neighborhood meetups to city-wide events, we’ll help make it real.</p>
+      <div class="bar-grad" data-gx-reveal="line"></div>
+      <div class="perks">
+        <div class="gx-perk"><div class="gx-perk-ring" style="--gx-ping-delay:0s"><svg width="32" height="27"><use href="#i-game"/></svg></div>Flexible formats</div>
+        <div class="gx-perk"><div class="gx-perk-ring" style="--gx-ping-delay:1s"><svg width="32" height="32"><use href="#i-pin"/></svg></div>Saudi + UAE cities</div>
+        <div class="gx-perk"><div class="gx-perk-ring" style="--gx-ping-delay:2s"><svg width="32" height="32"><use href="#i-pin"/></svg></div>A team that backs you</div>
+      </div>
+    </div>
+    <form class="form gx-form-glint" data-demo-form novalidate>
+      <p class="f-title"><span class="gx-zap">ϟ</span> START YOUR REQUEST</p>
+      <div class="gx-field"><label for="f1">Tournament name</label><input id="f1" placeholder="e.g. Riyadh City Cup"></div>
+      <div class="gx-field"><label for="f2">Expected participants (type letters to see the error shake)</label><input id="f2" value="64"></div>
+      <button type="button" class="gx-loc-btn" data-demo-open-map><svg width="22" height="22"><use href="#i-pin"/></svg><span>SELECT LOCATION ON MAP<br><b data-demo-loc>Open interactive map</b></span></button>
+      <button type="submit" class="gx-btn gx-btn--wide" data-demo-submit><span data-demo-submit-txt>Request Tournament</span> <svg class="gx-btn__icon"><use href="#i-arrow"/></svg><i class="gx-btn__load"></i></button>
+    </form>
+  </div>
+</section>
+
+<!-- ============ REGIONAL  (P1–P3) ============ -->
+<section class="regional">
+  <span class="tag-id">P1–P3 · sections.css</span>
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <p class="eyebrow" data-gx-reveal>CONTACT US</p>
+    <h2 class="d" style="font-size:clamp(42px,4.6vw,66px)" data-gx-reveal="mask">FROM THE GULF.<br><span class="y">BUILT TO CONNECT.</span></h2>
+    <a class="gx-arrow-link" href="mailto:hello@scooring.com">✉ hello@scooring.com <span class="gx-arrow">→</span></a>
+  </div>
+  <div class="map-frame" data-gx-reveal>
+    <img class="gx-ken-burns" src="assets/map-regional.jpg" alt="">
+    <i class="gx-pin-ping" style="left:52%;top:46%"></i>
+    <i class="gx-pin-ping gx-pin-ping--sm" style="left:36%;top:58%"></i>
+    <i class="gx-pin-ping gx-pin-ping--sm" style="left:70%;top:40%"></i>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA  (F1–F2) ============ -->
+<section class="final">
+  <div class="gx-cta-panel" data-gx-spotlight>
+    <span class="tag-id">F1–F2 · sections.css</span>
+    <p class="eyebrow">READY WHEN YOU ARE</p>
+    <h2 class="d h72" data-gx-reveal="mask">YOUR NEXT COMPETITION STARTS HERE.</h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <a class="gx-btn" href="#request">Join Now <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+      <a class="gx-btn gx-btn--ghost" href="#journey">Explore Tournaments <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ INNER PAGE (G6 page wipe demo) ============ -->
+<main id="page-contact" class="inner-page" hidden>
+  <section class="hero-inner">
+    <div class="gx-page-hero__grid"></div>
+    <p class="eyebrow gx-page-hero__eyebrow" style="position:relative">CONTACT US</p>
+    <h1 class="d h94"><span class="gx-page-hero__line"><span>LET’S BUILD THE NEXT</span></span><span class="gx-page-hero__line"><span style="--gx-delay:.42s">COMPETITION.</span></span></h1>
+    <p class="gx-page-hero__intro" style="position:relative;max-width:700px;margin-top:18px">This page was swapped in behind the gradient wipe (G6). Use the header logo to go back.</p>
+  </section>
+  <div class="legal">
+    <div class="legal-sec" data-gx-reveal="divider"><h2 class="d">Section dividers draw in</h2><p class="muted">Scroll to see each divider line draw from left to right.</p></div>
+    <div class="legal-sec" data-gx-reveal="divider"><h2 class="d">Second section</h2><p class="muted">Same reveal, 150ms delay.</p></div>
+    <div class="legal-sec" data-gx-reveal="divider"><h2 class="d">Third section</h2><p class="muted">Same reveal.</p></div>
+  </div>
+</main>
+
+<footer class="foot">
+  <img src="assets/brand/gxper-h-gradient.svg" alt="GXPER" width="200" height="30" style="height:30px;width:auto">
+  <div class="links"><a class="gx-color-link" href="#contact" data-demo-page="contact">Contact Us</a><a class="gx-color-link" href="#top">Privacy</a><a class="gx-color-link" href="#top">Support</a></div>
+</footer>
+
+<!-- ============ OVERLAYS ============ -->
+<div class="gx-overlay" data-demo-map-ov hidden>
+  <div class="gx-overlay__panel panel-box" role="dialog" aria-modal="true" aria-label="Choose a location">
+    <div class="panel-head">
+      <div><p class="eyebrow">PIN YOUR ARENA</p><h2 class="d" style="font-size:clamp(36px,3.6vw,52px)">CHOOSE A LOCATION</h2></div>
+      <button class="gx-round-btn gx-round-btn--close" data-demo-close aria-label="Close"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M7.5 7.5l15 15M22.5 7.5l-15 15" stroke="#f7f6f5" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="gx-map" data-gx-map tabindex="0" aria-label="Map. Click or use arrow keys to move the pin.">
+      <img data-gx-map-img src="assets/map-location.jpg" alt="" width="976" height="355">
+      <div class="gx-map__pin" data-gx-map-pin><div class="gx-map__pin-drop" data-gx-map-pin-drop><i class="pin-glow"></i><span class="pin-icon"><svg width="26" height="26"><use href="#i-pin-dark"/></svg></span></div></div>
+    </div>
+    <div class="sel">
+      <div><p class="k">Selected location</p><span class="gx-roll-text"><span data-gx-map-label>Jeddah, Saudi Arabia</span></span></div>
+      <button class="gx-btn" data-demo-confirm>Confirm pin <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+</div>
+<div class="gx-overlay" data-demo-succ-ov hidden>
+  <div class="gx-overlay__panel succ" role="dialog" aria-modal="true" aria-label="Request received">
+    <svg class="gx-success-badge" width="112" height="112" viewBox="0 0 112 112" fill="none"><rect class="gx-ring" x=".75" y=".75" width="110.5" height="110.5" rx="55.25" stroke="#fff400" stroke-opacity=".31" stroke-width="1.5"/><circle class="gx-dot" cx="56" cy="56" r="31" fill="#fff400"/><path class="gx-check" d="M45.5 56.75L51.8 63.05L66.5 48.5" stroke="#0f0d0c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <p class="eyebrow">REQUEST RECEIVED</p>
+    <h2 class="d" style="font-size:clamp(40px,4.4vw,64px)">YOUR ARENA STARTS HERE.</h2>
+    <button class="gx-btn" data-demo-close>Perfect, thanks <svg class="gx-btn__icon"><use href="#i-arrow"/></svg></button>
+  </div>
+</div>
+<canvas class="gx-confetti" data-gx-confetti hidden></canvas>
+<div class="gx-toast" data-gx-toast role="status" aria-live="polite"></div>
+<div class="gx-wipe" data-gx-wipe aria-hidden="true"><img class="gx-wipe__logo" src="assets/brand/gxper-v-black.svg" alt=""></div>
+
+<!-- icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 18 18"><path d="M3.75 9H14.25M9.75 13.5L14.25 9L9.75 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-game" viewBox="0 0 34 34"><path d="M11.33 12.75h11.34a7.6 7.6 0 0 1 6.66 10.5l-1.42 3.68a2.83 2.83 0 0 1-4.96.57l-2.41-2.42h-7.08l-2.41 2.42a2.83 2.83 0 0 1-4.96-.57L4.67 23.25a7.6 7.6 0 0 1 6.66-10.5Z M11.33 17v5.67M8.5 19.83h5.67M22.67 18.42h.01M25.5 21.25h.01" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 32 32"><path d="M26.67 13.33C26.67 20 16 29.33 16 29.33S5.33 20 5.33 13.33a10.67 10.67 0 0 1 21.34 0Z M16 16.67a3.33 3.33 0 1 0 0-6.67 3.33 3.33 0 0 0 0 6.67Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin-dark" viewBox="0 0 32 32"><path d="M26.67 13.33C26.67 20 16 29.33 16 29.33S5.33 20 5.33 13.33a10.67 10.67 0 0 1 21.34 0Z M16 16.67a3.33 3.33 0 1 0 0-6.67 3.33 3.33 0 0 0 0 6.67Z" fill="none" stroke="#0f0d0c" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-target" viewBox="0 0 28 28"><circle cx="14" cy="14" r="8.2" fill="none" stroke="#fff400" stroke-width="1.7"/><circle cx="14" cy="14" r="2.9" fill="none" stroke="#fff400" stroke-width="1.7"/><path d="M14 2.3v3.5M14 22.2v3.5M2.3 14h3.5M22.2 14h3.5" stroke="#fff400" stroke-width="1.7" stroke-linecap="round"/></symbol>
+</svg>
+
+<script src="../dist/gxper-motion.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+/* ==========================================================================
+   What we do — capability cards (desktop) / capability list (phones)
+   Catalogue IDs: C1–C4
+
+   Desktop (> 760px)  2×2 cards
+     C1  hover: card lifts 4px, border turns yellow-line           500ms
+     C2  hover: a soft yellow light follows the cursor inside the
+         card (pointer-spotlight.js writes --gx-mx / --gx-my)      400ms fade
+     C3  hover: icon tilts -10° and grows 15% (spring)             600ms
+     C4  hover: yellow bar draws along the bottom edge             700ms
+     Entrance: cards reveal with 80ms stagger (data-gx-reveal)
+
+   Phones (≤ 760px)  clean list (matches Figma mobile), SAME effects on tap
+     Each card becomes a row: icon box + tag + title + text, thin lines
+     between rows. Rows reveal one after another (80ms stagger) and each
+     icon box glows softly on a 2.4s loop (offset per row).
+   ========================================================================== */
+.gx-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: border-color 400ms, transform 500ms var(--gx-ease-out), opacity var(--gx-dur-slower) var(--gx-ease-out);
+}
+.gx-card::before {                       /* C2 cursor light */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 400ms;
+  background: radial-gradient(420px circle at var(--gx-mx, 50%) var(--gx-my, 50%), rgba(255, 244, 0, .13), transparent 60%);
+}
+.gx-card__icon { transition: transform 600ms var(--gx-ease-spring); }
+.gx-card__bar {                          /* C4 */
+  position: absolute; left: 28px; right: 28px; bottom: 0; height: 2px;
+  background: var(--gx-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--gx-dur-slow) var(--gx-ease-out);
+}
+.gx-card:hover { border-color: rgba(255, 244, 0, .31); transform: translateY(calc(var(--gx-shift-sm) * -1)); }   /* C1 */
+.gx-card:hover::before { opacity: 1; }
+.gx-card:hover .gx-card__icon { transform: rotate(-10deg) scale(1.15); }                                       /* C3 */
+.gx-card:hover .gx-card__bar { transform: scaleX(1); }
+
+/* Phones: list rows */
+@media (max-width: 760px) {
+  .gx-card { border-radius: 0; border-width: 1px 0 0; background: none; }
+  .gx-card:last-child { border-bottom-width: 1px; }
+  .gx-card__bar { left: 66px; right: 0; }   /* bar runs under the text column */
+  .gx-card:hover { transform: translateX(var(--gx-shift-sm)); }
+  .gx-card__icon-box {
+    border: 1px solid rgba(255, 244, 0, .35);
+    background: rgba(255, 244, 0, .05);
+    border-radius: 14px;
+    animation: gx-icon-glow 2.4s var(--gx-ease-in-out) infinite;
+    animation-delay: calc(var(--gx-row, 0) * .3s);       /* rows glow one after another */
+  }
+}
