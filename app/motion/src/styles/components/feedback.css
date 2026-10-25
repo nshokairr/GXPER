@@ -1,0 +1,80 @@
+/* ==========================================================================
+   I6–I11 · Form + state feedback
+   ========================================================================== */
+
+/* I6 text field focus: lime border, soft glow, blinking caret */
+.gxa-field { position: relative; border-radius: 9px; }
+.gxa-field.is-focused::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid var(--gxa-yellow);
+  box-shadow: 0 0 0 3px rgba(255, 244, 0, .14), 0 0 18px rgba(255, 244, 0, .18);
+  animation: gxa-focus-in var(--gxa-dur-focus) var(--gxa-ease-out) both;
+}
+.gxa-field.is-focused.has-fake-caret::after { /* prototype only: real inputs have a native caret */
+  content: "";
+  position: absolute;
+  left: var(--gxa-caret-x, 39px);
+  top: 50%;
+  width: 1.5px;
+  height: 18px;
+  margin-top: -9px;
+  background: var(--gxa-yellow);
+  animation: gxa-caret var(--gxa-dur-caret) steps(1) infinite;
+}
+
+/* I7 checkbox: box pops (spring), check draws */
+.gxa-tick {
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--gxa-surface);
+  border: 2px solid var(--gxa-yellow);
+  animation: gxa-pop var(--gxa-dur-tick-pop) var(--gxa-ease-spring) both;
+}
+.gxa-tick svg { width: 70%; height: 70%; }
+.gxa-tick path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: gxa-check var(--gxa-dur-tick-draw) var(--gxa-ease-out) var(--gxa-delay-tick-draw) forwards;
+}
+
+/* I8 chip / toggle / accordion: ring pulses outward once */
+.gxa-pulse {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1.5px var(--gxa-yellow);
+  animation: gxa-pulse-out var(--gxa-dur-pulse) ease-out forwards;
+}
+
+/* I9 tap on empty space: every tappable area flashes (prototype helper) */
+.gxa-flash [data-gxa-target] { animation: gxa-flash var(--gxa-dur-flash) ease-out both; }
+.gxa-show-targets [data-gxa-target] {
+  background: rgba(255, 244, 0, .14);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 244, 0, .75);
+}
+
+/* I11 toast — springs up from the bottom, holds 2s */
+.gxa-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  z-index: 85;
+  transform: translate(-50%, 30px);
+  opacity: 0;
+  background: var(--gxa-yellow);
+  color: var(--gxa-ink);
+  font: 600 13px/normal Poppins, system-ui, sans-serif;
+  padding: 12px 18px;
+  border-radius: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 14px 34px -10px rgba(255, 244, 0, .6);
+  transition: transform var(--gxa-dur-toast) var(--gxa-ease-spring), opacity .3s;
+}
+.gxa-toast.is-shown { transform: translate(-50%, 0); opacity: 1; }

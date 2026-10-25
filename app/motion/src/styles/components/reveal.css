@@ -1,0 +1,37 @@
+/* ==========================================================================
+   E · Entrance / reveal
+   Mark each block (header, card, row, paragraph) with data-gxa-reveal.
+   JS adds .is-pre (hidden), sets --gxa-delay, then removes .is-pre so the
+   block transitions in. Blocks taller than 260px also get .is-big (mask).
+
+   Markup:
+     <div data-gxa-reveal>…</div>
+   States (added by js/modules/reveal.js):
+     .is-pre    hidden start position
+     .is-soft   smaller travel (used while a push slide is running)
+     .is-big    wipe up from the bottom edge instead of a rise
+   ========================================================================== */
+
+[data-gxa-reveal] {
+  transition:
+    opacity var(--gxa-reveal-opacity) var(--gxa-ease-out),
+    transform var(--gxa-reveal-move) var(--gxa-ease-out),
+    clip-path var(--gxa-reveal-mask) var(--gxa-ease-out);
+  transition-delay: var(--gxa-delay, 0s);
+}
+
+/* E1 fade + rise */
+[data-gxa-reveal].is-pre {
+  opacity: 0;
+  transform: translateY(var(--gxa-reveal-rise));
+}
+/* E3 softer rise during a slide */
+[data-gxa-reveal].is-soft.is-pre { transform: translateY(var(--gxa-reveal-rise-soft)); }
+
+/* E2 large blocks (hero images, tall cards) are unmasked bottom→top */
+[data-gxa-reveal].is-big.is-pre {
+  opacity: 1;
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(var(--gxa-reveal-rise-big));
+}
+[data-gxa-reveal].is-big { clip-path: inset(0 0 0 0); }

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GXPER App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Poppins:wght@400;500;600&display=swap">
+<style>/*CSS*/</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="panel" aria-label="Prototype controls">
+    <a class="brand" href="#" aria-label="GXPER"><img src="assets/gxper-h-gradient.svg" alt="GXPER"></a>
+    <div>
+      <p class="eyebrow">Motion prototype · App</p>
+      <h1 class="ttl"><span class="ln"><span>Play. Earn.</span></span><span class="ln"><span>Rank.</span></span></h1>
+    </div>
+    <div class="now" aria-live="polite">
+      <span class="k" id="nowK">Onboarding</span>
+      <span class="v"><span id="nowV">Splash</span></span>
+      <div class="bar"><i id="nowBar"></i></div>
+    </div>
+    <nav class="flows" aria-label="Flows"></nav>
+    <div class="ctrls">
+      <button class="chip" type="button" data-act="back">← Back <span class="kbd">Esc</span></button>
+      <button class="chip" type="button" data-act="hs" aria-pressed="false">Tap areas <span class="kbd">H</span></button>
+      <button class="chip" type="button" data-act="restart">Restart <span class="kbd">R</span></button>
+    </div>
+    <p class="hint">Tap anything in the phone. Tap an empty spot to flash what's clickable. Drag to scroll; swipe the profile card to switch games.</p>
+  </aside>
+  <main class="dev" id="dev">
+    <div class="phone" id="phone">
+      <div class="vp" id="vp">
+        <button class="island" id="island" type="button" aria-label="Open flows menu"><i></i></button>
+        <div class="wipe" id="wipe"></div>
+        <div class="toast" id="toast" role="status"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="sh"></div>
+  <div class="pn">
+    <p class="eyebrow">GXPER app · flows</p>
+    <nav class="flows" aria-label="Flows"></nav>
+    <div class="ctrls">
+      <button class="chip" type="button" data-act="back">← Back</button>
+      <button class="chip" type="button" data-act="hs" aria-pressed="false">Tap areas</button>
+      <button class="chip" type="button" data-act="restart">Restart</button>
+    </div>
+  </div>
+</div>
+<script>window.SCREENS=/*DATA*/;</script>
+<script>/*JS*/</script>
+</body>
+</html>

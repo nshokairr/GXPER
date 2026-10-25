@@ -1,0 +1,85 @@
+/* Demo page layout + stand-in screen styling only. Not part of the motion system. */
+*{box-sizing:border-box}
+body{margin:0;background:#0f0d0c;color:#f7f6f5;font:14px/1.45 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+code{font-size:12px;color:#fff400}
+.stage{display:grid;grid-template-columns:minmax(280px,360px) 1fr;min-height:100vh}
+.side{padding:32px;border-right:1px solid rgba(255,255,255,.12);overflow:auto;max-height:100vh}
+.eb{font:600 11px/1 Poppins;letter-spacing:3px;color:#fff400;text-transform:uppercase;margin:0}
+h1{font:400 40px/.95 'League Gothic',Impact,sans-serif;text-transform:uppercase;margin:12px 0}
+.side h2{font:600 11px/1 Poppins;letter-spacing:2px;color:#a8a4a1;margin:22px 0 10px;text-transform:uppercase}
+.note{color:#a8a4a1;font-size:13px}
+.row{display:flex;flex-wrap:wrap;gap:6px}
+.row button{height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.2);border-radius:9px;font-size:12px;font-weight:600;transition:border-color .3s,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.row button:hover{border-color:#fff400;transform:translateY(-2px)}
+.dev{display:grid;place-items:center;padding:24px;overflow:hidden}
+.phone{border-radius:52px;overflow:hidden;box-shadow:0 0 0 11px #050404,0 0 0 12.5px #2c2826,0 40px 90px -20px rgba(0,0,0,.9);transform:scale(var(--k,1))}
+@media (max-width:820px){.stage{grid-template-columns:1fr}.side{max-height:none;border:0}.phone{--k:.9}}
+
+/* ---------- stand-in screens ---------- */
+.pad{padding:58px 16px 110px;display:flex;flex-direction:column;gap:12px}
+.pad.top0{padding-top:0}
+.pad.center{align-items:center;text-align:center;justify-content:center;min-height:852px;padding-top:120px}
+.bar{display:flex;align-items:center;gap:12px;height:44px}
+.logo{font:400 30px/1 'League Gothic',Impact;background:linear-gradient(90deg,#ff0ce1,#ffee06,#69d2ff);-webkit-background-clip:text;color:transparent}
+.ttl,h2,h3{font-family:'League Gothic',Impact,sans-serif;font-weight:400;text-transform:uppercase;margin:0}
+.ttl{font-size:26px}h2{font-size:38px;line-height:.95}h3{font-size:24px;color:#fff400}
+.y{color:#fff400}.muted{color:#a8a4a1}
+.gt{background:linear-gradient(90deg,#ff0ce1,#ff945d,#ffee06,#8ddac0,#69d2ff);-webkit-background-clip:text;color:transparent}
+.chips{display:flex;gap:8px}
+.chip{height:44px;flex:1;border-radius:10px;background:#1f1c1b;border:1px solid #2e2a28;font:400 18px 'League Gothic'}
+.chip.on{border-color:#fff400;color:#fff400}
+.card{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;padding:16px;border-radius:14px;background:#1a1716;border:1px solid #2a2624}
+.card.hero{height:150px;justify-content:flex-end;background:linear-gradient(135deg,#2a1322,#1a1716 60%);border-color:rgba(255,244,0,.35)}
+.card.hero b{font:400 44px/1 'League Gothic'}
+.card.t i{display:block;height:120px;border-radius:9px;background:linear-gradient(135deg,#4b1c7a,#ff0ce1)}
+.card.t i.b{background:linear-gradient(135deg,#7a1c1c,#ff945d)}.card.t i.c{background:linear-gradient(135deg,#0d4a3a,#69d2ff)}
+.card b{font:400 22px/1 'League Gothic'}.card small{color:#a8a4a1}
+.tabs{display:flex;height:80px;padding:0 10px 22px;background:#171413;border-top:1px solid #2a2624}
+.tabs button{flex:1;font-size:12px;color:#a8a4a1}.tabs button.on{color:#fff400;box-shadow:inset 0 2px #fff400}
+.podium{display:flex;align-items:flex-end;gap:8px;height:210px}.podium i{flex:1;height:70%;border-radius:12px 12px 0 0;background:#211d1c}.podium i.first{height:100%;background:linear-gradient(#fff400,#3a3500)}
+.li{display:flex;justify-content:space-between;padding:14px;border-radius:12px;background:#1a1716}.li b{color:#fff400}
+.pcard{position:relative;height:380px;border-radius:18px;border:1px solid #fff400;background:linear-gradient(160deg,#18361f,#141110 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;touch-action:pan-y;user-select:none}
+.pcard .game{position:absolute;left:16px;top:14px;font:400 24px 'League Gothic'}
+.pcard .av{width:90px;height:90px;border-radius:50%;background:#556;border:2px solid #fff400}
+.pcard b{font:400 28px 'League Gothic'}
+.pcard .share{position:absolute;right:12px;top:12px;height:32px;padding:0 10px;border-radius:8px;background:#2a2624;font-size:12px}
+.stats{display:flex;justify-content:space-around;padding:14px;border-radius:14px;background:#1a1716;font:400 26px 'League Gothic'}.stats small{display:block;font:500 9px Poppins;color:#a8a4a1}
+.btn{height:48px;border-radius:12px;font:400 20px 'League Gothic';text-transform:uppercase;width:100%}
+.btn.grad{background:linear-gradient(90deg,#ff0ce1,#ff945d,#ffee06,#8ddac0,#69d2ff);color:#0f0d0c}
+.btn.ghost{background:#211d1c;color:#fff400}.btn.danger{background:#ff4b4b;color:#fff}
+.cover{position:relative;height:200px;background:linear-gradient(135deg,#0b3d1e,#2b7a3c 60%,#0f0d0c)}
+.back{position:absolute;left:14px;top:58px;width:36px;height:36px;border-radius:10px;background:rgba(0,0,0,.45);font-size:18px}
+.bar .back{position:static}
+.seg{display:flex;padding:4px;border-radius:12px;background:#1a1716;border:1px solid #2a2624}
+.seg button{flex:1;height:38px;border-radius:9px;font:400 17px 'League Gothic';color:#a8a4a1}.seg button.on{color:#fff400;box-shadow:inset 0 -2px #fff400}
+.segbody{display:flex;flex-direction:column;gap:10px}
+.lbl{display:flex;flex-direction:column;gap:8px;font:400 18px 'League Gothic'}
+.input{display:flex;align-items:center;height:44px;padding:0 14px;border-radius:9px;background:#211d1c;color:#a8a4a1;font:400 14px Poppins;text-align:left;width:100%}
+.agree{display:flex;align-items:center;gap:10px;font-size:13px}
+.agree .box{width:24px;height:24px;border-radius:5px;border:2px solid #555;cursor:pointer}
+.trophy{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff9a8,#fff400 40%,#6b6400 75%);box-shadow:0 0 50px rgba(255,244,0,.35)}.big{font:400 160px/1 'League Gothic';color:#222;-webkit-text-stroke:2px #d0e950}
+.dim{position:absolute;inset:0;background:rgba(5,4,4,.62);backdrop-filter:blur(2px)}
+.gxa-screen[data-name=confirm]{background:transparent}
+.csheet{position:absolute;left:0;right:0;bottom:0;padding:22px 16px 34px;display:flex;flex-direction:column;gap:10px;background:#1f1c1b;border-radius:22px 22px 0 0}
+.csheet p{margin:0}
+.badge-wrap{position:relative;width:110px;height:110px;display:grid;place-items:center}
+.badge{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:40px;background:#2a1322;border:2px solid #ff0ce1}
+.splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.mark{font:400 84px/1 'League Gothic';background:linear-gradient(90deg,#ff0ce1,#ffee06,#69d2ff);-webkit-background-clip:text;color:transparent;text-align:center}
+.mark small{display:block;font:500 12px Poppins;letter-spacing:6px;color:#fff;-webkit-text-fill-color:#fff}
+.splash .gxa-loader{width:132px;margin-top:190px}.ls{letter-spacing:6px;font-size:11px}
+.whero{position:relative;height:420px;overflow:hidden}
+.whero .img{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,#33d39a 0 8%,transparent 9%),radial-gradient(ellipse at 50% 40%,#0e5c4a,#0f0d0c 70%)}
+.sheet{padding:10px 16px 34px;background:#1f1c1b;border-radius:22px 22px 0 0;display:flex;flex-direction:column;gap:8px}
+.sheet .handle{width:44px;height:4px;border-radius:4px;background:#444;align-self:center;margin-bottom:10px}
+.sheet b{font:400 24px 'League Gothic';text-align:center;margin-bottom:6px}
+.opt{height:44px;border-radius:10px;background:#2a2624;text-align:left;padding:0 14px}.opt.on{box-shadow:inset 0 0 0 1px #fff400;color:#fff400}
+.modal{width:340px;padding:18px;border-radius:22px;background:#1f1c1b;display:flex;flex-direction:column;gap:14px;text-align:center}
+.modal b{font:400 24px 'League Gothic'}
+.mcard{height:220px;border-radius:14px;border:1px solid #fff400;display:flex;flex-direction:column;justify-content:center;font:400 28px 'League Gothic';background:linear-gradient(160deg,#18361f,#141110)}
+.mcard small{font:500 11px Poppins;color:#fff400}
+.row3{display:flex;gap:8px}.row3 button{flex:1;height:56px;border-radius:12px;background:#2a2624;font-size:12px}
+
+/* wipe mark (T5) — the motion CSS leaves the image to the app */
+.gxa-wipe::after{background-image:url(assets/gxper-v-black.svg)}

@@ -1,0 +1,21 @@
+{
+  "name": "gxper-app-motion",
+  "version": "1.0.0",
+  "description": "GXPER mobile app motion system — tokens, CSS animations and JS controllers (same motion language as the GXPER website)",
+  "type": "module",
+  "main": "src/js/index.js",
+  "style": "src/styles/gxper-app-motion.css",
+  "files": ["src", "dist"],
+  "scripts": {
+    "build": "npm run build:js && npm run build:css && npm run build:min",
+    "build:js": "esbuild src/js/index.js --bundle --format=iife --global-name=GXAppMotion --target=es2019 --outfile=dist/gxper-app-motion.js",
+    "build:css": "esbuild src/styles/gxper-app-motion.css --bundle --outfile=dist/gxper-app-motion.css",
+    "build:min": "esbuild src/js/index.js --bundle --minify --format=iife --global-name=GXAppMotion --target=es2019 --outfile=dist/gxper-app-motion.min.js && esbuild src/styles/gxper-app-motion.css --bundle --minify --outfile=dist/gxper-app-motion.min.css",
+    "demo": "npx --yes serve . -l 5174"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

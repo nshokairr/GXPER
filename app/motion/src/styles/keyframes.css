@@ -1,0 +1,68 @@
+/* ==========================================================================
+   GXPER App — every @keyframes, named gxa-*
+   Durations/delays are applied by the component files, never here.
+   ========================================================================== */
+
+/* T5 gradient wipe — bar grows from the left, then leaves to the right */
+@keyframes gxa-wipe {
+  0%   { transform: scaleX(0); transform-origin: left; }
+  45%  { transform: scaleX(1); transform-origin: left; }
+  55%  { transform: scaleX(1); transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
+}
+/* T5 the black GXPER mark shown while the screen is covered */
+@keyframes gxa-wipe-mark {
+  0%, 100% { opacity: 0; transform: scale(.6); }
+  35%, 60% { opacity: .9; transform: scale(1); }
+}
+
+/* I1 tap ripple */
+@keyframes gxa-ripple { to { transform: scale(var(--gxa-ripple-scale)); opacity: 0; } }
+/* I4 sheen */
+@keyframes gxa-shine { to { transform: translateX(120%); } }
+/* I5 CTA loading bar (84% wide, centred) */
+@keyframes gxa-loadbar { to { width: 84%; } }
+/* I6 field focus ring + caret */
+@keyframes gxa-focus-in { from { opacity: 0; transform: scale(1.03); } }
+@keyframes gxa-caret { 50% { opacity: 0; } }
+/* I7 tick */
+@keyframes gxa-pop { from { transform: scale(0); } }
+@keyframes gxa-check { to { stroke-dashoffset: 0; } }
+/* I8 pulse ring */
+@keyframes gxa-pulse-out { to { opacity: 0; transform: scale(1.06); } }
+/* I9 tap-area flash */
+@keyframes gxa-flash {
+  0%, 55% { background: rgba(255, 244, 0, .18); box-shadow: inset 0 0 0 1.5px rgba(255, 244, 0, .85); }
+  100%    { background: transparent; box-shadow: inset 0 0 0 1.5px transparent; }
+}
+
+/* U1 splash logo + alert hero: pop in from 72% with a blur */
+@keyframes gxa-pop-in { from { transform: scale(.72); opacity: 0; filter: blur(6px); } }
+/* U1 logo glow loop (magenta + yellow) */
+@keyframes gxa-mark-glow {
+  50% { filter: drop-shadow(0 0 14px rgba(235, 0, 139, .45)) drop-shadow(0 0 22px rgba(255, 238, 6, .25)); }
+}
+/* U2 loading bar fill */
+@keyframes gxa-fill { to { transform: scaleX(1); } }
+/* U3 / U8 breathing glow */
+@keyframes gxa-breathe { 50% { transform: scale(1.08); opacity: .6; } }
+/* U5 hero settles */
+@keyframes gxa-kenburns { from { transform: scale(1.07); } }
+/* U6 diagonal light sweep */
+@keyframes gxa-sweep {
+  0%       { background-position: 120% 0; }
+  60%,100% { background-position: -60% 0; }
+}
+/* U10 success badge */
+@keyframes gxa-spin-in { from { transform: rotate(-120deg) scale(.6); opacity: 0; } }
+/* U11 radar rings */
+@keyframes gxa-ping {
+  0%   { transform: scale(1); opacity: .8; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+/* D · prototype shell */
+@keyframes gxa-line-up { from { transform: translateY(105%); } }
+@keyframes gxa-fade-up { from { opacity: 0; transform: translateY(22px); } }
+@keyframes gxa-phone-in { from { opacity: 0; transform: scale(var(--k, 1)) translateY(40px); } }
+@keyframes gxa-blink { 50% { opacity: .25; } }

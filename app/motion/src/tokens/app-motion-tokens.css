@@ -1,0 +1,116 @@
+/* ==========================================================================
+   GXPER App — Motion tokens
+   Every duration, curve, distance, stagger and threshold used by the app
+   prototype. Components reference these custom properties; never hard-code.
+
+   The website tokens (motion/src/tokens/motion-tokens.css) use the same
+   curves and brand values on purpose — the app moves exactly like the site.
+   JavaScript mirror: app-motion-tokens.js. Keep both files in sync.
+   ========================================================================== */
+
+:root {
+  /* ---------- Easing curves (shared with the website) -------------------
+     out        Signature curve. Fast start, long soft landing. Everything
+                that ENTERS or MOVES: screen slides, reveals, sheets, wipe.
+     spring     Small overshoot then settles. Playful feedback: button
+                release, modal pop, toast, tick pop, sheet snap-back.
+     in         Strong ease-in. Only for things LEAVING the screen
+                (sheet dismiss, sheet-screen close) so they accelerate away.
+     in-out     Ambient loops only (breathing glows).
+     linear     Endless sweeps / loaders that must not "land".           */
+  --gxa-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --gxa-ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --gxa-ease-in: cubic-bezier(.5, 0, .75, 0);
+  --gxa-ease-in-out: ease-in-out;
+  --gxa-ease-linear: linear;
+
+  /* ---------- Screen transitions (T) ------------------------------------ */
+  --gxa-dur-push: 560ms;          /* T1 new screen slides in from the right   */
+  --gxa-dur-pop: 520ms;           /* T2 back: current screen slides off right */
+  --gxa-parallax-under: -28%;     /* T1/T2 screen underneath moves 28% left   */
+  --gxa-dim-under: .4;            /* T1/T2 screen underneath dims to 40%      */
+  --gxa-dur-tab-out: 220ms;       /* T3 old tab fades + shrinks to 98.5%      */
+  --gxa-dur-tab-in: 300ms;        /* T3 new tab fades in…                     */
+  --gxa-delay-tab-in: 80ms;       /*    …starting 80ms later                  */
+  --gxa-dur-segment-out: 140ms;   /* T4 old tab content fades below the tabs  */
+  --gxa-dur-wipe: 900ms;          /* T5 gradient wipe in + out                */
+  --gxa-wipe-swap: 430ms;         /* T5 screen swapped while fully covered    */
+  --gxa-dur-sheet-screen-in: 560ms;   /* T7 confirm-sheet screen rises        */
+  --gxa-dur-sheet-screen-fade: 280ms; /* T7 its dimmed backdrop fades in      */
+  --gxa-dur-sheet-screen-out: 340ms;  /* T8 sheet drops away (ease-in)        */
+  --gxa-dur-sheet-screen-unfade: 180ms; /* T8 then the backdrop fades out     */
+
+  /* ---------- Entrance / reveal (E) ------------------------------------- */
+  --gxa-reveal-opacity: 750ms;    /* E1 fade                                  */
+  --gxa-reveal-move: 850ms;       /* E1 rise                                  */
+  --gxa-reveal-mask: 950ms;       /* E2 big blocks wipe up from the bottom    */
+  --gxa-reveal-rise: 26px;        /* E1 travel                                */
+  --gxa-reveal-rise-soft: 12px;   /* E3 travel while a push slide is running  */
+  --gxa-reveal-rise-big: 18px;    /* E2 travel for blocks taller than 260px   */
+  --gxa-reveal-stagger: 55ms;     /* E1 delay between rows                    */
+  --gxa-reveal-stagger-cap: 600ms;/* E1 no row waits longer than this         */
+
+  /* ---------- Interaction feedback (I) ---------------------------------- */
+  --gxa-dur-ripple: 750ms;        /* I1 lime ring grows ×6 and fades          */
+  --gxa-ripple-scale: 6;
+  --gxa-dur-press: 140ms;         /* I2 squeeze to 95.5%                      */
+  --gxa-press-scale: .955;
+  --gxa-dur-release: 500ms;       /* I3 spring back to 100%                   */
+  --gxa-dur-shine: 700ms;         /* I4 light sheen across wide buttons       */
+  --gxa-dur-loadbar: 900ms;       /* I5 ink bar fills under the CTA label     */
+  --gxa-nav-delay: 120ms;         /* I1 ripple shows before navigating        */
+  --gxa-dur-focus: 400ms;         /* I6 field ring settles from 103%          */
+  --gxa-dur-caret: 1s;            /* I6 caret blink (steps)                   */
+  --gxa-dur-tick-pop: 450ms;      /* I7 checkbox pops in (spring)             */
+  --gxa-dur-tick-draw: 400ms;     /* I7 check mark draws…                     */
+  --gxa-delay-tick-draw: 120ms;   /*    …after the pop starts                 */
+  --gxa-dur-pulse: 700ms;         /* I8 chip/toggle ring pulses out           */
+  --gxa-dur-flash: 900ms;         /* I9 tappable areas flash                  */
+  --gxa-dur-toast: 500ms;         /* I11 toast springs up                     */
+  --gxa-toast-hold: 2000ms;       /* I11 visible for 2s                       */
+
+  /* ---------- Sheets & popups (S) --------------------------------------- */
+  --gxa-dur-shade-in: 320ms;      /* S6 backdrop fade                         */
+  --gxa-dur-sheet-in: 560ms;      /* S1 bottom sheet slides up                */
+  --gxa-dur-sheet-out: 320ms;     /* S2 slides down (ease-in)                 */
+  --gxa-dur-sheet-out-fast: 200ms;/* S2 when closing because you navigated    */
+  --gxa-dur-snap-back: 450ms;     /* S3 released short of the threshold       */
+  --gxa-dismiss-distance: 70px;   /* S3 drag further than this to close       */
+  --gxa-dur-modal-in: 620ms;      /* S4 popup pops in (spring)                */
+  --gxa-modal-from-y: 26px;
+  --gxa-modal-from-scale: .9;
+  --gxa-modal-to-y: 20px;         /* S5 close                                 */
+  --gxa-modal-to-scale: .94;
+
+  /* ---------- Signature moments (U) ------------------------------------- */
+  --gxa-dur-logo-pop: 1s;         /* U1 splash logo                           */
+  --gxa-loop-logo-glow: 3s;       /* U1 glow loop, starts at 1.1s             */
+  --gxa-dur-loader: 2.5s;         /* U2 splash loading bar, starts at 0.3s    */
+  --gxa-splash-hold: 2900ms;      /* U4 auto-advance to Welcome               */
+  --gxa-dur-kenburns: 2.8s;       /* U5 hero settles from 107%                */
+  --gxa-loop-sweep: 6s;           /* U6 light sweep, starts at 1s             */
+  --gxa-loop-breathe: 4.5s;       /* U8 alert glow breathe                    */
+  --gxa-loop-corner: 5s;          /* U3 splash corner glows                   */
+  --gxa-dur-confetti: 2.3s;       /* U9                                       */
+  --gxa-confetti-delay: 700ms;    /* U9 after the screen arrives              */
+  --gxa-dur-spin-in: 1s;          /* U10 badge spins in                       */
+  --gxa-loop-ping: 2.6s;          /* U11 rings, second one +1.3s              */
+
+  /* ---------- Swipe & scroll -------------------------------------------- */
+  --gxa-swipe-lock: 8px;          /* horizontal intent before the card follows*/
+  --gxa-swipe-follow: .35;        /* card follows the finger at 35%           */
+  --gxa-swipe-commit: 50px;       /* switch game when released past this      */
+  --gxa-dragscroll-threshold: 5px;/* mouse drag becomes a scroll              */
+
+  /* ---------- Brand values used by motion (same as website) ------------- */
+  --gxa-yellow: #fff400;
+  --gxa-magenta: #eb008b;
+  --gxa-cyan: #69d2ff;
+  --gxa-ink: #0f0d0c;
+  --gxa-surface: #141110;
+  --gxa-gradient: linear-gradient(90deg, #ff0ce1 0%, #ff945d 25%, #ffee06 45%, #d0e950 60%, #8ddac0 80%, #69d2ff 100%);
+
+  /* ---------- Device -------------------------------------------------- */
+  --gxa-screen-w: 393px;          /* iPhone 15/16 Pro logical size (Figma)    */
+  --gxa-screen-h: 852px;
+}

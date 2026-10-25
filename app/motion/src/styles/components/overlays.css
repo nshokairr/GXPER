@@ -1,0 +1,44 @@
+/* ==========================================================================
+   S · Bottom sheets and popups
+   Open/close motion runs in js/modules/overlays.js (WAAPI) so it can start
+   from wherever a drag left the sheet. This file is the static layout.
+   ========================================================================== */
+
+.gxa-overlay { position: absolute; inset: 0; z-index: 40; }
+
+/* S6 dimmed, slightly blurred backdrop */
+.gxa-shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 4, .62);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* S1 sheet: pinned to the bottom, full width */
+.gxa-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  filter: drop-shadow(0 -10px 40px rgba(0, 0, 0, .6));
+}
+/* S3 invisible 30px grab zone along the top edge */
+.gxa-sheet-grab {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 30px;
+  cursor: grab;
+  touch-action: none;
+}
+
+/* S4 popup: centred card */
+.gxa-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  filter: drop-shadow(0 -10px 40px rgba(0, 0, 0, .6));
+}

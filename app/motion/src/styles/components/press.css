@@ -1,0 +1,60 @@
+/* ==========================================================================
+   I1–I5 · Tap feedback
+   Markup:
+     <button data-gxa-press>…</button>                  squeeze + spring + ripple
+     <button data-gxa-press="wide">…</button>           + sheen (≥150px wide)
+     <button data-gxa-press="cta">…</button>            + sheen + loading bar
+   JS (js/modules/press.js) toggles the classes below.
+   ========================================================================== */
+
+[data-gxa-press] {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform var(--gxa-dur-release) var(--gxa-ease-spring);   /* I3 release */
+}
+/* I2 press: squeeze fast */
+[data-gxa-press].is-down {
+  transform: scale(var(--gxa-press-scale));
+  transition: transform var(--gxa-dur-press) var(--gxa-ease-out);
+}
+
+/* I4 sheen sweeping left → right */
+.gxa-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  mix-blend-mode: overlay;
+}
+.is-shining > .gxa-shine { animation: gxa-shine var(--gxa-dur-shine) var(--gxa-ease-out) both; }
+
+/* I5 loading bar under a CTA label */
+.gxa-loadbar {
+  position: absolute;
+  left: 8%;
+  bottom: 6px;
+  z-index: 2;
+  height: 3px;
+  width: 0;
+  border-radius: 3px;
+  background: var(--gxa-ink);
+  animation: gxa-loadbar var(--gxa-dur-loadbar) var(--gxa-ease-out) forwards;
+}
+
+/* I1 ripple ring at the touch point (appended to the viewport) */
+.gxa-ripple {
+  position: absolute;
+  z-index: 7;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 2px solid var(--gxa-yellow);
+  pointer-events: none;
+  animation: gxa-ripple var(--gxa-dur-ripple) ease-out forwards;
+}

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GXPER App Motion Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Poppins:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../dist/gxper-app-motion.css">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<div class="stage">
+  <aside class="side">
+    <p class="eb">GXPER app · motion demo</p>
+    <h1>Every app animation, on stand-in screens</h1>
+    <p class="note">Tap inside the phone like a real app, or use the buttons. Each button is tagged with its catalogue ID from <code>app/README.md</code>.</p>
+
+    <h2>T · Screen transitions</h2>
+    <div class="row">
+      <button data-demo="T1">T1 Push</button>
+      <button data-demo="T2">T2 Back</button>
+      <button data-demo="T3">T3 Tab bar</button>
+      <button data-demo="T4">T4 Segment</button>
+      <button data-demo="T5">T5 Wipe</button>
+      <button data-demo="T6">T6 Swipe</button>
+      <button data-demo="T7">T7 Sheet screen</button>
+      <button data-demo="T8">T8 Close it</button>
+    </div>
+    <h2>E · Entrance</h2>
+    <div class="row"><button data-demo="E1">E1–E2 Replay reveal</button><button data-demo="E5">E5 Long screen</button></div>
+    <h2>I · Feedback</h2>
+    <div class="row">
+      <button data-demo="I5">I5 CTA loading</button>
+      <button data-demo="I6">I6 Field focus</button>
+      <button data-demo="I7">I7 Checkbox</button>
+      <button data-demo="I8">I8 Pulse</button>
+      <button data-demo="I9">I9 Flash targets</button>
+      <button data-demo="I11">I11 Toast</button>
+    </div>
+    <h2>S · Sheets &amp; popups</h2>
+    <div class="row"><button data-demo="S1">S1 Bottom sheet</button><button data-demo="S4">S4 Popup</button></div>
+    <h2>U · Signature moments</h2>
+    <div class="row">
+      <button data-demo="U1">U1–U4 Splash</button>
+      <button data-demo="U5">U5–U7 Welcome</button>
+      <button data-demo="U8">U8 Alert</button>
+      <button data-demo="U9">U9 Confetti</button>
+      <button data-demo="U10">U10–U11 Success</button>
+    </div>
+  </aside>
+  <main class="dev">
+    <div class="phone"><div class="gxa-viewport" id="vp">
+      <div class="gxa-wipe" id="wipe"></div>
+      <div class="gxa-toast" id="toast" role="status"></div>
+    </div></div>
+  </main>
+</div>
+
+<!-- ============ stand-in screens (plain HTML, no Figma images) ============ -->
+<template id="s-home">
+  <section class="gxa-screen" data-name="home">
+    <div class="gxa-scroller"><div class="pad">
+      <div class="bar" data-gxa-reveal><span class="logo">GXPER</span></div>
+      <div class="chips" data-gxa-reveal><button class="chip on" data-gxa-press>FC26</button><button class="chip" data-gxa-press>TEKKEN 8</button><button class="chip" data-gxa-press>ROCKET</button></div>
+      <div class="hero card" data-gxa-reveal><small>UPCOMING MATCH</small><b>JUN 16 · 19:00</b></div>
+      <h3 data-gxa-reveal>FEATURED TOURNAMENTS</h3>
+      <button class="card t" data-gxa-reveal data-gxa-press data-go="detail"><i></i><b>SUMMER BASKETBALL LEAGUE</b><small>Jeddah · 12/50</small></button>
+      <button class="card t" data-gxa-reveal data-gxa-press data-go="detail"><i class="b"></i><b>TENNIS MASTERS 2026</b><small>Dammam · 16/24</small></button>
+      <button class="card t" data-gxa-reveal data-gxa-press data-go="detail"><i class="c"></i><b>WINTER FOOTBALL LEAGUE</b><small>Riyadh · 10/35</small></button>
+    </div></div>
+    <nav class="gxa-fixed-bottom tabs"><button data-tab="home" class="on" data-gxa-press>Home</button><button data-tab="board" data-gxa-press>Leaderboard</button><button data-tab="profile" data-gxa-press>Profile</button></nav>
+  </section>
+</template>
+
+<template id="s-board">
+  <section class="gxa-screen" data-name="board">
+    <div class="gxa-scroller"><div class="pad">
+      <div class="bar" data-gxa-reveal><span class="ttl">LEADERBOARD</span></div>
+      <div class="podium" data-gxa-reveal><i></i><i class="first"></i><i></i></div>
+      <div class="li" data-gxa-reveal>4 · Youssef N. <b>2,840</b></div>
+      <div class="li" data-gxa-reveal>5 · Ahmed M. <b>2,610</b></div>
+      <div class="li" data-gxa-reveal>6 · Sara K. <b>2,455</b></div>
+      <div class="li" data-gxa-reveal>7 · Omar H. <b>2,300</b></div>
+    </div></div>
+    <nav class="gxa-fixed-bottom tabs"><button data-tab="home" data-gxa-press>Home</button><button data-tab="board" class="on" data-gxa-press>Leaderboard</button><button data-tab="profile" data-gxa-press>Profile</button></nav>
+  </section>
+</template>
+
+<template id="s-profile">
+  <section class="gxa-screen" data-name="profile">
+    <div class="gxa-scroller"><div class="pad">
+      <div class="bar" data-gxa-reveal><span class="ttl">PROFILE</span></div>
+      <div class="pcard" data-gxa-reveal data-swipe><span class="game">FC26</span><i class="av"></i><b>MOHAMED AHMED</b><small>Swipe me ← →</small><button class="share" data-gxa-press data-open="modal">Share</button></div>
+      <div class="stats" data-gxa-reveal><span>3,761<small>XP</small></span><span>200<small>WINS</small></span><span>512<small>GAMES</small></span></div>
+      <button class="btn ghost" data-gxa-press data-go="settings">Settings</button>
+    </div></div>
+    <nav class="gxa-fixed-bottom tabs"><button data-tab="home" data-gxa-press>Home</button><button data-tab="board" data-gxa-press>Leaderboard</button><button data-tab="profile" class="on" data-gxa-press>Profile</button></nav>
+  </section>
+</template>
+
+<template id="s-detail">
+  <section class="gxa-screen" data-name="detail">
+    <div class="gxa-scroller"><div class="pad top0">
+      <div class="cover" data-gxa-reveal data-y="0"><button class="back" data-gxa-press data-back aria-label="Back">←</button></div>
+      <div data-gxa-reveal data-y="200"><h2>SUMMER BASKETBALL LEAGUE</h2><small class="muted">Jeddah Sports Club</small></div>
+      <button class="btn grad" data-gxa-reveal data-y="270" data-gxa-press="cta" data-go="form">Join</button>
+      <div class="seg" data-gxa-reveal data-y="330"><button class="on" data-seg="details">Details</button><button data-seg="matches">Matches</button><button data-seg="sponsors">Sponsors</button></div>
+      <div class="segbody"></div>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-form">
+  <section class="gxa-screen" data-name="form">
+    <div class="gxa-scroller"><div class="pad">
+      <div class="bar" data-gxa-reveal><button class="back" data-gxa-press data-back aria-label="Back">←</button><span class="ttl">JOIN TOURNAMENT</span></div>
+      <label class="lbl" data-gxa-reveal>TEAM NAME<span class="gxa-field input" data-field tabindex="0">Enter team name</span></label>
+      <label class="lbl" data-gxa-reveal>COUNTRY<button class="gxa-field input sel" data-gxa-press data-open="sheet">Choose country ▾</button></label>
+      <div class="agree" data-gxa-reveal><span class="box" role="checkbox" aria-checked="false" tabindex="0" data-tick></span>I accept the rules</div>
+      <button class="btn grad" data-gxa-reveal data-gxa-press="cta" data-go="success">Submit</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-success">
+  <section class="gxa-screen" data-name="success">
+    <div class="gxa-glow-top"></div>
+    <div class="gxa-scroller"><div class="pad center">
+      <div class="trophy gxa-hero-pop" data-gxa-reveal aria-hidden="true"></div>
+      <h2 data-gxa-reveal>THANK YOU!</h2>
+      <p class="muted" data-gxa-reveal>Your registration is under review.</p>
+      <button class="btn grad" data-gxa-reveal data-gxa-press="wide" data-go="home" data-reset>Back to tournaments</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-settings">
+  <section class="gxa-screen" data-name="settings">
+    <div class="gxa-scroller"><div class="pad">
+      <div class="bar" data-gxa-reveal><button class="back" data-gxa-press data-back aria-label="Back">←</button><span class="ttl">SETTINGS</span></div>
+      <div class="li" data-gxa-reveal>Language <b>English</b></div>
+      <div class="li" data-gxa-reveal>Notifications <b>On</b></div>
+      <button class="btn danger" data-gxa-reveal data-gxa-press data-go="confirm">Delete account</button>
+      <button class="btn ghost" data-gxa-reveal data-gxa-press data-logout>Log out</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-confirm">
+  <section class="gxa-screen" data-name="confirm">
+    <div class="dim"></div>
+    <div class="csheet" data-sheet-part>
+      <p><b>Delete your account permanently?</b></p>
+      <p class="muted">This can't be undone.</p>
+      <button class="btn danger" data-gxa-press="wide" data-go="gone">Yes, delete</button>
+      <button class="btn ghost" data-gxa-press data-back>Keep my account</button>
+    </div>
+  </section>
+</template>
+
+<template id="s-gone">
+  <section class="gxa-screen" data-name="gone">
+    <div class="gxa-scroller"><div class="pad center">
+      <div class="badge-wrap" data-gxa-reveal><div class="badge gxa-spin-in">✓</div></div>
+      <h2 data-gxa-reveal>ACCOUNT DELETED</h2>
+      <button class="btn grad" data-gxa-reveal data-gxa-press="cta" data-logout>Back to start</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-splash">
+  <section class="gxa-screen" data-name="splash">
+    <i class="gxa-corner-glow is-cyan"></i><i class="gxa-corner-glow is-magenta"></i>
+    <div class="splash"><div class="mark gxa-logo-pop">GXPER<small>PLAY · EARN · RANK</small></div><div class="gxa-loader"></div><small class="muted ls">LOADING</small></div>
+  </section>
+</template>
+
+<template id="s-welcome">
+  <section class="gxa-screen" data-name="welcome">
+    <div class="gxa-scroller"><div class="pad top0">
+      <div class="whero" data-gxa-reveal><div class="img gxa-kenburns"></div><div class="gxa-sweep"></div></div>
+      <h2 data-gxa-reveal>EARN XP.<br><span class="gt">CLIMB THE RANKS.</span></h2>
+      <button class="btn grad" data-gxa-reveal data-gxa-press="cta" data-login>Create account</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="s-alert">
+  <section class="gxa-screen" data-name="alert">
+    <div class="gxa-glow-top"></div>
+    <div class="gxa-scroller"><div class="pad center">
+      <div class="big gxa-hero-pop" data-gxa-reveal>500</div>
+      <h2 class="y" data-gxa-reveal>ERROR 500</h2>
+      <button class="btn grad" data-gxa-reveal data-gxa-press="wide" data-go="home" data-reset>Back to home</button>
+    </div></div>
+  </section>
+</template>
+
+<template id="t-sheet">
+  <div class="sheet"><div class="handle"></div><b>CHOOSE COUNTRY</b>
+    <button class="opt on" data-gxa-press data-close>Saudi Arabia</button><button class="opt" data-gxa-press data-close>United Arab Emirates</button><button class="opt" data-gxa-press data-close>Qatar</button><button class="opt" data-gxa-press data-close>Kuwait</button></div>
+</template>
+<template id="t-modal">
+  <div class="modal"><b>SHARE PROFILE</b><div class="mcard">MOHAMED AHMED<small>#1,275 · CHALLENGER</small></div>
+    <div class="row3"><button data-gxa-press data-share="Opening Snapchat…">Snap</button><button data-gxa-press data-share="Sharing to WhatsApp…">WhatsApp</button><button data-gxa-press data-share="Saved as PDF">PDF</button></div></div>
+</template>
+
+<script src="../dist/gxper-app-motion.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>
