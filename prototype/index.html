@@ -22,7 +22,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--ink)}
-body{background:var(--ink);color:var(--fg);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-synthesis:none}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-synthesis:none}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--ink)}
 p{margin:0}
 a{color:inherit;text-decoration:none}
@@ -63,7 +63,9 @@ img{display:block;max-width:100%}
 .hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:82px;display:flex;align-items:center;justify-content:space-between;gap:24px;
   padding-left:max(clamp(16px,3.333vw,48px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,3.333vw,48px),env(safe-area-inset-right,0px));
   background:rgba(15,13,12,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  animation:hdrIn .8s var(--ease) both}
+  animation:hdrIn .8s var(--ease) backwards;transition:transform .45s var(--ease)}
+/* hide on scroll down, show on scroll up */
+.hdr-off .hdr{transform:translateY(calc(-100% - env(safe-area-inset-top,0px) - 2px))}
 .hdr.inner{background:var(--ink)}
 @keyframes hdrIn{from{transform:translateY(-100%)}}
 .brand{height:32px;flex:none;display:block;transition:transform .4s var(--spring)}
@@ -83,11 +85,12 @@ img{display:block;max-width:100%}
 .menu-open .menu-btn span::before{transform:translateY(6px) rotate(45deg)}
 .menu-open .menu-btn span::after{transform:translateY(-6px) rotate(-45deg)}
 .hdr-right{display:flex;align-items:center;gap:12px}
-.progress{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 82px);height:2px;z-index:49;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));pointer-events:none;box-shadow:0 0 12px rgba(255,140,120,.5)}
+.progress{--hh:82px;position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + var(--hh));transition:translate .45s var(--ease);height:2px;z-index:49;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));pointer-events:none;box-shadow:0 0 12px rgba(255,140,120,.5)}
 .mnav{position:fixed;z-index:48;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 82px);background:rgba(15,13,12,.97);border-bottom:1px solid var(--line);
   padding:18px max(16px,env(safe-area-inset-right,0px)) 26px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:4px;
   transform:translateY(-12px);opacity:0;visibility:hidden;transition:transform .4s var(--ease),opacity .3s,visibility .3s}
 .menu-open .mnav{transform:none;opacity:1;visibility:visible}
+.hdr-off .progress{translate:0 calc(-1 * var(--hh))}
 .mnav{bottom:0;overflow-y:auto;background:var(--ink);padding-top:34px;padding-bottom:max(30px,env(safe-area-inset-bottom,0px))}
 .mn-main{display:flex;flex-direction:column;margin-top:12px}
 .mn-main a{font:400 44px/1.12 var(--display);text-transform:uppercase;color:var(--fg);transition:color .25s,transform .35s var(--ease)}
@@ -368,7 +371,9 @@ img{display:block;max-width:100%}
 .field{position:relative;display:flex;flex-direction:column;gap:6px;height:62px;padding:10px 14px;background:rgba(15,13,12,.66);border:1px solid var(--line3);border-radius:10px;transition:border-color .3s,box-shadow .3s,background-color .3s}
 .field label{font:500 10px/normal var(--body);color:var(--muted);transition:color .3s}
 .field input,.field select{all:unset;font:400 14px/normal var(--body);color:var(--fg);width:100%;cursor:text}
-.field select{cursor:pointer}
+.field select{cursor:pointer;padding-right:34px;box-sizing:border-box}
+.field .chev{position:absolute;right:14px;top:50%;width:24px;height:24px;margin-top:-12px;color:var(--fg);pointer-events:none;transition:transform .35s var(--ease),color .3s}
+.field:focus-within .chev{color:var(--lime);transform:rotate(180deg)}
 .field select option{background:#1a1716;color:var(--fg)}
 .field input::placeholder{color:var(--fg);opacity:1}
 .field:focus-within{border-color:var(--lime);box-shadow:0 0 0 3px rgba(255,244,0,.12);background:rgba(15,13,12,.82)}
@@ -475,17 +480,18 @@ img{display:block;max-width:100%}
 .l-contact .mail{width:300px;justify-content:flex-end;text-align:right;align-self:center}
 /* contact page */
 .c-body{background:var(--ink);padding-block:90px}
-.c-in{display:grid;grid-template-columns:minmax(0,520px) minmax(0,680px);gap:40px;align-items:start}
+.c-in{display:grid;grid-template-columns:minmax(0,500px) minmax(0,680px);gap:40px;align-items:start}
 .c-dir{display:flex;flex-direction:column;gap:14px}
-.c-card{background:rgba(26,23,22,.72);border:1px solid var(--line);border-radius:16px;padding:26px;display:flex;flex-direction:column;gap:12px;transition:border-color .35s,transform .5s var(--ease),background-color .35s,opacity .9s var(--ease)}
+.c-card{background:rgba(26,23,22,.72);border:1px solid var(--line);border-radius:16px;padding:20px 26px;display:flex;flex-direction:column;gap:12px;transition:border-color .35s,transform .5s var(--ease),background-color .35s,opacity .9s var(--ease)}
 .c-card.hot{border-color:var(--limeline)}
+.c-dir .c-card{min-height:200px}
 .c-card:hover{border-color:var(--lime);transform:translateX(6px);background:rgba(26,23,22,.9)}
 .c-card svg{width:30px;height:30px;transition:transform .5s var(--spring)}
 .c-card:hover svg{transform:scale(1.15) rotate(-8deg)}
 .c-card h3{margin:0;font-size:clamp(28px,2.361vw,34px);line-height:.882}
-.c-card .b{font:400 16px/21px var(--body);color:var(--muted)}
+.c-card .b{font:400 15px/21px var(--body);color:var(--muted)}
 .c-card button.h{all:unset;cursor:pointer}
-.c-map{height:700px}
+.c-map{height:628px}
 .c-cta{background:var(--ink2);padding-block:80px}
 .c-cta .in{display:grid;grid-template-columns:minmax(0,720px) minmax(0,420px);gap:70px;align-items:start;max-width:1210px;margin-inline:0}
 .c-cta .tt{display:flex;flex-direction:column;gap:12px}
@@ -597,7 +603,7 @@ body.lock{overflow:hidden}
   .m-grid{grid-template-columns:repeat(2,1fr)}
   .form{max-width:560px}
   .map-frame{height:auto;aspect-ratio:690/480}
-  .c-map{aspect-ratio:680/700}
+  .c-map{aspect-ratio:680/628}
 }
 @media (max-width:900px){
   .nav{display:none}
@@ -675,7 +681,8 @@ body.lock{overflow:hidden}
   .hdr{height:83px;padding-inline:20px}
   .brand{height:26px}
   .menu-btn{width:42px;height:42px;border-radius:12px}
-  .progress,.mnav{top:calc(env(safe-area-inset-top,0px) + 83px)}
+  .progress{--hh:83px}
+  .mnav{top:calc(env(safe-area-inset-top,0px) + 83px)}
 
   /* hero (744 tall) */
   .hero{height:744px;min-height:0;padding:0}
@@ -802,9 +809,10 @@ body.lock{overflow:hidden}
   .app-copy .body16{font-size:14px;line-height:25px}
   .badges{gap:10px;flex-wrap:nowrap}
   .badge,.badge img{width:168px;height:56px}
-  .phones{display:flex;gap:16px;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 6px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .app .in{margin:0;max-width:none}
+  .phones{display:flex;gap:2px;width:calc(100% + 20px);margin-left:-20px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:6px;padding:0 6px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .phones::-webkit-scrollbar{display:none}
-  .ph{flex:0 0 200px;margin:0;scroll-snap-align:start}
+  .ph{flex:0 0 175px;margin:0;scroll-snap-align:start}
   .ph:nth-child(1),.ph:nth-child(3){margin-top:0}
 
   /* request */
@@ -840,8 +848,10 @@ body.lock{overflow:hidden}
   .panel .acts .btn{width:198px;height:46px;padding:0 19px;border-radius:12px;font-size:13px;justify-content:space-between}
 
   /* contact + legal pages */
-  .c-card h3{font-size:27px;line-height:30px}
-  .c-card .b{font-size:13px;line-height:21px}
+  .c-card h3{font-size:27px;line-height:28px}
+  .c-card,.c-dir .c-card{padding:26px;min-height:0}
+  .c-card .b{font-size:12px;line-height:21px}
+  .c-map{aspect-ratio:350/400}
 
   /* footer — logo, motto, store badges, links, divider, credits */
   .foot{padding:34px 20px 28px}
@@ -864,6 +874,7 @@ body.lock{overflow:hidden}
 
 <!-- icon sprite (vectors exported from Figma) -->
 <svg class="sprite" aria-hidden="true">
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z" fill="currentColor"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 18 18"><path d="M3.75 9H14.25M9.75 13.5L14.25 9L9.75 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-game34" viewBox="0 0 34 34"><path d="M11.3334 12.75H22.6667C23.8039 12.7505 24.9242 13.0248 25.933 13.5496C26.9418 14.0745 27.8095 14.8345 28.4625 15.7655C29.1156 16.6965 29.5349 17.771 29.685 18.8982C29.8352 20.0254 29.7117 21.1722 29.325 22.2417L27.9084 25.925C27.7187 26.4004 27.4037 26.8155 26.997 27.1263C26.5903 27.437 26.1071 27.6318 25.5985 27.6899C25.09 27.748 24.5752 27.6673 24.1089 27.4563C23.6426 27.2454 23.2421 26.912 22.95 26.4917L20.5417 24.0833H13.4584L11.05 26.4917C10.758 26.912 10.3575 27.2454 9.89118 27.4563C9.42485 27.6673 8.91007 27.748 8.40155 27.6899C7.89302 27.6318 7.40974 27.437 7.00303 27.1263C6.59633 26.8155 6.2814 26.4004 6.09171 25.925L4.67504 22.2417C4.2884 21.1722 4.16492 20.0254 4.31505 18.8982C4.46518 17.771 4.8845 16.6965 5.53756 15.7655C6.19063 14.8345 7.05823 14.0745 8.06704 13.5496C9.07584 13.0248 10.1962 12.7505 11.3334 12.75Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.3333 17V22.6667M8.5 19.8333H14.1667M22.6667 18.4167H22.6808M25.5 21.25H25.5142" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-pgame" viewBox="0 0 32 27"><path d="M10.6638 6H21.3305C22.4008 6.00046 23.4552 6.25859 24.4047 6.75259C25.3542 7.24659 26.1707 7.96192 26.7854 8.83812C27.4 9.71432 27.7947 10.7256 27.936 11.7865C28.0773 12.8475 27.9611 13.9268 27.5972 14.9333L26.2638 18.4C26.0853 18.8474 25.7889 19.2381 25.4061 19.5306C25.0233 19.8231 24.5685 20.0064 24.0899 20.0611C23.6113 20.1158 23.1268 20.0398 22.6879 19.8413C22.249 19.6427 21.8721 19.3289 21.5972 18.9333L19.3305 16.6667H12.6638L10.3972 18.9333C10.1223 19.3289 9.74537 19.6427 9.30647 19.8413C8.86757 20.0398 8.38308 20.1158 7.90447 20.0611C7.42585 20.0064 6.971 19.8231 6.58822 19.5306C6.20544 19.2381 5.90904 18.8474 5.7305 18.4L4.39717 14.9333C4.03327 13.9268 3.91706 12.8475 4.05835 11.7865C4.19965 10.7256 4.5943 9.71432 5.20895 8.83812C5.8236 7.96192 6.64017 7.24659 7.58963 6.75259C8.5391 6.25859 9.59354 6.00046 10.6638 6Z" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.6637 10V15.3333M7.99707 12.6667H13.3304M21.3304 11.3333H21.3437M23.9971 14H24.0104" fill="none" stroke="#fff400" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -1081,10 +1092,10 @@ body.lock{overflow:hidden}
         <div class="f-title"><span class="bolt">ϟ</span><span class="t">START YOUR REQUEST</span></div>
         <div class="field"><label for="fNameEn">Tournament name (English)</label><input id="fNameEn" name="nameEn" placeholder="e.g. Riyadh City Cup" autocomplete="off"></div>
         <div class="field"><label for="fNameAr">Tournament name (Arabic)</label><input id="fNameAr" name="nameAr" dir="rtl" placeholder="مثال: كأس مدينة الرياض" autocomplete="off" style="text-align:left"></div>
-        <div class="field"><label for="fGame">Select game</label><select id="fGame" name="game"><option>VALORANT</option><option>EA SPORTS FC 26</option><option>TEKKEN 8</option><option>ROCKET LEAGUE</option><option>FORTNITE</option></select></div>
+        <div class="field"><label for="fGame">Select game</label><select id="fGame" name="game"><option>VALORANT</option><option>EA SPORTS FC 26</option><option>TEKKEN 8</option><option>ROCKET LEAGUE</option><option>FORTNITE</option></select><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></div>
         <div class="f-row">
           <div class="field"><label for="fCount">Expected participants</label><input id="fCount" name="count" inputmode="numeric" value="64"></div>
-          <div class="field"><label for="fCountry">Country</label><select id="fCountry" name="country"><option>Saudi Arabia</option><option>United Arab Emirates</option></select></div>
+          <div class="field"><label for="fCountry">Country</label><select id="fCountry" name="country"><option>Saudi Arabia</option><option>United Arab Emirates</option></select><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></div>
         </div>
         <div class="field"><label for="fCity">City</label><input id="fCity" name="city" value="Riyadh" autocomplete="off"></div>
         <button type="button" class="loc" id="openMap"><svg width="22" height="22"><use href="#i-pin22"/></svg><span><span class="k" id="locK">SELECT LOCATION ON MAP</span><span class="v" id="locV">Open interactive map</span></span></button>
@@ -1403,7 +1414,8 @@ function setPage(p) {
 function scrollToSection(id) {
   if (!id) { scrollTo({top: 0, behavior: RM ? 'auto' : 'smooth'}); return; }
   const el = document.getElementById(id); if (!el) return;
-  const y = el.getBoundingClientRect().top + scrollY - 82;
+  const y = el.getBoundingClientRect().top + scrollY - hdr.offsetHeight;
+  holdHeader(1400);   // keep the header visible while the page glides to the section
   scrollTo({top: Math.max(0, y), behavior: RM ? 'auto' : 'smooth'});
 }
 function route(first) {
@@ -1436,6 +1448,19 @@ const menuBtn = $('#menuBtn');
 function closeMenu() { document.body.classList.remove('menu-open'); menuBtn.setAttribute('aria-expanded', 'false'); }
 menuBtn.addEventListener('click', () => { const o = document.body.classList.toggle('menu-open'); menuBtn.setAttribute('aria-expanded', String(o)); });
 
+/* ---------------- header: hide on scroll down, show on scroll up ---------------- */
+let lastY = scrollY, hdrHold = 0;
+function hideHeader() {
+  const y = Math.max(0, scrollY), dy = y - lastY;
+  const b = document.body.classList;
+  if (y < 120 || b.contains('menu-open') || performance.now() < hdrHold) b.remove('hdr-off'); // near the top, menu open, or jumping to a section: always show
+  else if (dy > 6) b.add('hdr-off');        // scrolling down
+  else if (dy < -6) b.remove('hdr-off');    // scrolling up
+  if (Math.abs(dy) > 6 || y < 120) lastY = y;
+}
+function holdHeader(ms) { hdrHold = performance.now() + ms; document.body.classList.remove('hdr-off'); }
+document.addEventListener('focusin', e => { if (e.target.closest('#hdr')) holdHeader(400); });
+
 /* ---------------- scroll-linked motion ---------------- */
 const prog = $('#progress'), heroC = $('#heroContent'), heroBg = $('#heroBg');
 const phones = $$('.ph');
@@ -1446,6 +1471,7 @@ function onScroll() {
     ticking = false;
     const max = document.documentElement.scrollHeight - innerHeight;
     prog.style.setProperty('--p', max > 0 ? (scrollY / max).toFixed(4) : 0);
+    hideHeader();
     if (RM || current !== 'home') return;
     const y = scrollY;
     if (y < 1000) {

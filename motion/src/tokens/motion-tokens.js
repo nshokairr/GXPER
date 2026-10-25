@@ -49,7 +49,7 @@ export const PARALLAX = {
   heroFadeEnd: 760,    // hero text fully faded after 760px of scroll
   heroBackground: 0.12,
   heroLimit: 1000,     // stop calculating after 1000px of scroll
-  phoneSpeeds: [-0.06, 0.04, -0.03], // app phones, desktop only
+  phoneSpeeds: [-0.06, 0.04, -0.03], // app phones, all screen sizes
 };
 
 export const BREAKPOINTS = {
@@ -60,6 +60,13 @@ export const BREAKPOINTS = {
 };
 
 export const HEADER_HEIGHT = { desktop: 82, mobile: 72 };
+
+export const HEADER_AUTOHIDE = {
+  minScroll: 120,        // always visible in the first 120px of the page
+  threshold: 6,          // px of movement in one direction before it reacts
+  holdAfterJumpMs: 1400, // stays visible while the page glides to a section
+  // slide: 450ms ease-out (--gx-dur-base / --gx-ease-out), see interactions.css
+};
 
 /** Read a CSS token at runtime, e.g. cssToken('--gx-dur-slow') -> "700ms" */
 export const cssToken = (name, el = document.documentElement) =>

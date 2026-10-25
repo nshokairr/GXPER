@@ -27,7 +27,8 @@ become tap effects.
 |---|---|---|
 | Reveal travel | 34px | 24px (`--gx-shift-reveal`) |
 | Phone mock entrance | 90px + tilt | 48px + tilt; the swipe row reveals together |
-| App phones | 3 in a row, parallax | Swipe row: 200px phones, 16px gap, next phone peeks in (Figma mobile) |
+| App phones | 3 in a row, parallax | Swipe row, edge to edge: 175px phones, 2px gap, 6px from the screen edge, third phone peeks in (Figma mobile) |
+| Header | Hides on scroll down, back on scroll up (G3b) | Same |
 | Hero | photo `hero-arena.jpg`, centred | `hero-arena-m.jpg`, focus at 72% so the trophy stays in frame |
 | Journey | copy left, visual right, timeline with nodes | Stacked: copy → visual → 4 tabs. Ghost number top-right; track, nodes, halo pulse and glowing head sit on top of the tabs |
 | Capabilities | 2×2 cards with hover effects | List rows; same effects on tap, plus the icon glow (C6) |

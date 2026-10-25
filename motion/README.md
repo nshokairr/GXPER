@@ -42,7 +42,7 @@ gxper-motion-handoff/
 │   │   ├── keyframes.css      ← every @keyframes, named gx-*
 │   │   ├── reduced-motion.css ← accessibility override (must load last)
 │   │   └── components/
-│   │       ├── interactions.css    G1–G5, G9, G10  buttons, links, header, progress, menu, toast, fields
+│   │       ├── interactions.css    G1–G5, G9, G10, G12  buttons, links, header (+ auto-hide), progress, menu, toast, fields, dropdown arrow
 │   │       ├── page-transition.css G6              gradient page wipe + inner-page hero entrance
 │   │       ├── reveal.css          G7, G8          scroll reveal system + number roll
 │   │       ├── hero.css            H1–H8           hero load choreography + loops
@@ -60,6 +60,7 @@ gxper-motion-handoff/
 │       └── modules/
 │           ├── reveal.js            G7, G8
 │           ├── scroll-effects.js    G4, H8, A2
+│           ├── header.js            G3b (hide on scroll down, show on scroll up)
 │           ├── sparks.js            H7
 │           ├── journey.js           J1–J8
 │           ├── orbit.js             O1–O8

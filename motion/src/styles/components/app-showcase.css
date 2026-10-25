@@ -44,7 +44,16 @@
   .gx-phone { flex: 0 0 min(269px, 64vw); scroll-snap-align: start; }
 }
 @media (max-width: 760px) {
-  /* Figma mobile: 200px phones, 16px apart, next phone peeks in from the right */
-  .gx-phones { gap: 16px; padding-block: 0 6px; }
-  .gx-phone { flex: 0 0 200px; }
+  /* Figma mobile: 175px phones, 2px apart, row runs edge to edge with 6px
+     inside padding, so two phones fit and the third peeks in from the right
+     (tells the visitor "swipe for more"). The row breaks out of the page
+     gutters so it runs from screen edge to screen edge (full-bleed). */
+  .gx-phones {
+    gap: 2px;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    padding: 0 6px 6px;
+    scroll-padding-inline: 6px;
+  }
+  .gx-phone { flex: 0 0 175px; }
 }

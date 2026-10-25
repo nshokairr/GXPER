@@ -71,6 +71,9 @@ inside a component.
 | `PARALLAX.heroContent` | 0.22 | Hero text moves at 22% of scroll speed |
 | `PARALLAX.heroFadeEnd` | 760 | Hero text fully faded after 760px of scroll |
 | `PARALLAX.heroBackground` | 0.12 | Hero photo moves at 12% of scroll speed |
-| `PARALLAX.phoneSpeeds` | −0.06 / 0.04 / −0.03 | App phones, desktop only |
+| `PARALLAX.phoneSpeeds` | −0.06 / 0.04 / −0.03 | App phones, all screen sizes |
+| `HEADER_AUTOHIDE.minScroll` | 120 | Header is always shown in the first 120px of the page |
+| `HEADER_AUTOHIDE.threshold` | 6 | px of scrolling in one direction before the header reacts |
+| `HEADER_AUTOHIDE.holdAfterJumpMs` | 1400 | Header stays visible while a nav click glides to a section |
 | `REVEAL.rootMargin` | `0px 0px -6% 0px` | Reveal when the element is 6% inside the viewport |
 | `REVEAL.preHideBelow` | 0.92 | Only hide elements starting below 92% of the first screen |

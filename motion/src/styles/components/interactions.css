@@ -79,7 +79,10 @@
 .gx-badge:hover { transform: translateY(-3px); box-shadow: 0 10px 26px -10px rgba(255, 244, 0, .45); }
 
 /* ---------- G3  Header --------------------------------------------------
-   Slides down once on first load. Sticky, blurred background.             */
+   Slides down once on first load. Sticky, blurred background.
+   G3b  Hides when the visitor scrolls down, slides back as soon as they
+   scroll up (header.js toggles html.is-header-hidden). 450ms ease-out.
+   The progress bar (G4) rides up with it so it stays on the top edge.     */
 .gx-header {
   position: sticky;
   top: env(safe-area-inset-top, 0px);
@@ -87,8 +90,10 @@
   height: var(--gx-header-h);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  animation: gx-slide-down-in .8s var(--gx-ease-out) both;
+  animation: gx-slide-down-in .8s var(--gx-ease-out) backwards;   /* backwards, not both: a held transform would block G3b */
+  transition: transform var(--gx-dur-base) var(--gx-ease-out);
 }
+.is-header-hidden .gx-header { transform: translateY(calc(-100% - env(safe-area-inset-top, 0px) - 2px)); }
 .gx-logo { display: block; transition: transform 400ms var(--gx-ease-spring); }
 .gx-logo:hover { transform: scale(1.04); }
 
@@ -106,7 +111,9 @@
   transform: scaleX(var(--gx-progress, 0));
   box-shadow: 0 0 12px rgba(255, 140, 120, .5);
   pointer-events: none;
+  transition: translate var(--gx-dur-base) var(--gx-ease-out);
 }
+.is-header-hidden .gx-progress { translate: 0 calc(-1 * var(--gx-header-h)); }
 
 /* ---------- G10  Mobile menu --------------------------------------------
    Hamburger morphs into an X; the full-screen panel fades in and drops
@@ -158,9 +165,22 @@
 .gx-toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- Form fields --------------------------------------------------
-   Focus: yellow border + soft 3px glow. Error: red border + short shake. */
+   Focus: yellow border + soft 3px glow. Error: red border + short shake.
+   G12  Dropdowns (Select game, Country): a chevron sits 14px from the
+   right edge; on focus it turns yellow and flips up (350ms ease-out).
+   Markup: <div class="gx-field gx-field--select"><label/><select/>
+           <svg class="gx-field__chevron">…</svg></div>                  */
 .gx-field { transition: border-color var(--gx-dur-fast), box-shadow var(--gx-dur-fast), background-color var(--gx-dur-fast); }
 .gx-field label { transition: color var(--gx-dur-fast); }
 .gx-field:focus-within { border-color: var(--gx-yellow); box-shadow: 0 0 0 3px rgba(255, 244, 0, .12); }
 .gx-field:focus-within label { color: var(--gx-yellow); }
 .gx-field.is-error { border-color: #ff6b5b; animation: gx-shake 400ms; }
+.gx-field--select { position: relative; }
+.gx-field--select select { padding-right: 34px; cursor: pointer; }
+.gx-field__chevron {
+  position: absolute; right: 14px; top: 50%;
+  width: 24px; height: 24px; margin-top: -12px;
+  pointer-events: none;
+  transition: transform var(--gx-dur-quick) var(--gx-ease-out), color var(--gx-dur-fast);
+}
+.gx-field--select:focus-within .gx-field__chevron { color: var(--gx-yellow); transform: rotate(180deg); }

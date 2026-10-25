@@ -122,7 +122,9 @@ section { position: relative; }
 .gx-zap { font-size: 30px; color: var(--gx-yellow); }
 .gx-field { display: flex; flex-direction: column; gap: 6px; height: 62px; padding: 10px 14px; background: rgba(15,13,12,.66); border: 1px solid rgba(255,255,255,.22); border-radius: 10px; }
 .gx-field label { font: 500 10px Poppins; color: var(--muted); }
-.gx-field input { all: unset; font: 400 14px Poppins; color: var(--fg); }
+.gx-field input, .gx-field select { all: unset; font: 400 14px Poppins; color: var(--fg); }
+.gx-field select { box-sizing: border-box; width: 100%; }
+.gx-field select option { background: #1a1716; }
 .gx-loc-btn { display: flex; gap: 10px; align-items: center; height: 62px; padding: 12px; border: 1px solid rgba(255,244,0,.31); border-radius: 10px; text-align: left; font: 500 13px Poppins; }
 
 /* regional + final */

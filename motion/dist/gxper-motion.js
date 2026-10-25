@@ -23,6 +23,8 @@ var GXMotion = (() => {
     closeOverlay: () => closeOverlay,
     confetti: () => confetti,
     flagFieldError: () => flagFieldError,
+    holdHeader: () => holdHeader,
+    initHeaderAutoHide: () => initHeaderAutoHide,
     initJourney: () => initJourney,
     initMapPin: () => initMapPin,
     initMenu: () => initMenu,
@@ -46,6 +48,7 @@ var GXMotion = (() => {
     BREAKPOINTS: () => BREAKPOINTS,
     DURATION: () => DURATION,
     EASE: () => EASE,
+    HEADER_AUTOHIDE: () => HEADER_AUTOHIDE,
     HEADER_HEIGHT: () => HEADER_HEIGHT,
     JOURNEY: () => JOURNEY,
     PAGE_TRANSITION: () => PAGE_TRANSITION,
@@ -105,7 +108,7 @@ var GXMotion = (() => {
     heroLimit: 1e3,
     // stop calculating after 1000px of scroll
     phoneSpeeds: [-0.06, 0.04, -0.03]
-    // app phones, desktop only
+    // app phones, all screen sizes
   };
   var BREAKPOINTS = {
     tablet: 1100,
@@ -118,6 +121,15 @@ var GXMotion = (() => {
     // header CTA hidden, logo 26px
   };
   var HEADER_HEIGHT = { desktop: 82, mobile: 72 };
+  var HEADER_AUTOHIDE = {
+    minScroll: 120,
+    // always visible in the first 120px of the page
+    threshold: 6,
+    // px of movement in one direction before it reacts
+    holdAfterJumpMs: 1400
+    // stays visible while the page glides to a section
+    // slide: 450ms ease-out (--gx-dur-base / --gx-ease-out), see interactions.css
+  };
   var cssToken = (name, el = document.documentElement) => getComputedStyle(el).getPropertyValue(name).trim();
 
   // src/js/core/env.js
@@ -540,6 +552,42 @@ var GXMotion = (() => {
     field.classList.add("is-error");
   }
 
+  // src/js/modules/header.js
+  var html = document.documentElement;
+  var holdUntil = 0;
+  function holdHeader(ms = HEADER_AUTOHIDE.holdAfterJumpMs) {
+    holdUntil = performance.now() + ms;
+    html.classList.remove("is-header-hidden");
+  }
+  function initHeaderAutoHide(root = document) {
+    const header = $(".gx-header", root);
+    if (!header) return null;
+    const { minScroll, threshold } = HEADER_AUTOHIDE;
+    let lastY = scrollY;
+    const update = rafThrottle(() => {
+      const y = Math.max(0, scrollY);
+      const dy = y - lastY;
+      const menuOpen = html.classList.contains("is-menu-open") || document.body.classList.contains("is-menu-open");
+      if (y < minScroll || menuOpen || performance.now() < holdUntil) html.classList.remove("is-header-hidden");
+      else if (dy > threshold) html.classList.add("is-header-hidden");
+      else if (dy < -threshold) html.classList.remove("is-header-hidden");
+      if (Math.abs(dy) > threshold || y < minScroll) lastY = y;
+    });
+    const onFocus = (e) => {
+      if (header.contains(e.target)) holdHeader(400);
+    };
+    addEventListener("scroll", update, { passive: true });
+    document.addEventListener("focusin", onFocus);
+    update();
+    return {
+      destroy() {
+        removeEventListener("scroll", update);
+        document.removeEventListener("focusin", onFocus);
+        html.classList.remove("is-header-hidden");
+      }
+    };
+  }
+
   // src/js/modules/page-transition.js
   var running = false;
   function pageTransition(swap) {
@@ -555,11 +603,11 @@ var GXMotion = (() => {
     return new Promise((resolve) => {
       setTimeout(async () => {
         await (swap == null ? void 0 : swap());
-        const html = document.documentElement;
-        const prev = html.style.scrollBehavior;
-        html.style.scrollBehavior = "auto";
+        const html2 = document.documentElement;
+        const prev = html2.style.scrollBehavior;
+        html2.style.scrollBehavior = "auto";
         scrollTo(0, 0);
-        html.style.scrollBehavior = prev;
+        html2.style.scrollBehavior = prev;
       }, PAGE_TRANSITION.swapAtMs);
       setTimeout(() => {
         running = false;
@@ -577,6 +625,7 @@ var GXMotion = (() => {
     const el = document.getElementById(id);
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY - headerHeight();
+    holdHeader();
     scrollTo({ top: Math.max(0, top), behavior });
   }
   function replayEntrance(root) {
@@ -717,7 +766,8 @@ var GXMotion = (() => {
       initJourney($("[data-gx-journey]", root)),
       initOrbit($("[data-gx-orbit-box]", root)),
       initSpotlights(root),
-      initMenu(root)
+      initMenu(root),
+      initHeaderAutoHide(root)
     ].filter(Boolean);
     return { destroy: () => parts.forEach((p) => {
       var _a;

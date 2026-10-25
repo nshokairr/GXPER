@@ -16,9 +16,11 @@ import { initJourney } from './modules/journey.js';
 import { initOrbit } from './modules/orbit.js';
 import { initSpotlights } from './modules/pointer-spotlight.js';
 import { initMenu } from './modules/ui.js';
+import { initHeaderAutoHide } from './modules/header.js';
 import { $ } from './core/env.js';
 
-export { initReveal, initScrollEffects, initSparks, initJourney, initOrbit, initSpotlights, initMenu };
+export { initReveal, initScrollEffects, initSparks, initJourney, initOrbit, initSpotlights, initMenu, initHeaderAutoHide };
+export { holdHeader } from './modules/header.js';
 export { pageTransition, scrollToSection, replayEntrance } from './modules/page-transition.js';
 export { toast, openOverlay, closeOverlay, flagFieldError } from './modules/ui.js';
 export { initMapPin } from './modules/map-pin.js';
@@ -34,6 +36,7 @@ export function initMotion(root = document) {
     initOrbit($('[data-gx-orbit-box]', root)),
     initSpotlights(root),
     initMenu(root),
+    initHeaderAutoHide(root),
   ].filter(Boolean);
   return { destroy: () => parts.forEach((p) => p.destroy?.()) };
 }

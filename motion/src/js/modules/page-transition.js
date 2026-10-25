@@ -30,6 +30,7 @@
  */
 import { PAGE_TRANSITION } from '../../tokens/motion-tokens.js';
 import { prefersReducedMotion, headerHeight, $, $$, restartClass } from '../core/env.js';
+import { holdHeader } from './header.js';
 
 let running = false;
 
@@ -52,13 +53,14 @@ export function pageTransition(swap) {
   });
 }
 
-/** Smooth-scroll to an element id, leaving room for the sticky header. */
+/** Smooth-scroll to an element id, leaving room for the sticky header (which stays visible on the way). */
 export function scrollToSection(id) {
   const behavior = prefersReducedMotion() ? 'auto' : 'smooth';
   if (!id) { scrollTo({ top: 0, behavior }); return; }
   const el = document.getElementById(id);
   if (!el) return;
   const top = el.getBoundingClientRect().top + scrollY - headerHeight();
+  holdHeader();   // keep the header visible while the page glides there (G3b)
   scrollTo({ top: Math.max(0, top), behavior });
 }
 
