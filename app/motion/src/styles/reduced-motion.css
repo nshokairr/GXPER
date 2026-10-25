@@ -1,0 +1,14 @@
+/* ==========================================================================
+   Accessibility — Reduce motion. MUST load last.
+   Everything still works and every state change still happens, instantly.
+   JS modules also read prefers-reduced-motion and skip sparks, confetti,
+   the wipe, reveals and the CTA loading hold.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  [data-gxa-reveal].is-pre { opacity: 1; transform: none; clip-path: none; }
+}

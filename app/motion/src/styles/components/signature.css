@@ -1,0 +1,89 @@
+/* ==========================================================================
+   U · Signature moments — one-off screen effects
+   Add the class to the element named in the comment.
+   ========================================================================== */
+
+/* U1 splash logo: pops in from 72% with a blur, then glows forever */
+.gxa-logo-pop {
+  animation:
+    gxa-pop-in var(--gxa-dur-logo-pop) var(--gxa-ease-spring) both,
+    gxa-mark-glow var(--gxa-loop-logo-glow) ease-in-out 1.1s infinite;
+}
+/* U1b alert/empty-state hero illustration: same pop, no glow loop */
+.gxa-hero-pop { animation: gxa-pop-in var(--gxa-dur-logo-pop) var(--gxa-ease-spring) both; }
+
+/* U2 splash loading bar: gradient fills its track left → right */
+.gxa-loader {
+  position: relative;
+  height: 4px;
+  border-radius: 4px;
+  background: #2b2826;
+  overflow: hidden;
+}
+.gxa-loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gxa-gradient);
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: gxa-fill var(--gxa-dur-loader) var(--gxa-ease-out) .3s forwards;
+}
+
+/* U3 splash corner glows (cyan top-right, magenta bottom-left) */
+.gxa-corner-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  filter: blur(30px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: gxa-breathe var(--gxa-loop-corner) ease-in-out infinite;
+}
+.gxa-corner-glow.is-cyan { right: -130px; top: -130px; background: radial-gradient(circle, rgba(105, 210, 255, .35), transparent 65%); }
+.gxa-corner-glow.is-magenta { left: -130px; bottom: -130px; background: radial-gradient(circle, rgba(235, 0, 139, .4), transparent 65%); animation-delay: -2s; }
+
+/* U5 hero image settles from 107% */
+.gxa-kenburns { animation: gxa-kenburns var(--gxa-dur-kenburns) var(--gxa-ease-out) both; transform-origin: 50% 60%; }
+
+/* U6 diagonal yellow light sweeping across a hero image (overlay element) */
+.gxa-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 244, 0, .12) 48%, rgba(255, 244, 0, .02) 52%, transparent 60%);
+  background-size: 250% 100%;
+  animation: gxa-sweep var(--gxa-loop-sweep) ease-in-out 1s infinite;
+}
+
+/* U8 breathing yellow glow at the top of alert / success screens */
+.gxa-glow-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 300px;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 70% at 50% 0%, rgba(255, 244, 0, .22), transparent 70%);
+  mix-blend-mode: screen;
+  animation: gxa-breathe var(--gxa-loop-breathe) ease-in-out infinite;
+}
+.gxa-glow-top.is-muted { background: radial-gradient(ellipse 60% 70% at 50% 0%, rgba(255, 244, 0, .18), transparent 70%); }
+
+/* U10 success badge spins in from −120° at 60% */
+.gxa-spin-in { animation: gxa-spin-in var(--gxa-dur-spin-in) var(--gxa-ease-out) both; }
+
+/* U11 two radar rings behind the badge (orange, then cyan 1.3s later) */
+.gxa-ping {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid #ff945d;
+  pointer-events: none;
+  opacity: 0;
+  animation: gxa-ping var(--gxa-loop-ping) ease-out 1s infinite;
+}
+.gxa-ping.is-second { border-color: var(--gxa-cyan); animation-delay: 2.3s; }
+
+/* U7 / U9 canvases (sparks, confetti) */
+.gxa-canvas { position: absolute; left: 0; width: 100%; pointer-events: none; display: block; }

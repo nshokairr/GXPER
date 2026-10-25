@@ -1,0 +1,82 @@
+/* ==========================================================================
+   T · Screen transitions
+   The slides themselves are driven by JS (Web Animations API) in
+   js/modules/transitions.js because they need both screens at once.
+   This file holds the static layer setup and the CSS-only wipe (T5).
+   ========================================================================== */
+
+/* The phone viewport: every screen is an absolutely-stacked layer */
+.gxa-viewport {
+  position: relative;
+  width: var(--gxa-screen-w);
+  height: var(--gxa-screen-h);
+  overflow: hidden;
+  isolation: isolate;
+  contain: strict;
+  background: var(--gxa-surface);
+}
+.gxa-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--gxa-surface);
+  will-change: transform;
+}
+/* Scrolling body inside a screen; fixed header/tab bar sit above it */
+.gxa-scroller {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+.gxa-scroller::-webkit-scrollbar { display: none; }
+.gxa-fixed-top, .gxa-fixed-bottom { position: absolute; left: 0; width: 100%; z-index: 5; }
+.gxa-fixed-top { top: 0; }
+.gxa-fixed-bottom { bottom: 0; }
+
+/* T1/T2 the incoming (push) or outgoing (pop) screen casts a soft edge shadow */
+.gxa-screen.is-edge { box-shadow: -24px 0 50px rgba(0, 0, 0, .55); }
+
+/* ---------- T5 gradient wipe (identical to website G6) ------------------ */
+.gxa-wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  background: var(--gxa-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.gxa-wipe.is-running { animation: gxa-wipe var(--gxa-dur-wipe) var(--gxa-ease-out) both; }
+.gxa-wipe::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 132px;
+  height: 86px;
+  margin: -43px 0 0 -66px;
+  background: var(--gxa-wipe-mark, none) center / contain no-repeat; /* set to url(gxper-v-black.svg) */
+  opacity: 0;
+}
+.gxa-wipe.is-running::after { animation: gxa-wipe-mark var(--gxa-dur-wipe) var(--gxa-ease-out) both; }
+
+/* ---------- E5 scroll progress line (long screens) ---------------------- */
+.gxa-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--gxa-progress-top, 0);
+  height: 2px;
+  z-index: 6;
+  background: var(--gxa-gradient);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(255, 140, 120, .5);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.gxa-progress.is-on { opacity: 1; }

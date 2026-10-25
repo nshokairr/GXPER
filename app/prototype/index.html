@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GXPER App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Poppins:wght@400;500;600&display=swap">
+<style>/* GXPER app prototype — motion system lifted from the GXPER website build:
+   --ease / --spring curves, gradient page wipe with the V mark, lineUp/fadeUp reveals,
+   button shine + press, lime ripple, field focus glow, loadbar, spinIn/pop badge, confetti, sparks, toast. */
+:root{
+  --ink:#0f0d0c; --ink2:#141110; --panel:#1a1716; --lime:#fff400; --fg:#f7f6f5; --muted:#a8a4a1; --dim:#7b7673;
+  --line:rgba(255,255,255,.14); --line2:rgba(255,255,255,.21);
+  --display:'League Gothic','Oswald','Arial Narrow',Impact,sans-serif;
+  --body:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --grad:linear-gradient(90deg,#ff0ce1 0%,#ff945d 25%,#ffee06 45%,#d0e950 60%,#8ddac0 80%,#69d2ff 100%);
+  --ease:cubic-bezier(.22,1,.36,1); --spring:cubic-bezier(.34,1.56,.64,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow:hidden;
+  background:
+   radial-gradient(ellipse 40% 50% at 70% 20%,rgba(255,244,0,.07),transparent 70%),
+   radial-gradient(ellipse 35% 45% at 15% 90%,rgba(235,0,139,.08),transparent 70%),
+   repeating-linear-gradient(90deg,rgba(247,246,245,.025) 0 1px,transparent 1px 120px),
+   repeating-linear-gradient(0deg,rgba(247,246,245,.02) 0 1px,transparent 1px 77px),var(--ink)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px;border-radius:6px}
+.eyebrow{font:600 11px/1.4 var(--body);letter-spacing:3px;color:var(--lime);text-transform:uppercase}
+.d{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:-.3px}
+
+/* ---------- page layout ---------- */
+.stage{position:fixed;inset:0;display:grid;grid-template-columns:minmax(260px,330px) 1fr;grid-template-rows:100%}
+.panel{height:100%;display:flex;flex-direction:column;gap:22px;padding:34px 10px 28px 36px;min-width:0;animation:fadeUp .9s var(--ease) both}
+.brand img{height:30px;width:auto;display:block}
+.ttl{margin:0;font:400 54px/.88 var(--display);text-transform:uppercase}
+.ttl .ln{display:block;overflow:hidden;padding-bottom:.03em}
+.ttl .ln>span{display:block;animation:lineUp 1s var(--ease) both}
+.ttl .ln:nth-child(2)>span{animation-delay:.12s;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.now{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:rgba(26,23,22,.6)}
+.now .k{font:600 10px/1 var(--body);letter-spacing:2.4px;color:var(--muted);text-transform:uppercase}
+.now .v{display:block;overflow:hidden;height:30px;margin-top:6px}
+.now .v span{display:block;font:400 26px/30px var(--display);text-transform:uppercase;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;transition:transform .45s var(--ease),opacity .3s}
+.now .v span.out{transform:translateY(-100%);opacity:0}
+.now .bar{height:2px;margin-top:12px;background:var(--line);border-radius:2px;overflow:hidden}
+.now .bar i{display:block;height:100%;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));transition:transform .5s var(--ease)}
+.flows{flex:1;min-height:0;overflow-y:auto;padding-right:18px;margin-right:-4px;scrollbar-width:thin;scrollbar-color:#3a3634 transparent}
+.fl{border-top:1px solid var(--line)}
+.fl>button{width:100%;display:flex;align-items:center;gap:10px;padding:13px 0;text-align:left;font:500 13px/1.2 var(--body)}
+.fl>button .no{font:400 18px/1 var(--display);color:var(--dim);width:22px;transition:color .3s}
+.fl>button .nm{flex:1}
+.fl>button .ct{font:500 11px/1 var(--body);color:var(--dim)}
+.fl>button .chev{width:10px;height:10px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg) translateY(-3px);transition:transform .35s var(--ease)}
+.fl.open>button .chev{transform:rotate(-135deg) translateX(-3px)}
+.fl.cur>button .no,.fl>button:hover .no{color:var(--lime)}
+.fl ul{list-style:none;margin:0;padding:0 0 10px 32px;display:none}
+.fl.open ul{display:block;animation:fadeUp .45s var(--ease) both}
+.fl li button{display:block;width:100%;text-align:left;padding:6px 0;font:400 12px/1.35 var(--body);color:var(--muted);transition:color .2s,transform .3s var(--ease)}
+.fl li button:hover{color:var(--fg);transform:translateX(4px)}
+.fl li button[aria-current="true"]{color:var(--lime)}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:11px;border:1px solid var(--line2);font:600 12px/1 var(--body);transition:border-color .3s,background-color .3s,transform .3s var(--ease)}
+.chip:hover{border-color:var(--lime);transform:translateY(-2px)}
+.chip:active{transform:translateY(0) scale(.97)}
+.chip[aria-pressed="true"]{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.chip .kbd{font:500 10px/1 var(--body);padding:3px 5px;border-radius:4px;border:1px solid currentColor;opacity:.6}
+.hint{font:400 11.5px/1.55 var(--body);color:var(--dim);margin:0}
+
+.dev{display:grid;place-items:center;height:100vh;height:100dvh;min-width:0;position:relative;overflow:hidden}
+.phone{position:absolute;left:50%;top:50%;margin:-426px 0 0 -196.5px;width:393px;height:852px;flex:none;transform:scale(var(--k,1));transform-origin:center;border-radius:56px;
+  box-shadow:0 0 0 11px #050404,0 0 0 12.5px #2c2826,0 40px 90px -20px rgba(0,0,0,.9),0 0 120px -30px rgba(255,244,0,.18);
+  animation:phoneIn 1.1s var(--ease) both}
+@keyframes phoneIn{from{opacity:0;transform:scale(var(--k,1)) translateY(40px)}}
+.vp{position:absolute;inset:0;overflow:hidden;border-radius:56px;background:#141110;isolation:isolate;contain:strict}
+.island{position:absolute;z-index:90;left:50%;top:11px;width:122px;height:35px;margin-left:-61px;border-radius:20px;background:#000;
+  display:flex;align-items:center;justify-content:flex-end;padding-right:13px;transition:width .45s var(--spring),margin .45s var(--spring)}
+.island i{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px var(--lime);animation:blink 2.4s ease-in-out infinite}
+.island:hover{width:136px;margin-left:-68px}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- screens ---------- */
+.scr{position:absolute;inset:0;overflow:hidden;background:#141110;will-change:transform}
+.sc{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain}
+.sc::-webkit-scrollbar{display:none}
+.body{position:relative;width:100%}
+.bd{position:absolute;left:0;width:100%}
+.bd>span{position:absolute;inset:0;background-image:var(--img);background-size:var(--sw) auto;background-repeat:no-repeat;background-position:0 var(--by)}
+.bd.c{overflow:hidden}
+.bd.c>span{transition:opacity .75s var(--ease),transform .85s var(--ease),clip-path .95s var(--ease);transition-delay:var(--dl,0s)}
+.bd.c.pre>span{opacity:0;transform:translateY(var(--ry,26px))}
+.bd.c.big.pre>span{opacity:1;clip-path:inset(0 0 100% 0);transform:translateY(18px)}
+.bd.c.soft.pre>span{transform:translateY(12px)}
+.fxt,.fxb{position:absolute;left:0;width:100%;z-index:5}
+.fxt{top:0}.fxb{bottom:0}
+.prog{position:absolute;left:0;right:0;height:2px;z-index:6;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));pointer-events:none;box-shadow:0 0 12px rgba(255,140,120,.5);opacity:0;transition:opacity .3s}
+.prog.on{opacity:1}
+
+/* hotspots */
+.hs{position:absolute;z-index:3;border-radius:10px;-webkit-tap-highlight-color:transparent;transition:background-color .35s,box-shadow .35s;touch-action:manipulation}
+.hs.drag{touch-action:pan-y;cursor:grab;z-index:2}
+.show-hs .hs,.flash .hs{background:rgba(255,244,0,.14);box-shadow:inset 0 0 0 1.5px rgba(255,244,0,.75)}
+.flash .hs{animation:hsFlash .9s ease-out both}
+@keyframes hsFlash{0%,55%{background:rgba(255,244,0,.18);box-shadow:inset 0 0 0 1.5px rgba(255,244,0,.85)}100%{background:transparent;box-shadow:inset 0 0 0 1.5px transparent}}
+
+/* press: a slice of the button lifted out and squeezed */
+.lift{position:absolute;z-index:4;overflow:hidden;pointer-events:none}
+.lift>span{position:absolute;inset:0;background-image:var(--img);background-size:var(--sw) auto;background-repeat:no-repeat;transition:transform .14s var(--ease)}
+.lift.down>span{transform:scale(.955)}
+.lift.up>span{transition:transform .5s var(--spring)}
+.lift .shine{position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);mix-blend-mode:overlay}
+.lift.shn .shine{animation:shine .7s var(--ease) both}
+@keyframes shine{to{transform:translateX(120%)}}
+.lift .load{position:absolute;left:8%;bottom:6px;height:3px;width:0;border-radius:3px;background:var(--ink);animation:loadbar .9s var(--ease) forwards}
+@keyframes loadbar{to{width:84%}}
+.rip{position:absolute;z-index:7;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:2px solid var(--lime);pointer-events:none;animation:ripple .75s ease-out forwards}
+@keyframes ripple{to{transform:scale(6);opacity:0}}
+.focus{position:absolute;z-index:4;border-radius:9px;pointer-events:none;border:1px solid var(--lime);box-shadow:0 0 0 3px rgba(255,244,0,.14),0 0 18px rgba(255,244,0,.18);animation:focusIn .4s var(--ease) both}
+.focus::after{content:"";position:absolute;left:39px;top:50%;width:1.5px;height:18px;margin-top:-9px;background:var(--lime);animation:caret 1s steps(1) infinite}
+@keyframes focusIn{from{opacity:0;transform:scale(1.03)}}
+@keyframes caret{50%{opacity:0}}
+.tick{position:absolute;z-index:4;pointer-events:none;border-radius:5px;background:#141110;border:2px solid var(--lime);display:grid;place-items:center;animation:pop .45s var(--spring) both}
+.tick svg{width:70%;height:70%}
+.tick path{stroke-dasharray:24;stroke-dashoffset:24;animation:check .4s var(--ease) .12s forwards}
+.pulse{position:absolute;z-index:4;pointer-events:none;border-radius:10px;box-shadow:inset 0 0 0 1.5px var(--lime);animation:pulseOut .7s ease-out forwards}
+@keyframes pulseOut{to{opacity:0;transform:scale(1.06)}}
+@keyframes pop{from{transform:scale(0)}}
+@keyframes check{to{stroke-dashoffset:0}}
+
+/* overlays */
+.ov{position:absolute;inset:0;z-index:40}
+.ov .shade{position:absolute;inset:0;background:rgba(5,4,4,.62);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.ov .card{position:absolute;background-image:var(--img);background-size:100% 100%;filter:drop-shadow(0 -10px 40px rgba(0,0,0,.6))}
+.ov .grab{position:absolute;left:0;right:0;top:0;height:30px;cursor:grab;touch-action:none}
+
+/* wipe — identical to the website's page wipe */
+.wipe{position:absolute;inset:0;z-index:80;pointer-events:none;background:var(--grad);transform:scaleX(0);transform-origin:left}
+.wipe.go{animation:wipe .9s var(--ease) both}
+@keyframes wipe{0%{transform:scaleX(0);transform-origin:left}45%{transform:scaleX(1);transform-origin:left}55%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+.wipe::after{content:"";position:absolute;left:50%;top:50%;width:132px;height:86px;margin:-43px 0 0 -66px;background:url(assets/gxper-v-black.svg) center/contain no-repeat;opacity:0}
+.wipe.go::after{animation:wipeMark .9s var(--ease) both}
+@keyframes wipeMark{35%,60%{opacity:.9;transform:scale(1)}0%,100%{opacity:0;transform:scale(.6)}}
+
+/* toast */
+.toast{position:absolute;left:50%;bottom:44px;z-index:85;transform:translate(-50%,30px);opacity:0;background:var(--lime);color:var(--ink);font:600 13px/normal var(--body);padding:12px 18px;border-radius:12px;white-space:nowrap;transition:transform .5s var(--spring),opacity .3s;pointer-events:none;box-shadow:0 14px 34px -10px rgba(255,244,0,.6)}
+.toast.show{transform:translate(-50%,0);opacity:1}
+
+/* screen effects */
+.fx{position:absolute;left:0;width:100%;pointer-events:none;z-index:2}
+canvas.fx{display:block}
+.sweep{background:linear-gradient(105deg,transparent 40%,rgba(255,244,0,.12) 48%,rgba(255,244,0,.02) 52%,transparent 60%);background-size:250% 100%;animation:sweep 6s ease-in-out 1s infinite}
+@keyframes sweep{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
+.glowtop{height:300px;top:0;background:radial-gradient(ellipse 60% 70% at 50% 0%,rgba(255,244,0,.22),transparent 70%);mix-blend-mode:screen;animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.08);opacity:.6}}
+.corner{width:260px;height:260px;border-radius:50%;filter:blur(30px);mix-blend-mode:screen;animation:breathe 5s ease-in-out infinite}
+.kb>span{animation:kb 2.8s var(--ease) both;transform-origin:50% 60%}
+@keyframes kb{from{transform:scale(1.07)}}
+.popin>span{animation:popIn 1s var(--spring) both;transform-origin:50% 50%}
+@keyframes popIn{from{transform:scale(.72);opacity:0;filter:blur(6px)}}
+.glow>span{animation:popIn 1s var(--spring) both,markGlow 3s ease-in-out 1.1s infinite}
+@keyframes markGlow{50%{filter:drop-shadow(0 0 14px rgba(235,0,139,.45)) drop-shadow(0 0 22px rgba(255,238,6,.25))}}
+.spin>span{animation:spinIn 1s var(--ease) both;transform-origin:var(--ox) var(--oy)}
+@keyframes spinIn{from{transform:rotate(-120deg) scale(.6);opacity:0}}
+.ping{position:absolute;z-index:3;border-radius:50%;border:2px solid #ff945d;pointer-events:none;opacity:0;animation:ping 2.6s ease-out 1s infinite}
+.ping.b{animation-delay:2.3s;border-color:#69d2ff}
+@keyframes ping{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.1);opacity:0}}
+.loader{position:absolute;z-index:3;height:4px;border-radius:4px;background:#2b2826;overflow:hidden}
+.loader i{position:absolute;inset:0;background:var(--grad);transform-origin:left;transform:scaleX(0);animation:fill 2.5s var(--ease) .3s forwards}
+@keyframes fill{to{transform:scaleX(1)}}
+
+/* drawer (small screens) */
+.drawer{position:fixed;inset:0;z-index:300;visibility:hidden}
+.drawer .sh{position:absolute;inset:0;background:rgba(5,4,4,.6);opacity:0;transition:opacity .35s}
+.drawer .pn{position:absolute;left:0;right:0;bottom:0;max-height:82%;display:flex;flex-direction:column;gap:16px;background:#1a1716;border-top:1px solid var(--line2);border-radius:22px 22px 0 0;padding:14px 20px max(20px,env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .5s var(--ease)}
+.drawer .pn::before{content:"";align-self:center;width:44px;height:4px;border-radius:4px;background:#3a3634}
+.drawer.open{visibility:visible}
+.drawer.open .sh{opacity:1}
+.drawer.open .pn{transform:none}
+
+@keyframes lineUp{from{transform:translateY(105%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}}
+
+@media (max-width:900px){
+  .stage{grid-template-columns:1fr}
+  .panel{display:none}
+}
+@media (max-width:520px){
+  .phone{border-radius:0;box-shadow:none}
+  .vp{border-radius:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="panel" aria-label="Prototype controls">
+    <a class="brand" href="#" aria-label="GXPER"><img src="assets/gxper-h-gradient.svg" alt="GXPER"></a>
+    <div>
+      <p class="eyebrow">Motion prototype · App</p>
+      <h1 class="ttl"><span class="ln"><span>Play. Earn.</span></span><span class="ln"><span>Rank.</span></span></h1>
+    </div>
+    <div class="now" aria-live="polite">
+      <span class="k" id="nowK">Onboarding</span>
+      <span class="v"><span id="nowV">Splash</span></span>
+      <div class="bar"><i id="nowBar"></i></div>
+    </div>
+    <nav class="flows" aria-label="Flows"></nav>
+    <div class="ctrls">
+      <button class="chip" type="button" data-act="back">← Back <span class="kbd">Esc</span></button>
+      <button class="chip" type="button" data-act="hs" aria-pressed="false">Tap areas <span class="kbd">H</span></button>
+      <button class="chip" type="button" data-act="restart">Restart <span class="kbd">R</span></button>
+    </div>
+    <p class="hint">Tap anything in the phone. Tap an empty spot to flash what's clickable. Drag to scroll; swipe the profile card to switch games.</p>
+  </aside>
+  <main class="dev" id="dev">
+    <div class="phone" id="phone">
+      <div class="vp" id="vp">
+        <button class="island" id="island" type="button" aria-label="Open flows menu"><i></i></button>
+        <div class="wipe" id="wipe"></div>
+        <div class="toast" id="toast" role="status"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="sh"></div>
+  <div class="pn">
+    <p class="eyebrow">GXPER app · flows</p>
+    <nav class="flows" aria-label="Flows"></nav>
+    <div class="ctrls">
+      <button class="chip" type="button" data-act="back">← Back</button>
+      <button class="chip" type="button" data-act="hs" aria-pressed="false">Tap areas</button>
+      <button class="chip" type="button" data-act="restart">Restart</button>
+    </div>
+  </div>
+</div>
+<script>window.SCREENS={"101:13712":{"n":"Sports Bottom Sheet","s":"signup","w":393,"h":182,"top":0,"bot":0,"bg":"#edcc50","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,48,"#1a1a1a",1],[48,63,"#1a1a1a",0],[63,78,"#1a1a1a",1],[78,97,"#1a1a1a",0],[97,159,"#1a1a1a",1],[159,169,"#1b1a1a",0],[169,174,"#1b1a1a",1],[174,182,"#1a1a1a",0]],"hs":[[14,106,365,44,"N73:19958","m"]]},"101:13987":{"n":"Sports Bottom Sheet","s":"signup","w":393,"h":182,"top":0,"bot":0,"bg":"#edcc50","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,63,"#1a1a1a",0],[63,78,"#1a1a1a",1],[78,97,"#1a1a1a",0],[97,159,"#1a1a1a",1],[159,169,"#1b1a1a",0],[169,174,"#1b1a1a",1],[174,182,"#1a1a1a",0]],"hs":[[14,106,365,44,"N73:19958","m"]]},"119:6346":{"n":"Sports Bottom Sheet","s":"signup","w":393,"h":536,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,70,"#1a1a1a",0],[70,107,"#1a1a1a",1],[107,126,"#1a1a1a",0],[126,145,"#1a1a1a",1],[145,161,"#1a1a1a",0],[161,198,"#1a1a1a",1],[198,206,"#1a1a1a",0],[206,243,"#1a1a1a",1],[243,251,"#1a1a1a",0],[251,288,"#1a1a1a",1],[288,296,"#1a1a1a",0],[296,333,"#1a1a1a",1],[333,341,"#1a1a1a",0],[341,378,"#1a1a1a",1],[378,386,"#1a1a1a",0],[386,423,"#1a1a1a",1],[423,431,"#1a1a1a",0],[431,468,"#1a1a1a",1],[468,476,"#1a1a1a",0],[476,513,"#1a1a1a",1],[513,521,"#1a1a1a",0],[521,536,"#1a1a1a",1]],"hs":[]},"119:6400":{"n":"Sports Bottom Sheet","s":"signup","w":393,"h":558,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,70,"#1a1a1a",0],[70,107,"#1a1a1a",1],[107,126,"#1a1a1a",0],[126,145,"#1a1a1a",1],[145,161,"#1a1a1a",0],[161,198,"#1a1a1a",1],[198,206,"#1a1a1a",0],[206,243,"#1a1a1a",1],[243,251,"#1a1a1a",0],[251,288,"#1a1a1a",1],[288,296,"#1a1a1a",0],[296,333,"#1a1a1a",1],[333,341,"#1a1a1a",0],[341,378,"#1a1a1a",1],[378,386,"#1a1a1a",0],[386,423,"#1a1a1a",1],[423,431,"#1a1a1a",0],[431,468,"#1a1a1a",1],[468,476,"#1a1a1a",0],[476,513,"#1a1a1a",1],[513,521,"#1a1a1a",0],[521,542,"#1a1a1a",1],[542,558,"#1a1a1a",0]],"hs":[]},"73:5869":{"n":"Sign up 1","s":"signup","w":393,"h":963,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,172,"#141110",1],[172,192,"#141110",0],[192,202,"#141110",1],[202,225,"#141110",0],[225,292,"#141110",1],[292,315,"#141110",0],[315,382,"#141110",1],[382,405,"#141110",0],[405,472,"#141110",1],[472,496,"#141110",0],[496,510,"#141110",1],[510,518,"#141110",0],[518,562,"#141110",1],[562,585,"#141110",0],[585,652,"#141110",1],[652,675,"#141110",0],[675,742,"#141110",1],[742,765,"#141110",0],[765,799,"#141110",1],[799,819,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,248,365,44,"C1:118418","m"],[14,338,365,44,"C1:118418","m"],[14,428,365,44,"C1:118450","m"],[14,518,365,44,"C73:20922","m"],[14,608,365,44,"O119:6346","m"],[14,698,365,44,"O119:6400","m"],[13,833,365,44,"N73:50013","b"],[14,766,24,24,"C73:21253","m"]]},"73:50013":{"n":"login-forgot 9","s":"signup","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,192,"#141110",1],[192,212,"#141110",0],[212,279,"#141110",1],[279,303,"#141110",0],[303,392,"#141110",1],[392,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"C73:21263","b"],[13,739,365,44,"N73:13409","b"]]},"73:8711":{"n":"login-forgot 2","s":"signup","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,192,"#141110",1],[192,212,"#141110",0],[212,279,"#141110",1],[279,303,"#141110",0],[303,392,"#141110",1],[392,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"C73:21263","b"],[13,739,365,44,"N73:14354","b"]]},"73:11539":{"n":"login-forgot 1","s":"signup","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,168,"#141110",0],[168,235,"#141110",1],[235,259,"#141110",0],[259,348,"#141110",1],[348,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"C73:21263","b"],[13,739,365,44,"N73:13409","b"]]},"73:13409":{"n":"Sign up 3","s":"signup","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,172,"#141110",1],[172,192,"#141110",0],[192,202,"#141110",1],[202,225,"#141110",0],[225,292,"#141110",1],[292,315,"#141110",0],[315,382,"#141110",1],[382,406,"#141110",0],[406,495,"#141110",1],[495,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,248,365,44,"C73:20936","m"],[14,338,365,44,"C73:20936","m"],[13,793,365,44,"O101:13712","b"],[349,262,16,16,"C73:21258","m"],[349,352,16,16,"C73:21258","m"]]},"73:14354":{"n":"login-forgot 3","s":"signup","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,172,"#141110",1],[172,191,"#141110",0],[191,258,"#141110",1],[258,281,"#141110",0],[281,348,"#141110",1],[348,372,"#141110",0],[372,461,"#141110",1],[461,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,214,365,44,"C73:20936","m"],[14,304,365,44,"C73:20936","m"],[13,793,365,44,"O101:13987","b"],[349,228,16,16,"C73:21258","m"],[349,318,16,16,"C73:21258","m"]]},"73:19958":{"n":"Login","s":"signup","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,169,"#141110",0],[169,183,"#141110",1],[183,191,"#141110",0],[191,235,"#141110",1],[235,258,"#141110",0],[258,347,"#141110",1],[347,367,"#141110",0],[367,456,"#141110",1],[456,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,191,365,44,"C73:20922","m"],[14,281,365,44,"C73:20936","m"],[13,739,365,44,"N1:79288","b"],[14,333,365,10,"N73:11539","m"],[349,295,16,16,"C73:21258","m"]]},"1:79288":{"n":"Home","s":"tournaments","w":393,"h":1534,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,60,"#141110",0],[60,96,"#141110",1],[96,114,"#141110",0],[114,163,"#141110",1],[163,186,"#141110",0],[186,468,"#141110",1],[468,483,"#141110",0],[483,502,"#141110",1],[502,521,"#141110",0],[521,1132,"#141110",1],[1132,1140,"#141110",0],[1140,1441,"#141110",1],[1441,1454,"#151211",0]],"hs":[[14,522,365,301,"N1:89580","m"],[14,831,365,301,"N1:90593","m"],[14,1140,365,301,"N1:92623","m"],[0,179,393,52,"N1:101340","m"],[14,516,180,38,"C1:111652","m"],[200,516,180,38,"C1:111763","m"],[223,114,99,49,"C14:50738","m"],[90,1454,59,52,"N1:84164","b"],[167,1454,59,52,"N1:101340","b"],[245,1454,59,52,"N1:119926","b"],[322,1454,59,52,"N73:21265","b"],[328,114,51,49,"N1:112242","m"],[322,485,57,16,"N1:81734","m"]]},"1:81734":{"n":"Featured Tournaments","s":"tournaments","w":393,"h":1202,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,161,"#141110",0],[161,175,"#141110",1],[175,189,"#141110",0],[189,1109,"#141110",1],[1109,1122,"#151211",0]],"hs":[[14,190,365,301,"N1:89580","m"],[14,499,365,301,"N1:90593","m"],[14,808,365,301,"N1:92623","m"],[0,50,393,58,"N1:79288","m"],[14,108,180,38,"C1:111652","m"],[200,108,180,38,"C1:111763","m"],[90,1122,59,52,"N1:84164","b"],[167,1122,59,52,"N1:101340","b"],[245,1122,59,52,"N1:119926","b"],[322,1122,59,52,"N73:21265","b"]]},"1:82949":{"n":"Tekken\u2019s Tournaments","s":"tournaments","w":393,"h":1202,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,161,"#141110",0],[161,175,"#141110",1],[175,189,"#141110",0],[189,1109,"#141110",1],[1109,1122,"#151211",0]],"hs":[[14,190,365,301,"N1:89580","m"],[14,499,365,301,"N1:90593","m"],[14,808,365,301,"N1:92623","m"],[0,50,393,58,"N1:79288","m"],[14,108,180,38,"C1:111652","m"],[200,108,180,38,"C1:111763","m"],[90,1122,59,52,"N1:84164","b"],[167,1122,59,52,"N1:101340","b"],[245,1122,59,52,"N1:119926","b"],[322,1122,59,52,"N73:21265","b"]]},"1:84164":{"n":"Tournaments - All","s":"tournaments","w":393,"h":1605,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,158,"#141110",0],[158,196,"#141110",1],[196,211,"#141110",0],[211,225,"#141110",1],[225,240,"#141110",0],[240,272,"#141110",1],[272,284,"#141110",0],[284,585,"#141110",1],[585,593,"#141110",0],[593,894,"#141110",1],[894,902,"#141110",0],[902,1203,"#141110",1],[1203,1211,"#141110",0],[1211,1512,"#141110",1],[1512,1525,"#151211",0]],"hs":[[14,284,365,301,"N1:89580","m"],[14,593,365,301,"N1:90593","m"],[14,902,365,301,"N1:91606","m"],[14,1211,365,301,"N1:92623","m"],[14,158,366,38,"O1:130107","m"],[14,108,180,38,"O1:131167","m"],[200,108,180,38,"O1:131221","m"],[12,1525,59,52,"N1:79288","b"],[167,1525,59,52,"N1:101340","b"],[245,1525,59,52,"N1:119926","b"],[322,1525,59,52,"N73:21265","b"],[151,240,88,32,"C1:112227","m"],[247,240,73,32,"C1:112197","m"],[328,240,70,32,"C1:112212","m"],[79,240,64,32,"C1:112182","m"],[219,58,16,42,"C1:126991","m"],[363,58,16,42,"C1:127013","m"]]},"1:85518":{"n":"Tournaments - TEKKEN 8","s":"tournaments","w":393,"h":1605,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,158,"#141110",0],[158,196,"#141110",1],[196,211,"#141110",0],[211,225,"#141110",1],[225,240,"#141110",0],[240,272,"#141110",1],[272,284,"#141110",0],[284,585,"#141110",1],[585,593,"#141110",0],[593,894,"#141110",1],[894,902,"#141110",0],[902,1203,"#141110",1],[1203,1211,"#141110",0],[1211,1512,"#141110",1],[1512,1525,"#151211",0]],"hs":[[14,284,365,301,"N1:89580","m"],[14,593,365,301,"N1:90593","m"],[14,902,365,301,"N1:91606","m"],[14,1211,365,301,"N1:92623","m"],[14,158,366,38,"O1:130372","m"],[14,108,180,38,"O1:131167","m"],[200,108,180,38,"O1:131221","m"],[12,1525,59,52,"N1:79288","b"],[167,1525,59,52,"N1:101340","b"],[245,1525,59,52,"N1:119926","b"],[322,1525,59,52,"N73:21265","b"],[151,240,88,32,"C1:112227","m"],[247,240,73,32,"C1:112197","m"],[328,240,70,32,"C1:112212","m"],[79,240,64,32,"C1:112182","m"],[219,58,16,42,"C1:126991","m"],[363,58,16,42,"C1:127013","m"]]},"1:86872":{"n":"Tournaments - FC 2026","s":"tournaments","w":393,"h":1605,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,158,"#141110",0],[158,196,"#141110",1],[196,211,"#141110",0],[211,225,"#141110",1],[225,240,"#141110",0],[240,272,"#141110",1],[272,284,"#141110",0],[284,585,"#141110",1],[585,593,"#141110",0],[593,894,"#141110",1],[894,902,"#141110",0],[902,1203,"#141110",1],[1203,1211,"#141110",0],[1211,1512,"#141110",1],[1512,1525,"#151211",0]],"hs":[[14,284,365,301,"N1:89580","m"],[14,593,365,301,"N1:90593","m"],[14,902,365,301,"N1:91606","m"],[14,1211,365,301,"N1:92623","m"],[14,158,366,38,"O1:130637","m"],[14,108,180,38,"O1:131167","m"],[200,108,180,38,"O1:131221","m"],[12,1525,59,52,"N1:79288","b"],[167,1525,59,52,"N1:101340","b"],[245,1525,59,52,"N1:119926","b"],[322,1525,59,52,"N73:21265","b"],[151,240,88,32,"C1:112227","m"],[247,240,73,32,"C1:112197","m"],[328,240,70,32,"C1:112212","m"],[79,240,64,32,"C1:112182","m"],[219,58,16,42,"C1:126991","m"],[363,58,16,42,"C1:127013","m"]]},"1:88226":{"n":"Tournaments - ROCKET LEAGUE","s":"tournaments","w":393,"h":1605,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,146,"#141110",1],[146,158,"#141110",0],[158,196,"#141110",1],[196,211,"#141110",0],[211,225,"#141110",1],[225,240,"#141110",0],[240,272,"#141110",1],[272,284,"#141110",0],[284,585,"#141110",1],[585,593,"#141110",0],[593,894,"#141110",1],[894,902,"#141110",0],[902,1203,"#141110",1],[1203,1211,"#141110",0],[1211,1512,"#141110",1],[1512,1525,"#151211",0]],"hs":[[14,284,365,301,"N1:89580","m"],[14,593,365,301,"N1:90593","m"],[14,902,365,301,"N1:91606","m"],[14,1211,365,301,"N1:92623","m"],[14,158,366,38,"O1:130902","m"],[14,108,180,38,"O1:131167","m"],[200,108,180,38,"O1:131221","m"],[12,1525,59,52,"N1:79288","b"],[167,1525,59,52,"N1:101340","b"],[245,1525,59,52,"N1:119926","b"],[322,1525,59,52,"N73:21265","b"],[151,240,88,32,"C1:112227","m"],[247,240,73,32,"C1:112197","m"],[328,240,70,32,"C1:112212","m"],[79,240,64,32,"C1:112182","m"],[219,58,16,42,"C1:126991","m"],[363,58,16,42,"C1:127013","m"]]},"1:89580":{"n":"Tournament details - open - Details","s":"tournaments","w":393,"h":1286,"top":50,"bot":80,"bg":"#1b1b1b","ov":"","b":[[50,233,"#131110",1],[233,245,"#131110",0],[245,271,"#131110",1],[271,286,"#141110",0],[286,409,"#141110",1],[409,432,"#141110",0],[432,451,"#141110",1],[451,470,"#141110",0],[470,506,"#141110",1],[506,527,"#141110",0],[527,563,"#141110",1],[563,583,"#141110",0],[583,620,"#141110",1],[620,640,"#141110",0],[640,677,"#141110",1],[677,697,"#141110",0],[697,734,"#141110",1],[734,754,"#141110",0],[754,791,"#141110",1],[791,822,"#141110",0],[822,840,"#141110",1],[840,859,"#141110",0],[859,988,"#141110",1],[988,1018,"#141110",0],[1018,1037,"#141110",1],[1037,1055,"#141110",0],[1055,1112,"#141110",1],[1112,1128,"#141110",0],[1128,1163,"#141110",1],[1163,1206,"#141110",0]],"hs":[[14,315,365,40,"N1:106079","m"],[14,1129,365,35,"C1:130101","m"],[12,1206,59,52,"N1:79288","b"],[167,1206,59,52,"N1:101340","b"],[245,1206,59,52,"N1:119926","b"],[322,1206,59,52,"N73:21265","b"],[117,371,68,38,"N1:93640","m"],[209,371,68,38,"N1:96572","m"],[302,371,68,38,"N1:97520","m"],[14,61,36,36,"N1:84164","m"]]},"1:90593":{"n":"Tournament details - active - bracket1","s":"tournaments","w":393,"h":1286,"top":50,"bot":80,"bg":"#1b1b1b","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,377,"#141110",0],[377,395,"#141110",1],[395,414,"#141110",0],[414,450,"#141110",1],[450,471,"#141110",0],[471,508,"#141110",1],[508,527,"#141110",0],[527,564,"#141110",1],[564,585,"#141110",0],[585,622,"#141110",1],[622,641,"#141110",0],[641,678,"#141110",1],[678,699,"#141110",0],[699,735,"#141110",1],[735,766,"#141110",0],[766,785,"#141110",1],[785,804,"#141110",0],[804,932,"#141110",1],[932,963,"#141110",0],[963,981,"#141110",1],[981,999,"#141110",0],[999,1057,"#141110",1],[1057,1073,"#141110",0],[1073,1108,"#141110",1],[1108,1206,"#141110",0]],"hs":[[14,1073,365,35,"C1:130101","m"],[12,1206,59,52,"N1:79288","b"],[167,1206,59,52,"N1:101340","b"],[245,1206,59,52,"N1:119926","b"],[322,1206,59,52,"N73:21265","b"],[117,315,68,38,"N1:95637","m"],[209,315,68,38,"N1:94579","m"],[302,315,68,38,"N1:98473","m"],[14,61,36,36,"N1:84164","m"]]},"1:91606":{"n":"Tournament details - upcoming - details","s":"tournaments","w":393,"h":1286,"top":50,"bot":80,"bg":"#1b1b1b","ov":"","b":[[50,233,"#141111",1],[233,245,"#141111",0],[245,271,"#141111",1],[271,286,"#141110",0],[286,299,"#141110",1],[299,315,"#141110",0],[315,356,"#141110",1],[356,370,"#141110",0],[370,409,"#141110",1],[409,432,"#141110",0],[432,451,"#141110",1],[451,470,"#141110",0],[470,506,"#141110",1],[506,527,"#141110",0],[527,563,"#141110",1],[563,583,"#141110",0],[583,620,"#141110",1],[620,640,"#141110",0],[640,677,"#141110",1],[677,697,"#141110",0],[697,734,"#141110",1],[734,754,"#141110",0],[754,791,"#141110",1],[791,822,"#141110",0],[822,840,"#141110",1],[840,859,"#141110",0],[859,988,"#141110",1],[988,1018,"#141110",0],[1018,1037,"#141110",1],[1037,1055,"#141110",0],[1055,1112,"#141110",1],[1112,1128,"#141110",0],[1128,1163,"#141110",1],[1163,1206,"#141110",0]],"hs":[[14,1129,365,35,"C1:130101","m"],[12,1206,59,52,"N1:79288","b"],[167,1206,59,52,"N1:101340","b"],[245,1206,59,52,"N1:119926","b"],[322,1206,59,52,"N73:21265","b"],[96,371,56,38,"N1:115331","m"],[169,371,56,38,"N2030:11764","m"],[242,371,56,38,"N1:114383","m"],[314,371,56,38,"N1:99426","m"],[14,61,36,36,"N1:84164","m"]]},"1:92623":{"n":"Tournament details - ended - details","s":"tournaments","w":393,"h":1252,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,377,"#141110",0],[377,395,"#141110",1],[395,414,"#141110",0],[414,450,"#141110",1],[450,471,"#141110",0],[471,508,"#141110",1],[508,527,"#141110",0],[527,564,"#141110",1],[564,585,"#141110",0],[585,622,"#141110",1],[622,641,"#141110",0],[641,678,"#141110",1],[678,699,"#141110",0],[699,735,"#141110",1],[735,766,"#141110",0],[766,785,"#141110",1],[785,804,"#141110",0],[804,932,"#141110",1],[932,963,"#141110",0],[963,981,"#141110",1],[981,999,"#141110",0],[999,1057,"#141110",1],[1057,1073,"#141110",0],[1073,1108,"#141110",1],[1108,1172,"#141110",0]],"hs":[[14,1073,365,35,"C1:130101","m"],[12,1172,59,52,"N1:79288","b"],[167,1172,59,52,"N1:101340","b"],[245,1172,59,52,"N1:119926","b"],[322,1172,59,52,"N73:21265","b"],[96,315,56,38,"N1:117470","m"],[169,315,56,38,"N2030:12845","m"],[242,315,56,38,"N1:116412","m"],[314,315,56,38,"N1:100383","m"],[14,61,36,36,"N1:84164","m"]]},"1:93640":{"n":"Tournament details - open - Leaderboard","s":"tournaments","w":393,"h":1310,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,234,"#131110",1],[234,245,"#131110",0],[245,271,"#131110",1],[271,286,"#141110",0],[286,410,"#141110",1],[410,425,"#141110",0],[425,457,"#141110",1],[457,481,"#141110",0],[481,833,"#141110",1],[833,860,"#141110",0],[860,1213,"#141110",1],[1213,1230,"#151211",0]],"hs":[[14,315,365,40,"N1:106079","m"],[100,425,110,32,"C1:112227","m"],[100,425,110,32,"C1:114116","m"],[12,1230,59,52,"N1:79288","b"],[167,1230,59,52,"N1:101340","b"],[245,1230,59,52,"N1:119926","b"],[322,1230,59,52,"N73:21265","b"],[218,425,91,32,"C1:112197","m"],[218,425,91,32,"C1:114120","m"],[24,371,68,38,"N1:89580","m"],[209,371,68,38,"N1:96572","m"],[302,371,68,38,"N1:97520","m"],[317,425,66,32,"C1:112212","m"],[317,425,66,32,"C1:114124","m"],[14,61,36,36,"N1:84164","m"]]},"1:94579":{"n":"Tournament details - active - matches","s":"tournaments","w":393,"h":1154,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,381,"#141110",0],[381,393,"#141110",1],[393,412,"#141110",0],[412,528,"#141110",1],[528,539,"#141110",0],[539,653,"#141110",1],[653,672,"#141110",0],[672,686,"#141110",1],[686,705,"#141110",0],[705,941,"#141110",1],[941,949,"#141110",0],[949,1063,"#141110",1],[1063,1074,"#151211",0]],"hs":[[12,1074,59,52,"N1:79288","b"],[167,1074,59,52,"N1:101340","b"],[245,1074,59,52,"N1:119926","b"],[322,1074,59,52,"N73:21265","b"],[24,315,68,38,"N1:90593","m"],[117,315,68,38,"N1:95637","m"],[302,315,68,38,"N1:98473","m"],[14,61,36,36,"N1:84164","m"]]},"1:95637":{"n":"Tournament details - active - bracket2","s":"tournaments","w":393,"h":1246,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,369,"#141110",0],[369,402,"#141110",1],[402,425,"#141110",0],[425,777,"#141110",1],[777,805,"#141110",0],[805,1157,"#141110",1],[1157,1166,"#151212",0]],"hs":[[100,369,110,32,"C1:112227","m"],[100,369,110,32,"C1:114116","m"],[12,1166,59,52,"N1:79288","b"],[167,1166,59,52,"N1:101340","b"],[245,1166,59,52,"N1:119926","b"],[322,1166,59,52,"N73:21265","b"],[218,369,91,32,"C1:112197","m"],[218,369,91,32,"C1:114120","m"],[24,315,68,38,"N1:90593","m"],[209,315,68,38,"N1:94579","m"],[302,315,68,38,"N1:98473","m"],[317,369,66,32,"C1:112212","m"],[317,369,66,32,"C1:114124","m"],[14,61,36,36,"N1:84164","m"]]},"1:96572":{"n":"Tournament details - open - matches","s":"tournaments","w":393,"h":852,"top":0,"bot":0,"bg":"#1a1a1a","ov":"","b":[[50,233,"#131110",1],[233,245,"#131110",0],[245,271,"#131110",1],[271,286,"#141110",0],[286,410,"#141110",1],[410,526,"#141110",0],[526,562,"#141110",1],[562,581,"#141110",0],[581,597,"#141110",1],[597,772,"#141110",0],[772,796,"#141110",1],[796,806,"#1a1a1a",0],[806,817,"#1a1a1a",1],[817,839,"#1a1a1a",0],[839,844,"#1a1a1a",1],[844,852,"#1a1a1a",0]],"hs":[[14,315,365,40,"N1:106079","m"],[12,772,59,52,"N1:79288","m"],[167,772,59,52,"N1:101340","m"],[245,772,59,52,"N1:119926","m"],[322,772,59,52,"N73:21265","m"],[24,371,68,38,"N1:89580","m"],[117,371,68,38,"N1:93640","m"],[302,371,68,38,"N1:97520","m"],[14,61,36,36,"N1:84164","m"]]},"1:97520":{"n":"Tournament details - open - Sponsors","s":"tournaments","w":393,"h":1836,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,264,"#141110",1],[264,279,"#141110",0],[279,403,"#141110",1],[403,425,"#141110",0],[425,444,"#141110",1],[444,463,"#141110",0],[463,572,"#141110",1],[572,580,"#141110",0],[580,689,"#141110",1],[689,697,"#141110",0],[697,806,"#141110",1],[806,814,"#141110",0],[814,849,"#141110",1],[849,880,"#141110",0],[880,899,"#141110",1],[899,918,"#141110",0],[918,1027,"#141110",1],[1027,1035,"#141110",0],[1035,1144,"#141110",1],[1144,1152,"#141110",0],[1152,1261,"#141110",1],[1261,1269,"#141110",0],[1269,1304,"#141110",1],[1304,1335,"#141110",0],[1335,1354,"#141110",1],[1354,1373,"#141110",0],[1373,1482,"#141110",1],[1482,1490,"#141110",0],[1490,1599,"#141110",1],[1599,1607,"#141110",0],[1607,1716,"#141110",1],[1716,1724,"#141110",0],[1724,1756,"#141110",1]],"hs":[[14,308,365,40,"N1:106079","m"],[14,814,365,35,"C1:113677","m"],[14,1269,365,35,"C1:113677","m"],[14,1724,365,35,"C1:113677","m"],[12,1756,59,52,"N1:79288","b"],[167,1756,59,52,"N1:101340","b"],[245,1756,59,52,"N1:119926","b"],[322,1756,59,52,"N73:21265","b"],[24,364,68,38,"N1:89580","m"],[117,364,68,38,"N1:93640","m"],[209,364,68,38,"N1:96572","m"],[14,61,36,36,"N1:84164","m"]]},"1:98473":{"n":"Tournament details - active - sponsors","s":"tournaments","w":393,"h":1836,"top":50,"bot":80,"bg":"#1b1b1b","ov":"","b":[[50,264,"#141110",1],[264,278,"#141110",0],[278,292,"#141110",1],[292,308,"#141110",0],[308,346,"#141110",1],[346,369,"#141110",0],[369,387,"#141110",1],[387,407,"#141110",0],[407,515,"#141110",1],[515,524,"#141110",0],[524,632,"#141110",1],[632,640,"#141110",0],[640,749,"#141110",1],[749,757,"#141110",0],[757,792,"#141110",1],[792,823,"#141110",0],[823,842,"#141110",1],[842,861,"#141110",0],[861,970,"#141110",1],[970,978,"#141110",0],[978,1247,"#141110",1],[1247,1278,"#141110",0],[1278,1296,"#141110",1],[1296,1315,"#141110",0],[1315,1424,"#141110",1],[1424,1432,"#141110",0],[1432,1541,"#141110",1],[1541,1549,"#141110",0],[1549,1658,"#141110",1],[1658,1666,"#141110",0],[1666,1701,"#141110",1],[1701,1753,"#141110",0],[1753,1756,"#141110",1]],"hs":[[14,758,365,35,"C1:113677","m"],[14,1213,365,35,"C1:113677","m"],[14,1668,365,35,"C1:113677","m"],[12,1756,59,52,"N1:79288","b"],[167,1756,59,52,"N1:101340","b"],[245,1756,59,52,"N1:119926","b"],[322,1756,59,52,"N73:21265","b"],[24,308,68,38,"N1:90593","m"],[117,308,68,38,"N1:95637","m"],[209,308,68,38,"N1:94579","m"],[14,61,36,36,"N1:84164","m"]]},"1:99426":{"n":"Tournament details - active - sponsors","s":"tournaments","w":393,"h":1836,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,264,"#141110",1],[264,279,"#141110",0],[279,293,"#141110",1],[293,308,"#141110",0],[308,349,"#141110",1],[349,364,"#141110",0],[364,403,"#141110",1],[403,425,"#141110",0],[425,444,"#141110",1],[444,463,"#141110",0],[463,572,"#141110",1],[572,580,"#141110",0],[580,689,"#141110",1],[689,697,"#141110",0],[697,806,"#141110",1],[806,814,"#141110",0],[814,849,"#141110",1],[849,880,"#141110",0],[880,899,"#141110",1],[899,918,"#141110",0],[918,1027,"#141110",1],[1027,1035,"#141110",0],[1035,1144,"#141110",1],[1144,1152,"#141110",0],[1152,1261,"#141110",1],[1261,1269,"#141110",0],[1269,1304,"#141110",1],[1304,1335,"#141110",0],[1335,1354,"#141110",1],[1354,1373,"#141110",0],[1373,1482,"#141110",1],[1482,1490,"#141110",0],[1490,1599,"#141110",1],[1599,1607,"#141110",0],[1607,1716,"#141110",1],[1716,1724,"#141110",0],[1724,1756,"#141110",1]],"hs":[[14,814,365,35,"C1:113677","m"],[14,1269,365,35,"C1:113677","m"],[14,1724,365,35,"C1:113677","m"],[12,1756,59,52,"N1:79288","b"],[167,1756,59,52,"N1:101340","b"],[245,1756,59,52,"N1:119926","b"],[322,1756,59,52,"N73:21265","b"],[24,364,56,38,"N1:91606","m"],[96,364,56,38,"N1:115331","m"],[169,364,56,38,"N2030:11764","m"],[242,364,56,38,"N1:114383","m"],[14,61,36,36,"N1:84164","m"]]},"1:100383":{"n":"Tournament details - active - sponsors","s":"tournaments","w":393,"h":1789,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,264,"#141110",1],[264,278,"#141110",0],[278,292,"#141110",1],[292,308,"#141110",0],[308,346,"#141110",1],[346,369,"#141110",0],[369,387,"#141110",1],[387,407,"#141110",0],[407,515,"#141110",1],[515,524,"#141110",0],[524,632,"#141110",1],[632,640,"#141110",0],[640,749,"#141110",1],[749,757,"#141110",0],[757,792,"#141110",1],[792,823,"#141110",0],[823,842,"#141110",1],[842,861,"#141110",0],[861,970,"#141110",1],[970,978,"#141110",0],[978,1247,"#141110",1],[1247,1278,"#141110",0],[1278,1296,"#141110",1],[1296,1315,"#141110",0],[1315,1424,"#141110",1],[1424,1432,"#141110",0],[1432,1541,"#141110",1],[1541,1549,"#141110",0],[1549,1658,"#141110",1],[1658,1666,"#141110",0],[1666,1709,"#141110",1]],"hs":[[14,758,365,35,"C1:113677","m"],[14,1213,365,35,"C1:113677","m"],[14,1668,365,35,"C1:113677","m"],[12,1709,59,52,"N1:79288","b"],[167,1709,59,52,"N1:101340","b"],[245,1709,59,52,"N1:119926","b"],[322,1709,59,52,"N73:21265","b"],[24,308,56,38,"N1:92623","m"],[96,308,56,38,"N1:117470","m"],[169,308,56,38,"N2030:12845","m"],[242,308,56,38,"N1:116412","m"],[14,61,36,36,"N1:84164","m"]]},"1:106079":{"n":"Join tournament 1","s":"tournaments","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,121,"#141110",0],[121,265,"#141110",1],[265,288,"#141110",0],[288,311,"#141110",1],[311,322,"#141110",0],[322,355,"#141110",1],[355,378,"#141110",0],[378,444,"#141110",1],[444,467,"#141110",0],[467,534,"#141110",1],[534,557,"#141110",0],[557,624,"#141110",1],[624,647,"#141110",0],[647,714,"#141110",1],[714,738,"#141110",0],[738,779,"#141110",1]],"hs":[[0,50,393,58,"B","t"],[14,400,365,44,"C1:118418","m"],[14,490,365,44,"C1:118450","m"],[14,580,365,44,"C1:118434","m"],[14,670,365,44,"C1:118468","m"],[13,793,366,40,"N1:107042","b"]]},"1:107042":{"n":"Join tournament 2","s":"tournaments","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,437,"#141110",1],[437,498,"#141110",0],[498,529,"#141110",1],[529,540,"#141110",0],[540,558,"#141110",1],[558,581,"#141110",0],[581,638,"#141110",1],[638,677,"#141110",0],[677,718,"#141110",1],[718,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[111,678,173,40,"N1:89580","m"]]},"1:112242":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":334,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,144,"#1a1a1a",0],[144,202,"#1a1a1a",1],[202,220,"#1a1a1a",0],[220,278,"#1a1a1a",1],[278,321,"#1a1a1a",0],[321,326,"#1a1a1a",1],[326,334,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:82949","m"],[140,68,114,58,"N1:82949","m"],[263,68,114,58,"N1:82949","m"],[16,144,114,58,"N1:82949","m"],[140,144,114,58,"N1:82949","m"],[263,144,114,58,"N1:82949","m"],[16,220,114,58,"N1:82949","m"],[140,220,114,58,"N1:82949","m"]]},"1:114383":{"n":"Tournament details - open - matches","s":"tournaments","w":393,"h":852,"top":0,"bot":0,"bg":"#1a1a1a","ov":"","b":[[50,235,"#141111",1],[235,245,"#141111",0],[245,271,"#141111",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,356,"#141110",1],[356,371,"#141110",0],[371,410,"#141110",1],[410,526,"#141110",0],[526,562,"#141110",1],[562,581,"#141110",0],[581,597,"#141110",1],[597,772,"#141110",0],[772,796,"#141110",1],[796,805,"#1a1a1a",0],[805,816,"#1a1a1a",1],[816,838,"#1a1a1a",0],[838,844,"#1a1a1a",1],[844,852,"#1a1a1a",0]],"hs":[[12,772,59,52,"N1:79288","m"],[167,772,59,52,"N1:101340","m"],[245,772,59,52,"N1:119926","m"],[322,772,59,52,"N73:21265","m"],[24,371,56,38,"N1:91606","m"],[96,371,56,38,"N1:115331","m"],[169,371,56,38,"N2030:11764","m"],[314,371,56,38,"N1:99426","m"],[14,61,36,36,"N1:84164","m"]]},"1:115331":{"n":"Tournament details - upcoming - standings","s":"tournaments","w":393,"h":931,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,235,"#141111",1],[235,245,"#141111",0],[245,271,"#141111",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,356,"#141110",1],[356,371,"#141110",0],[371,410,"#141110",1],[410,432,"#141110",0],[432,446,"#141110",1],[446,474,"#141110",0],[474,501,"#141110",1],[501,522,"#141110",0],[522,549,"#141110",1],[549,572,"#141110",0],[572,598,"#141110",1],[598,621,"#141110",0],[621,647,"#141110",1],[647,669,"#141110",0],[669,696,"#141110",1],[696,718,"#141110",0],[718,745,"#141110",1],[745,767,"#141110",0],[767,794,"#141110",1],[794,817,"#141110",0],[817,851,"#141110",1]],"hs":[[12,851,59,52,"N1:79288","b"],[167,851,59,52,"N1:101340","b"],[245,851,59,52,"N1:119926","b"],[322,851,59,52,"N73:21265","b"],[24,371,56,38,"N1:91606","m"],[169,371,56,38,"N2030:11764","m"],[242,371,56,38,"N1:114383","m"],[314,371,56,38,"N1:99426","m"],[14,61,36,36,"N1:84164","m"]]},"1:116412":{"n":"Tournament details - ended - matches","s":"tournaments","w":393,"h":1154,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,381,"#141110",0],[381,393,"#141110",1],[393,412,"#141110",0],[412,528,"#141110",1],[528,539,"#141110",0],[539,653,"#141110",1],[653,672,"#141110",0],[672,686,"#141110",1],[686,705,"#141110",0],[705,941,"#141110",1],[941,949,"#141110",0],[949,1063,"#141110",1],[1063,1074,"#151211",0]],"hs":[[12,1074,59,52,"N1:79288","b"],[167,1074,59,52,"N1:101340","b"],[245,1074,59,52,"N1:119926","b"],[322,1074,59,52,"N73:21265","b"],[24,315,56,38,"N1:92623","m"],[96,315,56,38,"N1:117470","m"],[169,315,56,38,"N2030:12845","m"],[314,315,56,38,"N1:100383","m"],[14,61,36,36,"N1:84164","m"]]},"1:117470":{"n":"Tournament details - ended - standings","s":"tournaments","w":393,"h":1173,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,369,"#141110",0],[369,600,"#141110",1],[600,616,"#141110",0],[616,847,"#141110",1],[847,863,"#141110",0],[863,1093,"#141110",1]],"hs":[[14,369,365,51,"C1:114267","m"],[14,616,365,51,"C1:114267","m"],[14,863,365,51,"C1:114267","m"],[12,1093,59,52,"N1:79288","b"],[167,1093,59,52,"N1:101340","b"],[245,1093,59,52,"N1:119926","b"],[322,1093,59,52,"N73:21265","b"],[24,315,56,38,"N1:92623","m"],[169,315,56,38,"N2030:12845","m"],[242,315,56,38,"N1:116412","m"],[314,315,56,38,"N1:100383","m"],[14,61,36,36,"N1:84164","m"]]},"1:130107":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":250,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,144,"#1a1a1a",0],[144,202,"#1a1a1a",1],[202,237,"#1a1a1a",0],[237,242,"#1a1a1a",1],[242,250,"#1a1a1a",0]],"hs":[[16,68,114,58,"X","m"],[140,68,114,58,"N1:85518","m"],[263,68,114,58,"N1:88226","m"],[16,144,114,58,"N1:86872","m"]]},"1:130372":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":250,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,144,"#1a1a1a",0],[144,202,"#1a1a1a",1],[202,237,"#1a1a1a",0],[237,242,"#1a1a1a",1],[242,250,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:84164","m"],[140,68,114,58,"X","m"],[263,68,114,58,"N1:88226","m"],[16,144,114,58,"N1:86872","m"]]},"1:130637":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":250,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,144,"#1a1a1a",0],[144,202,"#1a1a1a",1],[202,237,"#1a1a1a",0],[237,242,"#1a1a1a",1],[242,250,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:84164","m"],[140,68,114,58,"N1:85518","m"],[263,68,114,58,"X","m"],[16,144,114,58,"N1:86872","m"]]},"1:130902":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":250,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,144,"#1a1a1a",0],[144,202,"#1a1a1a",1],[202,237,"#1a1a1a",0],[237,242,"#1a1a1a",1],[242,250,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:84164","m"],[140,68,114,58,"N1:85518","m"],[263,68,114,58,"N1:88226","m"],[16,144,114,58,"X","m"]]},"1:131167":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":626,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,70,"#1a1a1a",0],[70,107,"#1a1a1a",1],[107,126,"#1a1a1a",0],[126,145,"#1a1a1a",1],[145,161,"#1a1a1a",0],[161,198,"#1a1a1a",1],[198,206,"#1a1a1a",0],[206,243,"#1a1a1a",1],[243,251,"#1a1a1a",0],[251,288,"#1a1a1a",1],[288,296,"#1a1a1a",0],[296,333,"#1a1a1a",1],[333,341,"#1a1a1a",0],[341,378,"#1a1a1a",1],[378,386,"#1a1a1a",0],[386,423,"#1a1a1a",1],[423,431,"#1a1a1a",0],[431,468,"#1a1a1a",1],[468,476,"#1a1a1a",0],[476,513,"#1a1a1a",1],[513,521,"#1a1a1a",0],[521,599,"#1a1a1a",1],[599,626,"#171717",0]],"hs":[[14,550,366,40,"X","m"]]},"1:131221":{"n":"Sports Bottom Sheet","s":"tournaments","w":393,"h":626,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,70,"#1a1a1a",0],[70,107,"#1a1a1a",1],[107,126,"#1a1a1a",0],[126,145,"#1a1a1a",1],[145,161,"#1a1a1a",0],[161,198,"#1a1a1a",1],[198,206,"#1a1a1a",0],[206,243,"#1a1a1a",1],[243,251,"#1a1a1a",0],[251,288,"#1a1a1a",1],[288,296,"#1a1a1a",0],[296,333,"#1a1a1a",1],[333,341,"#1a1a1a",0],[341,378,"#1a1a1a",1],[378,386,"#1a1a1a",0],[386,423,"#1a1a1a",1],[423,431,"#1a1a1a",0],[431,468,"#1a1a1a",1],[468,476,"#1a1a1a",0],[476,513,"#1a1a1a",1],[513,521,"#1a1a1a",0],[521,599,"#1a1a1a",1],[599,626,"#171717",0]],"hs":[[14,550,366,40,"X","m"]]},"2030:11764":{"n":"Tournament details - upcoming - bracket","s":"tournaments","w":393,"h":1261,"top":50,"bot":81,"bg":"#1a1a1a","ov":"","b":[[50,235,"#141111",1],[235,245,"#141111",0],[245,271,"#141111",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,356,"#141110",1],[356,371,"#141110",0],[371,410,"#141110",1],[410,425,"#141110",0],[425,510,"#141110",1],[510,525,"#141110",0],[525,541,"#141110",1],[541,563,"#141110",0],[563,577,"#141110",1],[577,607,"#141110",0],[607,633,"#141110",1],[633,656,"#141110",0],[656,682,"#141110",1],[682,704,"#141110",0],[704,731,"#141110",1],[731,753,"#141110",0],[753,780,"#141110",1],[780,790,"#141110",0],[790,807,"#141110",1],[807,829,"#141110",0],[829,844,"#141110",1],[844,864,"#141110",0],[864,874,"#141110",1],[874,888,"#141110",0],[888,1090,"#141110",1],[1090,1180,"#141110",0]],"hs":[[12,1180,59,52,"N1:79288","b"],[167,1180,59,52,"N1:101340","b"],[245,1180,59,52,"N1:119926","b"],[322,1180,59,52,"N73:21265","b"],[24,371,56,38,"N1:91606","m"],[96,371,56,38,"N1:115331","m"],[242,371,56,38,"N1:114383","m"],[314,371,56,38,"N1:99426","m"],[14,61,36,36,"N1:84164","m"]]},"2030:12845":{"n":"Tournament details - ended - bracket","s":"tournaments","w":393,"h":1197,"top":50,"bot":81,"bg":"#1a1a1a","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,369,"#141110",0],[369,453,"#141110",1],[453,469,"#141110",0],[469,485,"#141110",1],[485,507,"#141110",0],[507,521,"#141110",1],[521,551,"#141110",0],[551,578,"#141110",1],[578,600,"#141110",0],[600,627,"#141110",1],[627,649,"#141110",0],[649,675,"#141110",1],[675,698,"#141110",0],[698,725,"#141110",1],[725,735,"#141110",0],[735,752,"#141110",1],[752,774,"#141110",0],[774,789,"#141110",1],[789,808,"#141110",0],[808,819,"#141110",1],[819,833,"#141110",0],[833,1036,"#141110",1],[1036,1116,"#141110",0]],"hs":[[12,1116,59,52,"N1:79288","b"],[167,1116,59,52,"N1:101340","b"],[245,1116,59,52,"N1:119926","b"],[322,1116,59,52,"N73:21265","b"],[24,315,56,38,"N1:92623","m"],[96,315,56,38,"N1:117470","m"],[242,315,56,38,"N1:116412","m"],[314,315,56,38,"N1:100383","m"],[14,61,36,36,"N1:84164","m"]]},"2010:11553":{"n":"Splash","s":"onboarding","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,86,"#141110",1],[86,357,"#141110",0],[357,421,"#141110",1],[421,431,"#141110",0],[431,495,"#141110",1],[495,734,"#141110",0],[734,737,"#141110",1],[737,755,"#141110",0],[755,852,"#141110",1]],"hs":[]},"2010:11567":{"n":"Welcome (before sign up)","s":"onboarding","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,402,"#141110",1],[402,424,"#141110",0],[424,427,"#141110",1],[427,452,"#141110",0],[452,460,"#141110",1],[460,482,"#141110",0],[482,528,"#141110",1],[528,537,"#141110",0],[537,583,"#141110",1],[583,604,"#141110",0],[604,641,"#141110",1],[641,676,"#141110",0],[676,728,"#141110",1],[728,737,"#141110",0],[737,790,"#141110",1],[790,804,"#141110",0],[804,852,"#141110",1]],"hs":[[16,676,361,52,"N73:5869","m"],[16,738,361,52,"N73:19958","m"]]},"2013:11594":{"n":"Welcome \u00b7 Trophy","s":"onboarding","w":393,"h":852,"top":0,"bot":0,"bg":"#090909","ov":"","b":[[50,72,"#090909",1],[72,115,"#090909",0],[115,515,"#090909",1],[515,526,"#090909",0],[526,536,"#090909",1],[536,565,"#090909",0],[565,615,"#090909",1],[615,628,"#090909",0],[628,659,"#090909",1],[659,674,"#090909",0],[674,763,"#090909",1],[763,783,"#090909",0],[783,796,"#090909",1],[796,852,"#090909",0]],"hs":[[24,701,345,54,"N73:5869","m"],[98,767,198,44,"N73:19958","m"]]},"1:101340":{"n":"leaderboard-fc","s":"profile","w":393,"h":990,"top":173,"bot":80,"bg":"#1a1a1a","ov":"","b":[[173,185,"#141110",0],[185,420,"#141110",1],[420,429,"#141110",0],[429,442,"#141110",1],[442,452,"#141110",0],[452,756,"#141110",1],[756,772,"#141110",0],[772,785,"#141110",1],[785,854,"#141110",0],[854,895,"#141110",1],[895,910,"#151211",0]],"hs":[[138,185,116,267,"N1:123460","m"],[14,210,116,252,"N1:123460","m"],[263,230,116,252,"N1:123460","m"],[14,452,366,40,"N1:123460","m"],[14,496,366,40,"N1:123460","m"],[14,540,366,40,"N1:123460","m"],[14,584,366,40,"N1:123460","m"],[14,628,366,40,"N1:123460","m"],[14,672,366,40,"N1:123460","m"],[14,716,366,40,"N1:123460","m"],[14,222,365,38,"C1:118589","m"],[223,116,99,49,"C14:50738","t"],[12,910,59,52,"N1:79288","b"],[90,910,59,52,"N1:84164","b"],[245,910,59,52,"N1:119926","b"],[322,910,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","t"]]},"1:102584":{"n":"leaderboard-tekken","s":"profile","w":393,"h":990,"top":173,"bot":80,"bg":"#1a1a1a","ov":"","b":[[173,185,"#141110",0],[185,420,"#141110",1],[420,429,"#141110",0],[429,442,"#141110",1],[442,452,"#141110",0],[452,756,"#141110",1],[756,772,"#141110",0],[772,785,"#141110",1],[785,854,"#141110",0],[854,895,"#141110",1],[895,910,"#151211",0]],"hs":[[138,185,116,267,"N1:123460","m"],[14,210,116,252,"N1:123460","m"],[263,230,116,252,"N1:123460","m"],[14,452,366,40,"N1:123460","m"],[14,496,366,40,"N1:123460","m"],[14,540,366,40,"N1:123460","m"],[14,584,366,40,"N1:123460","m"],[14,628,366,40,"N1:123460","m"],[14,672,366,40,"N1:123460","m"],[14,716,366,40,"N1:123460","m"],[14,222,365,38,"C1:118589","m"],[223,116,99,49,"C14:50738","t"],[12,910,59,52,"N1:79288","b"],[90,910,59,52,"N1:84164","b"],[245,910,59,52,"N1:119926","b"],[322,910,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","t"]]},"1:103828":{"n":"leaderboard-rocket","s":"profile","w":393,"h":990,"top":173,"bot":80,"bg":"#1a1a1a","ov":"","b":[[173,185,"#141110",0],[185,420,"#141110",1],[420,429,"#141110",0],[429,442,"#141110",1],[442,452,"#141110",0],[452,756,"#141110",1],[756,772,"#141110",0],[772,785,"#141110",1],[785,854,"#141110",0],[854,895,"#141110",1],[895,910,"#151211",0]],"hs":[[138,185,116,267,"N1:123460","m"],[14,210,116,252,"N1:123460","m"],[263,230,116,252,"N1:123460","m"],[14,452,366,40,"N1:123460","m"],[14,496,366,40,"N1:123460","m"],[14,540,366,40,"N1:123460","m"],[14,584,366,40,"N1:123460","m"],[14,628,366,40,"N1:123460","m"],[14,672,366,40,"N1:123460","m"],[14,716,366,40,"N1:123460","m"],[14,222,365,38,"C1:118589","m"],[223,116,99,49,"C14:50738","t"],[12,910,59,52,"N1:79288","b"],[90,910,59,52,"N1:84164","b"],[245,910,59,52,"N1:119926","b"],[322,910,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","t"]]},"1:107968":{"n":"profile-tournament-fc","s":"profile","w":393,"h":1108,"top":120,"bot":80,"bg":"#1a1a1a","ov":"","b":[[120,128,"#141110",0],[128,177,"#141110",1],[177,198,"#141110",0],[198,211,"#141110",1],[211,224,"#141110",0],[224,333,"#141110",1],[333,342,"#141110",0],[342,451,"#141110",1],[451,460,"#141110",0],[460,569,"#141110",1],[569,578,"#141110",0],[578,687,"#141110",1],[687,696,"#141110",0],[696,805,"#141110",1],[805,814,"#141110",0],[814,923,"#141110",1],[923,1028,"#141110",0]],"hs":[[223,128,99,49,"C14:50738","m"],[289,66,90,38,"C1:118508","t"],[12,1028,59,52,"N1:79288","b"],[90,1028,59,52,"N1:84164","b"],[167,1028,59,52,"N1:101340","b"],[322,1028,59,52,"N73:21265","b"],[328,128,51,49,"N1:112242","m"]]},"1:109118":{"n":"profile-tournament-tekken","s":"profile","w":393,"h":1108,"top":120,"bot":80,"bg":"#1a1a1a","ov":"","b":[[120,128,"#141110",0],[128,177,"#141110",1],[177,198,"#141110",0],[198,211,"#141110",1],[211,224,"#141110",0],[224,333,"#141110",1],[333,342,"#141110",0],[342,451,"#141110",1],[451,460,"#141110",0],[460,569,"#141110",1],[569,578,"#141110",0],[578,687,"#141110",1],[687,696,"#141110",0],[696,805,"#141110",1],[805,814,"#141110",0],[814,923,"#141110",1],[923,1028,"#141110",0]],"hs":[[223,128,99,49,"C14:50738","m"],[289,66,90,38,"C1:118508","t"],[12,1028,59,52,"N1:79288","b"],[90,1028,59,52,"N1:84164","b"],[167,1028,59,52,"N1:101340","b"],[322,1028,59,52,"N73:21265","b"],[328,128,51,49,"N1:112242","m"]]},"1:110268":{"n":"profile-tournament-rocket","s":"profile","w":393,"h":1108,"top":120,"bot":80,"bg":"#1a1a1a","ov":"","b":[[120,128,"#141110",0],[128,177,"#141110",1],[177,198,"#141110",0],[198,211,"#141110",1],[211,224,"#141110",0],[224,333,"#141110",1],[333,342,"#141110",0],[342,451,"#141110",1],[451,460,"#141110",0],[460,569,"#141110",1],[569,578,"#141110",0],[578,687,"#141110",1],[687,696,"#141110",0],[696,805,"#141110",1],[805,814,"#141110",0],[814,923,"#141110",1],[923,1028,"#141110",0]],"hs":[[223,128,99,49,"C14:50738","m"],[289,66,90,38,"C1:118508","t"],[12,1028,59,52,"N1:79288","b"],[90,1028,59,52,"N1:84164","b"],[167,1028,59,52,"N1:101340","b"],[322,1028,59,52,"N73:21265","b"],[328,128,51,49,"N1:112242","m"]]},"1:112764":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#1a2011","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,554,"#1a1a1a",1],[554,569,"#1a1a1a",0],[569,626,"#1a1a1a",1],[626,634,"#171717",0],[634,650,"#171717",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:112916":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#0b090e","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,553,"#1a1a1a",1],[553,568,"#1a1a1a",0],[568,650,"#1a1a1a",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:113068":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#0d1a1c","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,554,"#1a1a1a",1],[554,569,"#1a1a1a",0],[569,626,"#1a1a1a",1],[626,634,"#171717",0],[634,650,"#171717",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:113220":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#1a2011","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,554,"#1a1a1a",1],[554,569,"#1a1a1a",0],[569,626,"#1a1a1a",1],[626,634,"#171717",0],[634,650,"#171717",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:113372":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#0b090e","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,553,"#1a1a1a",1],[553,568,"#1a1a1a",0],[568,650,"#1a1a1a",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:113524":{"n":"fc share popup","s":"profile","w":366,"h":650,"top":0,"bot":0,"bg":"#0d1a1c","ov":"modal","b":[[0,40,"#1a1a1a",1],[40,60,"#1a1a1a",0],[60,554,"#1a1a1a",1],[554,569,"#1a1a1a",0],[569,626,"#1a1a1a",1],[626,634,"#171717",0],[634,650,"#171717",1]],"hs":[[16,569,106,65,"X","m"],[130,569,106,65,"X","m"],[244,569,106,65,"X","m"],[306,18,41,23,"X","m"]]},"1:119926":{"n":"profile-profile-fc","s":"profile","w":393,"h":1325,"top":108,"bot":80,"bg":"#1a1a1a","ov":"","b":[[108,116,"#141110",0],[116,165,"#141110",1],[165,192,"#141110",0],[192,738,"#141110",1],[738,775,"#12100e",0],[775,788,"#12100e",1],[788,801,"#141110",0],[801,910,"#141110",1],[910,919,"#141110",0],[919,1028,"#141110",1],[1028,1037,"#141110",0],[1037,1145,"#141110",1],[1145,1154,"#141110",0],[1154,1245,"#141110",1]],"hs":[[0,173,393,589,"N1:122282","m","drag"],[223,116,99,49,"C14:50738","m"],[12,1245,59,52,"N1:79288","b"],[90,1245,59,52,"N1:84164","b"],[167,1245,59,52,"N1:101340","b"],[322,1245,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","m"],[347,193,32,32,"O1:112764","m"],[343,772,36,20,"N1:107968","m"]]},"1:121104":{"n":"profile-profile-tekken","s":"profile","w":393,"h":1325,"top":108,"bot":80,"bg":"#1a1a1a","ov":"","b":[[108,116,"#141110",0],[116,165,"#141110",1],[165,193,"#141110",0],[193,741,"#141110",1],[741,776,"#121010",0],[776,788,"#121010",1],[788,801,"#141110",0],[801,910,"#141110",1],[910,920,"#141110",0],[920,1028,"#141110",1],[1028,1038,"#141110",0],[1038,1146,"#141110",1],[1146,1155,"#141110",0],[1155,1245,"#141110",1]],"hs":[[0,173,393,589,"N1:119926","m","drag"],[223,116,99,49,"C14:50738","m"],[12,1245,59,52,"N1:79288","b"],[90,1245,59,52,"N1:84164","b"],[167,1245,59,52,"N1:101340","b"],[322,1245,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","m"],[347,193,32,32,"O1:112916","m"],[343,772,36,20,"N1:109118","m"]]},"1:122282":{"n":"profile-profile-rocket","s":"profile","w":393,"h":1325,"top":108,"bot":80,"bg":"#1a1a1a","ov":"","b":[[108,116,"#141110",0],[116,165,"#141110",1],[165,192,"#141110",0],[192,738,"#141110",1],[738,775,"#131110",0],[775,788,"#131110",1],[788,801,"#141110",0],[801,910,"#141110",1],[910,919,"#141110",0],[919,1028,"#141110",1],[1028,1037,"#141110",0],[1037,1145,"#141110",1],[1145,1154,"#141110",0],[1154,1245,"#141110",1]],"hs":[[16,173,361,589,"N1:119926","m","drag"],[223,116,99,49,"C14:50738","m"],[12,1245,59,52,"N1:79288","b"],[90,1245,59,52,"N1:84164","b"],[167,1245,59,52,"N1:101340","b"],[322,1245,59,52,"N73:21265","b"],[328,116,51,49,"N1:112242","m"],[331,193,32,32,"O1:113068","m"],[327,772,36,20,"N1:110268","m"]]},"1:123460":{"n":"Another Player Profile - fc","s":"profile","w":393,"h":1419,"top":102,"bot":22,"bg":"#151210","ov":"","b":[[102,110,"#141110",0],[110,159,"#141110",1],[159,186,"#141110",0],[186,731,"#141110",1],[731,792,"#141110",0],[792,805,"#141110",1],[805,818,"#141110",0],[818,926,"#141110",1],[926,936,"#141110",0],[936,1045,"#141110",1],[1045,1054,"#141110",0],[1054,1162,"#141110",1],[1162,1171,"#141110",0],[1171,1280,"#141110",1],[1280,1397,"#141110",0]],"hs":[[0,166,393,589,"N1:124633","m","drag"],[223,110,99,49,"C14:50738","m"],[328,110,51,49,"N1:112242","m"],[347,186,32,32,"O1:113220","m"],[343,789,36,20,"N1:107968","m"],[14,66,20,20,"B","t"]]},"1:124633":{"n":"Another Player Profile - tekken","s":"profile","w":393,"h":1419,"top":167,"bot":22,"bg":"#141110","ov":"","b":[[167,186,"#141110",0],[186,733,"#141110",1],[733,792,"#141110",0],[792,806,"#141110",1],[806,819,"#141110",0],[819,927,"#141110",1],[927,936,"#141110",0],[936,1045,"#141110",1],[1045,1054,"#141110",0],[1054,1163,"#141110",1],[1163,1173,"#141110",0],[1173,1281,"#141110",1],[1281,1397,"#141110",0]],"hs":[[0,166,393,589,"N1:125806","m","drag"],[223,110,99,49,"C14:50738","t"],[328,110,51,49,"N1:112242","t"],[347,186,32,32,"O1:113372","m"],[343,789,36,20,"N1:109118","m"],[14,66,20,20,"B","t"]]},"1:125806":{"n":"Another Player Profile - rocket league","s":"profile","w":393,"h":1419,"top":167,"bot":22,"bg":"#151210","ov":"","b":[[167,186,"#141110",0],[186,731,"#141110",1],[731,792,"#141110",0],[792,805,"#141110",1],[805,818,"#141110",0],[818,926,"#141110",1],[926,936,"#141110",0],[936,1045,"#141110",1],[1045,1054,"#141110",0],[1054,1162,"#141110",1],[1162,1171,"#141110",0],[1171,1280,"#141110",1],[1280,1397,"#141110",0]],"hs":[[0,166,393,589,"N1:123460","m","drag"],[223,110,99,49,"C14:50738","t"],[328,110,51,49,"N1:112242","t"],[347,186,32,32,"O1:113524","m"],[343,789,36,20,"N1:110268","m"],[14,66,20,20,"B","t"]]},"1:127545":{"n":"Sports Bottom Sheet","s":"profile","w":393,"h":184,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,184,"#1a1a1a",0]],"hs":[[16,68,114,58,"X","m"],[140,68,114,58,"N1:109118","m"],[263,68,114,58,"N1:110268","m"]]},"1:128565":{"n":"Sports Bottom Sheet","s":"profile","w":393,"h":184,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,184,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:107968","m"],[140,68,114,58,"X","m"],[263,68,114,58,"N1:110268","m"]]},"1:129585":{"n":"Sports Bottom Sheet","s":"profile","w":393,"h":184,"top":0,"bot":0,"bg":"#262626","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,68,"#1a1a1a",0],[68,126,"#1a1a1a",1],[126,184,"#1a1a1a",0]],"hs":[[16,68,114,58,"N1:107968","m"],[140,68,114,58,"N1:109118","m"],[263,68,114,58,"X","m"]]},"73:6824":{"n":"Sign up 4","s":"settings","w":393,"h":852,"top":0,"bot":0,"bg":"#171717","ov":"","b":[[50,70,"#141110",0],[70,89,"#141110",1],[89,123,"#141110",0],[123,190,"#141110",1],[190,213,"#141110",0],[213,280,"#141110",1],[280,303,"#141110",0],[303,370,"#141110",1],[370,394,"#141110",0],[394,408,"#141110",1],[408,416,"#141110",0],[416,460,"#141110",1],[460,483,"#141110",0],[483,550,"#141110",1],[550,573,"#141110",0],[573,640,"#141110",1],[640,767,"#141110",0],[767,829,"#141110",1],[829,839,"#171717",0],[839,844,"#171717",1],[844,852,"#171717",0]],"hs":[[14,484,365,66,"O119:6346","m"],[14,574,365,66,"O1:131167","m"],[0,50,393,58,"B","m"],[14,146,365,44,"C1:118418","m"],[14,236,365,44,"C1:118418","m"],[14,326,365,44,"C1:118450","m"],[14,416,365,44,"C73:20922","m"],[14,506,365,44,"C73:20952","m"],[13,776,365,44,"N73:21265","m"]]},"73:9653":{"n":"login-forgot 4","s":"settings","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,211,"#141110",1],[211,233,"#141110",0],[233,300,"#141110",1],[300,324,"#141110",0],[324,413,"#141110",1],[413,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"C73:21263","b"]]},"73:10597":{"n":"login-forgot 8","s":"settings","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,211,"#141110",1],[211,233,"#141110",0],[233,300,"#141110",1],[300,324,"#141110",0],[324,413,"#141110",1],[413,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"C73:21263","b"]]},"73:12474":{"n":"login-forgot 5","s":"settings","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,169,"#141110",0],[169,183,"#141110",1],[183,191,"#141110",0],[191,235,"#141110",1],[235,259,"#141110",0],[259,348,"#141110",1],[348,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,191,365,44,"C73:20922","m"]]},"73:15293":{"n":"login-forgot 6","s":"settings","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,172,"#141110",1],[172,191,"#141110",0],[191,258,"#141110",1],[258,281,"#141110",0],[281,348,"#141110",1],[348,372,"#141110",0],[372,461,"#141110",1],[461,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,214,365,44,"C73:20936","m"],[14,304,365,44,"C73:20936","m"],[13,793,365,44,"O101:13987","b"],[349,228,16,16,"C73:21258","m"],[349,318,16,16,"C73:21258","m"]]},"73:16230":{"n":"login-forgot 7","s":"settings","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,172,"#141110",1],[172,191,"#141110",0],[191,258,"#141110",1],[258,281,"#141110",0],[281,348,"#141110",1],[348,371,"#141110",0],[371,438,"#141110",1],[438,462,"#141110",0],[462,551,"#141110",1],[551,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,793,366,44,"C73:21263","b"],[14,214,365,44,"C73:20936","m"],[14,304,365,44,"C73:20936","m"],[14,394,365,44,"C73:20936","m"],[14,739,365,44,"N73:21265","b"],[349,228,16,16,"C73:21258","m"],[349,318,16,16,"C73:21258","m"],[349,408,16,16,"C73:21258","m"]]},"73:17172":{"n":"About us","s":"settings","w":393,"h":869,"top":108,"bot":22,"bg":"#141110","ov":"","b":[[108,121,"#141110",0],[121,351,"#141110",1],[351,374,"#141110",0],[374,448,"#141110",1],[448,470,"#141110",0],[470,633,"#141110",1],[633,651,"#141110",0],[651,726,"#141110",1],[726,847,"#141110",0]],"hs":[[0,50,393,58,"B","t"]]},"73:18095":{"n":"T&C","s":"settings","w":393,"h":869,"top":108,"bot":22,"bg":"#141110","ov":"","b":[[108,121,"#141110",0],[121,220,"#141110",1],[220,269,"#141110",0],[269,285,"#141110",1],[285,334,"#141110",0],[334,350,"#141110",1],[350,847,"#141110",0]],"hs":[[14,122,365,122,"C123:18958","m"],[14,244,365,65,"C123:18959","m"],[14,309,365,65,"C123:18959","m"],[0,50,393,58,"B","t"]]},"101:14031":{"n":"FAQ","s":"settings","w":393,"h":869,"top":108,"bot":22,"bg":"#141110","ov":"","b":[[108,121,"#141110",0],[121,220,"#141110",1],[220,269,"#141110",0],[269,285,"#141110",1],[285,334,"#141110",0],[334,350,"#141110",1],[350,847,"#141110",0]],"hs":[[14,122,365,122,"C123:18958","m"],[14,244,365,65,"C123:18959","m"],[14,309,365,65,"C123:18959","m"],[0,50,393,58,"B","t"]]},"73:19030":{"n":"Privacy and policy","s":"settings","w":393,"h":869,"top":108,"bot":22,"bg":"#141110","ov":"","b":[[108,120,"#141110",0],[120,214,"#141110",1],[214,235,"#141110",0],[235,416,"#141110",1],[416,434,"#141110",0],[434,528,"#141110",1],[528,847,"#141110",0]],"hs":[[0,50,393,58,"B","t"]]},"73:21265":{"n":"more","s":"settings","w":393,"h":852,"top":0,"bot":0,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,106,"#141110",0],[106,190,"#141110",1],[190,205,"#141110",0],[205,221,"#141110",1],[221,229,"#141110",0],[229,325,"#141110",1],[325,340,"#141110",0],[340,356,"#141110",1],[356,364,"#141110",0],[364,412,"#141110",1],[412,427,"#141110",0],[427,443,"#141110",1],[443,451,"#141110",0],[451,691,"#141110",1],[691,707,"#141110",0],[707,755,"#141110",1],[755,772,"#151211",0],[772,796,"#151211",1],[796,806,"#1a1a1a",0],[806,817,"#1a1a1a",1],[817,839,"#1a1a1a",0],[839,844,"#1a1a1a",1],[844,852,"#1a1a1a",0]],"hs":[[14,229,365,48,"N73:23246","m"],[14,277,365,48,"N73:16230","m"],[14,364,365,48,"N101:12569","m"],[14,451,365,48,"N73:19030","m"],[14,499,365,48,"N73:18095","m"],[14,547,365,48,"N101:14031","m"],[14,595,365,48,"N73:22272","m"],[14,643,365,48,"N73:17172","m"],[12,772,59,52,"N1:79288","m"],[90,772,59,52,"N1:84164","m"],[167,772,59,52,"N1:101340","m"],[245,772,59,52,"N1:119926","m"],[314,134,51,28,"N73:6824","m"]]},"101:12569":{"n":"more","s":"settings","w":393,"h":852,"top":0,"bot":0,"bg":"#1a1a1a","ov":"","b":[[50,70,"#141110",0],[70,88,"#141110",1],[88,120,"#141110",0],[120,216,"#141110",1],[216,772,"#141110",0],[772,796,"#141110",1],[796,806,"#1a1a1a",0],[806,817,"#1a1a1a",1],[817,839,"#1a1a1a",0],[839,844,"#1a1a1a",1],[844,852,"#1a1a1a",0]],"hs":[[0,50,393,58,"B","m"],[14,120,365,48,"O73:23235","m"],[14,168,365,48,"N2026:11582","m"],[12,772,59,52,"N1:79288","m"],[90,772,59,52,"N1:84164","m"],[167,772,59,52,"N1:101340","m"],[245,772,59,52,"N1:119926","m"]]},"73:22272":{"n":"more","s":"settings","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,70,"#141110",0],[70,88,"#141110",1],[88,124,"#141110",0],[124,412,"#141110",1],[412,839,"#141110",0],[839,846,"#141110",1],[846,852,"#141110",0]],"hs":[[0,50,393,58,"B","m"]]},"73:23235":{"n":"language bottom sheet","s":"settings","w":393,"h":184,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,34,"#1a1a1a",0],[34,52,"#1a1a1a",1],[52,64,"#1a1a1a",0],[64,104,"#1a1a1a",1],[104,114,"#1a1a1a",0],[114,151,"#1a1a1a",1],[151,171,"#1a1a1a",0],[171,176,"#1a1a1a",1],[176,184,"#1a1a1a",0]],"hs":[]},"73:23246":{"n":"Tournaments - All","s":"settings","w":393,"h":1605,"top":50,"bot":22,"bg":"#141110","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,108,"#141110",0],[108,152,"#141110",1],[152,166,"#141110",0],[166,215,"#141110",1],[215,238,"#141110",0],[238,251,"#141110",1],[251,266,"#141110",0],[266,299,"#141110",1],[299,310,"#141110",0],[310,1539,"#141110",1],[1539,1583,"#141110",0]],"hs":[[14,929,365,301,"O120:11313","m"],[14,108,180,38,"O1:131167","m"],[200,108,180,38,"O1:131221","m"],[223,166,99,49,"C14:50738","m"],[79,267,87,32,"C119:10694","m"],[262,267,84,32,"C120:10728","m"],[174,267,80,32,"C119:10711","m"],[328,166,51,49,"N1:112242","m"],[219,58,16,42,"C1:126991","m"],[363,58,16,42,"C1:127013","m"],[14,69,20,20,"B","m"]]},"120:11313":{"n":"Sports Bottom Sheet","s":"settings","w":393,"h":150,"top":0,"bot":0,"bg":"#1a1a1a","ov":"sheet","b":[[0,18,"#1a1a1a",1],[18,33,"#1a1a1a",0],[33,52,"#1a1a1a",1],[52,65,"#1a1a1a",0],[65,122,"#1a1a1a",1],[122,137,"#1a1a1a",0],[137,142,"#1a1a1a",1],[142,150,"#1a1a1a",0]],"hs":[]},"2026:11582":{"n":"delete account - 1 warning","s":"delete","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,190,"#141110",1],[190,208,"#141110",0],[208,224,"#141110",1],[224,244,"#141110",0],[244,406,"#141110",1],[406,425,"#141110",0],[425,443,"#141110",1],[443,461,"#141110",0],[461,639,"#141110",1],[639,654,"#141110",0],[654,688,"#141110",1],[688,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"B","b"],[13,739,365,44,"N2027:11595","b"],[14,655,24,24,"C73:21253","m"],[14,69,20,20,"B","t"]]},"2027:11595":{"n":"delete account - 2 confirm password","s":"delete","w":393,"h":869,"top":108,"bot":144,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,157,"#141110",0],[157,190,"#141110",1],[190,212,"#141110",0],[212,301,"#141110",1],[301,321,"#141110",0],[321,395,"#141110",1],[395,725,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,366,44,"B","b"],[14,235,365,44,"C73:20936","m"],[13,739,365,44,"N2027:12575","b"],[14,287,365,10,"N73:11539","m"],[14,69,20,20,"B","t"],[349,249,16,16,"C73:21258","m"]]},"2027:12575":{"n":"delete account - 3 are you sure","s":"delete","w":393,"h":869,"top":108,"bot":144,"bg":"#1a1a1a","ov":"","b":[[108,123,"#070606",0],[123,146,"#070606",1],[146,157,"#070606",0],[157,190,"#070606",1],[190,212,"#070606",0],[212,301,"#070606",1],[301,321,"#070606",0],[321,395,"#070606",1],[395,612,"#070606",0],[612,630,"#070606",1],[630,646,"#1a1a1a",0],[646,664,"#1a1a1a",1],[664,675,"#1a1a1a",0],[675,711,"#1a1a1a",1],[711,725,"#1a1a1a",0]],"hs":[[14,739,365,44,"N2027:13561","b"],[16,793,361,44,"B","b"]]},"2027:13561":{"n":"delete account - 4 account deleted","s":"delete","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,296,"#141110",0],[296,414,"#141110",1],[414,426,"#141110",0],[426,449,"#141110",1],[449,460,"#141110",0],[460,514,"#141110",1],[514,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,365,44,"N2010:11567","b"]]},"2023:37254":{"n":"more","s":"delete","w":393,"h":852,"top":0,"bot":0,"bg":"#1a1a1a","ov":"","b":[[50,70,"#141110",0],[70,88,"#141110",1],[88,120,"#141110",0],[120,216,"#141110",1],[216,772,"#141110",0],[772,796,"#141110",1],[796,806,"#1a1a1a",0],[806,817,"#1a1a1a",1],[817,839,"#1a1a1a",0],[839,844,"#1a1a1a",1],[844,852,"#1a1a1a",0]],"hs":[[0,50,393,58,"B","m"],[14,120,365,48,"O73:23235","m"],[14,168,365,48,"N2026:11582","m"],[12,772,59,52,"N1:79288","m"],[90,772,59,52,"N1:84164","m"],[167,772,59,52,"N1:101340","m"],[245,772,59,52,"N1:119926","m"]]},"123:15523":{"n":"Tournament details - active - bracket1","s":"referee","w":393,"h":1286,"top":50,"bot":22,"bg":"#131010","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,299,"#141110",1],[299,315,"#141110",0],[315,354,"#141110",1],[354,376,"#141110",0],[376,394,"#141110",1],[394,414,"#141110",0],[414,450,"#141110",1],[450,470,"#141110",0],[470,507,"#141110",1],[507,527,"#141110",0],[527,564,"#141110",1],[564,584,"#141110",0],[584,621,"#141110",1],[621,641,"#141110",0],[641,678,"#141110",1],[678,698,"#141110",0],[698,734,"#141110",1],[734,766,"#141110",0],[766,784,"#141110",1],[784,803,"#141110",0],[803,932,"#141110",1],[932,962,"#141110",0],[962,981,"#141110",1],[981,999,"#141110",0],[999,1056,"#141110",1],[1056,1072,"#141110",0],[1072,1107,"#141110",1],[1107,1264,"#141110",0]],"hs":[[14,1073,365,35,"C1:130101","m"],[24,315,68,38,"N123:16536","m"],[209,315,68,38,"N123:17594","m"],[302,315,68,38,"N163:21276","m"]]},"128:13929":{"n":"Tournament details - active - bracket1","s":"referee","w":393,"h":1286,"top":50,"bot":35,"bg":"#181818","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,299,"#141110",1],[299,315,"#141110",0],[315,354,"#141110",1],[354,376,"#141110",0],[376,394,"#141110",1],[394,414,"#141110",0],[414,450,"#141110",1],[450,470,"#141110",0],[470,507,"#141110",1],[507,527,"#141110",0],[527,564,"#141110",1],[564,584,"#141110",0],[584,621,"#141110",1],[621,641,"#141110",0],[641,678,"#141110",1],[678,698,"#141110",0],[698,734,"#141110",1],[734,766,"#141110",0],[766,784,"#141110",1],[784,803,"#141110",0],[803,932,"#141110",1],[932,962,"#141110",0],[962,981,"#141110",1],[981,999,"#141110",0],[999,1056,"#141110",1],[1056,1072,"#141110",0],[1072,1107,"#141110",1],[1107,1251,"#141110",0]],"hs":[[14,1073,365,35,"C1:130101","m"],[24,315,68,38,"N171:21660","m"],[209,315,68,38,"N128:16915","m"],[14,61,36,36,"B","m"]]},"123:16536":{"n":"Tournament details - active - matches","s":"referee","w":393,"h":1014,"top":50,"bot":21,"bg":"#2b2827","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,381,"#141110",0],[381,393,"#141110",1],[393,412,"#141110",0],[412,797,"#141110",1],[797,816,"#141110",0],[816,830,"#141110",1],[830,849,"#141110",0],[849,993,"#141110",1]],"hs":[[46,541,301,44,"N126:10095","m"],[46,737,301,44,"N126:10095","m"],[117,315,68,38,"N123:15523","m"],[209,315,68,38,"N123:17594","m"],[302,315,68,38,"N163:21276","m"],[14,61,36,36,"B","m"]]},"171:21660":{"n":"Tournament details - active - matches","s":"referee","w":393,"h":1014,"top":50,"bot":21,"bg":"#141110","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,299,"#141110",1],[299,315,"#141110",0],[315,354,"#141110",1],[354,380,"#141110",0],[380,393,"#141110",1],[393,412,"#141110",0],[412,784,"#141110",1],[784,993,"#141110",0]],"hs":[[117,315,68,38,"N128:13929","m"],[209,315,68,38,"N128:16915","m"],[302,315,68,38,"N225:11651","m"],[14,61,36,36,"B","m"]]},"126:10095":{"n":"Tournament details - active - matches","s":"referee","w":393,"h":852,"top":0,"bot":0,"bg":"#171717","ov":"","b":[[50,271,"#141110",1],[271,293,"#141110",0],[293,408,"#141110",1],[408,431,"#141110",0],[431,498,"#141110",1],[498,518,"#141110",0],[518,585,"#141110",1],[585,605,"#141110",0],[605,696,"#141110",1],[696,768,"#141110",0],[768,829,"#141110",1],[829,838,"#181718",0],[838,845,"#181718",1],[845,852,"#171717",0]],"hs":[[14,777,365,44,"N123:17594","m"],[14,454,157,44,"C163:10710","m"],[222,454,157,44,"C163:10710","m"],[14,541,157,44,"C73:20922","m"],[222,541,157,44,"C73:20922","m"],[14,61,36,36,"B","m"]]},"123:17594":{"n":"Tournament details - active - bracket2","s":"referee","w":393,"h":1246,"top":50,"bot":22,"bg":"#141110","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,369,"#141110",0],[369,402,"#141110",1],[402,425,"#141110",0],[425,777,"#141110",1],[777,805,"#141110",0],[805,1157,"#141110",1],[1157,1224,"#141110",0]],"hs":[[100,369,110,32,"C1:112227","m"],[100,369,110,32,"C1:114116","m"],[218,369,91,32,"C1:112197","m"],[218,369,91,32,"C1:114120","m"],[24,315,68,38,"N123:16536","m"],[117,315,68,38,"N123:15523","m"],[302,315,68,38,"N163:21276","m"],[317,369,66,32,"C1:112212","m"],[317,369,66,32,"C1:114124","m"],[14,61,36,36,"B","m"]]},"128:16915":{"n":"Tournament details - active - bracket2","s":"referee","w":393,"h":1246,"top":50,"bot":35,"bg":"#171717","ov":"","b":[[50,271,"#141110",1],[271,286,"#141110",0],[286,300,"#141110",1],[300,315,"#141110",0],[315,354,"#141110",1],[354,369,"#141110",0],[369,402,"#141110",1],[402,425,"#141110",0],[425,777,"#141110",1],[777,805,"#141110",0],[805,1157,"#141110",1],[1157,1211,"#141110",0]],"hs":[[100,369,110,32,"C1:112227","m"],[100,369,110,32,"C1:114116","m"],[218,369,91,32,"C1:112197","m"],[218,369,91,32,"C1:114120","m"],[117,315,68,38,"N128:13929","m"],[302,315,68,38,"N225:11651","m"],[317,369,66,32,"C1:112212","m"],[317,369,66,32,"C1:114124","m"],[14,61,36,36,"B","m"]]},"123:19001":{"n":"more","s":"referee","w":393,"h":900,"top":50,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,106,"#141110",0],[106,190,"#141110",1],[190,205,"#141110",0],[205,221,"#141110",1],[221,229,"#141110",0],[229,277,"#141110",1],[277,292,"#141110",0],[292,308,"#141110",1],[308,316,"#141110",0],[316,364,"#141110",1],[364,379,"#141110",0],[379,395,"#141110",1],[395,403,"#141110",0],[403,643,"#141110",1],[643,659,"#141110",0],[659,707,"#141110",1],[707,820,"#141110",0]],"hs":[[14,229,365,48,"N128:12687","m"],[14,316,365,48,"N101:12569","m"],[14,403,365,48,"N73:19030","m"],[14,451,365,48,"N73:18095","m"],[14,499,365,48,"N101:14031","m"],[14,547,365,48,"N73:22272","m"],[14,595,365,48,"N73:17172","m"],[126,820,59,52,"N122:11603","b"]]},"122:11603":{"n":"Tournaments - TODAY","s":"referee","w":393,"h":1605,"top":0,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,60,"#201d1c",0],[60,96,"#201d1c",1],[96,107,"#201d1c",0],[107,297,"#201d1c",1],[297,309,"#141110",0],[309,610,"#141110",1],[610,618,"#141110",0],[618,919,"#141110",1],[919,927,"#141110",0],[927,1228,"#141110",1],[1228,1236,"#141110",0],[1236,1525,"#141110",1]],"hs":[[14,309,365,301,"N123:16536","m"],[14,618,365,301,"N123:16536","m"],[14,927,365,301,"N123:16536","m"],[14,1236,365,301,"N123:16536","m"],[209,1525,59,52,"N123:19001","b"],[92,265,88,32,"N123:13039","m"],[15,60,36,36,"N127:11556","m"]]},"128:12687":{"n":"Tournaments - TODAY","s":"referee","w":393,"h":1605,"top":0,"bot":22,"bg":"#141110","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,130,"#141110",0],[130,431,"#141110",1],[431,439,"#141110",0],[439,740,"#141110",1],[740,748,"#141110",0],[748,1049,"#141110",1],[1049,1057,"#141110",0],[1057,1358,"#141110",1],[1358,1583,"#141110",0]],"hs":[[13,130,365,301,"N171:21660","m"],[13,439,365,301,"N171:21660","m"],[13,748,365,301,"N171:21660","m"],[13,1057,365,301,"N171:21660","m"],[14,61,36,36,"B","m"]]},"123:13039":{"n":"Tournaments - uPCOMING","s":"referee","w":393,"h":1605,"top":0,"bot":80,"bg":"#1a1a1a","ov":"","b":[[50,60,"#201d1c",0],[60,96,"#201d1c",1],[96,107,"#201d1c",0],[107,296,"#201d1c",1],[296,308,"#141110",0],[308,609,"#141110",1],[609,617,"#141110",0],[617,918,"#141110",1],[918,926,"#141110",0],[926,1227,"#141110",1],[1227,1235,"#141110",0],[1235,1525,"#141110",1]],"hs":[[14,308,365,301,"N123:15523","m"],[14,617,365,301,"N123:15523","m"],[14,926,365,301,"N123:15523","m"],[14,1235,365,301,"N123:15523","m"],[209,1525,59,52,"N123:19001","b"],[92,264,88,32,"C1:112182","m"],[14,264,70,32,"N122:11603","m"],[15,60,36,36,"N127:11556","m"]]},"123:21661":{"n":"Login","s":"referee","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,168,"#141110",0],[168,235,"#141110",1],[235,258,"#141110",0],[258,347,"#141110",1],[347,367,"#141110",0],[367,456,"#141110",1],[456,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[14,191,365,44,"C1:118450","m"],[14,281,365,44,"C73:20936","m"],[13,793,365,44,"N122:11603","b"],[14,333,365,10,"N128:11728","m"],[349,295,16,16,"C73:21258","m"]]},"128:11728":{"n":"Login","s":"referee","w":393,"h":869,"top":108,"bot":90,"bg":"#171717","ov":"","b":[[108,123,"#141110",0],[123,146,"#141110",1],[146,169,"#141110",0],[169,258,"#141110",1],[258,779,"#141110",0]],"hs":[[0,50,393,58,"B","t"],[13,793,365,44,"N123:21661","b"]]},"127:11556":{"n":"Notifications","s":"referee","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,68,"#141110",0],[68,90,"#141110",1],[90,120,"#141110",0],[120,148,"#141110",1],[148,175,"#1d1a19",0],[175,191,"#1d1a19",1],[191,206,"#1d1a19",0],[206,247,"#1d1a19",1],[247,262,"#1d1a19",0],[262,370,"#1d1a19",1],[370,389,"#191615",0],[389,406,"#191615",1],[406,420,"#191615",0],[420,461,"#191615",1],[461,500,"#141110",0],[500,630,"#141110",1],[630,649,"#191615",0],[649,665,"#191615",1],[665,680,"#191615",0],[680,721,"#191615",1],[721,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[13,61,36,36,"B","m"]]},"163:21276":{"n":"Tournament details - active - sponsors","s":"referee","w":393,"h":1836,"top":50,"bot":22,"bg":"#141110","ov":"","b":[[50,264,"#141110",1],[264,279,"#141110",0],[279,293,"#141110",1],[293,308,"#141110",0],[308,347,"#141110",1],[347,369,"#141110",0],[369,388,"#141110",1],[388,407,"#141110",0],[407,516,"#141110",1],[516,524,"#141110",0],[524,633,"#141110",1],[633,641,"#141110",0],[641,750,"#141110",1],[750,758,"#141110",0],[758,793,"#141110",1],[793,824,"#141110",0],[824,843,"#141110",1],[843,862,"#141110",0],[862,971,"#141110",1],[971,979,"#141110",0],[979,1088,"#141110",1],[1088,1096,"#141110",0],[1096,1205,"#141110",1],[1205,1213,"#141110",0],[1213,1248,"#141110",1],[1248,1279,"#141110",0],[1279,1298,"#141110",1],[1298,1317,"#141110",0],[1317,1426,"#141110",1],[1426,1434,"#141110",0],[1434,1543,"#141110",1],[1543,1551,"#141110",0],[1551,1660,"#141110",1],[1660,1668,"#141110",0],[1668,1702,"#141110",1],[1702,1814,"#141110",0]],"hs":[[14,758,365,35,"C1:113677","m"],[14,1213,365,35,"C1:113677","m"],[14,1668,365,35,"C1:113677","m"],[24,308,68,38,"N123:16536","m"],[117,308,68,38,"N123:15523","m"],[209,308,68,38,"N123:17594","m"],[14,61,36,36,"B","m"]]},"225:11651":{"n":"Tournament details - active - sponsors","s":"referee","w":393,"h":1836,"top":50,"bot":22,"bg":"#141110","ov":"","b":[[50,264,"#141110",1],[264,279,"#141110",0],[279,293,"#141110",1],[293,308,"#141110",0],[308,347,"#141110",1],[347,369,"#141110",0],[369,388,"#141110",1],[388,407,"#141110",0],[407,516,"#141110",1],[516,524,"#141110",0],[524,633,"#141110",1],[633,641,"#141110",0],[641,750,"#141110",1],[750,758,"#141110",0],[758,793,"#141110",1],[793,824,"#141110",0],[824,843,"#141110",1],[843,862,"#141110",0],[862,971,"#141110",1],[971,979,"#141110",0],[979,1088,"#141110",1],[1088,1096,"#141110",0],[1096,1205,"#141110",1],[1205,1213,"#141110",0],[1213,1248,"#141110",1],[1248,1279,"#141110",0],[1279,1298,"#141110",1],[1298,1317,"#141110",0],[1317,1426,"#141110",1],[1426,1434,"#141110",0],[1434,1543,"#141110",1],[1543,1551,"#141110",0],[1551,1660,"#141110",1],[1660,1668,"#141110",0],[1668,1702,"#141110",1],[1702,1814,"#141110",0]],"hs":[[14,758,365,35,"C1:113677","m"],[14,1213,365,35,"C1:113677","m"],[14,1668,365,35,"C1:113677","m"],[24,308,68,38,"N171:21660","m"],[117,308,68,38,"N128:13929","m"],[209,308,68,38,"N128:16915","m"],[14,61,36,36,"B","m"]]},"246:12395":{"n":"Join tournament 4","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,228,"#1a1710",1],[228,262,"#1a1710",0],[262,460,"#1a1710",1],[460,559,"#141110",0],[559,590,"#141110",1],[590,600,"#141110",0],[600,619,"#141110",1],[619,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[]},"246:13333":{"n":"Join tournament 5","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,168,"#1c1810",1],[168,182,"#1c1810",0],[182,480,"#1c1810",1],[480,556,"#141110",0],[556,587,"#141110",1],[587,598,"#141110",0],[598,616,"#141110",1],[616,639,"#141110",0],[639,680,"#141110",1],[680,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[144,640,107,40,"N1:89580","m"]]},"246:14271":{"n":"Join tournament 6","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,251,"#1c1810",1],[251,267,"#1c1810",0],[267,396,"#1c1810",1],[396,472,"#141110",0],[472,503,"#141110",1],[503,513,"#141110",0],[513,532,"#141110",1],[532,555,"#141110",0],[555,595,"#141110",1],[595,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[133,555,129,40,"N1:89580","m"]]},"246:15209":{"n":"Join tournament 7","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,251,"#1b1810",1],[251,271,"#1b1810",0],[271,393,"#1b1810",1],[393,472,"#141110",0],[472,503,"#141110",1],[503,513,"#141110",0],[513,532,"#141110",1],[532,555,"#141110",0],[555,595,"#141110",1],[595,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[133,555,129,40,"N1:89580","m"]]},"248:11521":{"n":"Join tournament 8","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,123,"#151210",1],[123,232,"#151210",0],[232,410,"#151210",1],[410,496,"#141110",0],[496,527,"#141110",1],[527,538,"#141110",0],[538,556,"#141110",1],[556,579,"#141110",0],[579,620,"#141110",1],[620,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[111,580,173,40,"N1:89580","m"]]},"248:12459":{"n":"Join tournament 9","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,126,"#161310",1],[126,213,"#161310",0],[213,448,"#161310",1],[448,520,"#141110",0],[520,551,"#141110",1],[551,561,"#141110",0],[561,580,"#141110",1],[580,595,"#141110",0],[595,635,"#141110",1],[635,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[158,595,80,40,"N1:89580","m"]]},"248:13397":{"n":"Join tournament 10","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,404,"#141110",1],[404,462,"#141110",0],[462,492,"#141110",1],[492,503,"#141110",0],[503,521,"#141110",1],[521,543,"#141110",0],[543,601,"#141110",1],[601,640,"#141110",0],[640,681,"#141110",1],[681,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[138,641,119,40,"N1:89580","m"]]},"249:14338":{"n":"Join tournament 11","s":"alerts","w":393,"h":852,"top":0,"bot":0,"bg":"#141110","ov":"","b":[[50,123,"#1a1710",1],[123,161,"#1a1710",0],[161,400,"#1a1710",1],[400,505,"#141110",0],[505,536,"#141110",1],[536,546,"#141110",0],[546,565,"#141110",1],[565,587,"#141110",0],[587,620,"#141110",1],[620,629,"#141110",0],[629,644,"#141110",1],[644,684,"#141110",0],[684,724,"#141110",1],[724,839,"#141110",0],[839,844,"#141110",1],[844,852,"#141110",0]],"hs":[[123,684,150,40,"N1:89580","m"]]}};</script>
+<script>(() => {
+'use strict';
+const S = window.SCREENS;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EASE = 'cubic-bezier(.22,1,.36,1)', SPRING = 'cubic-bezier(.34,1.56,.64,1)';
+const VH = 852;
+const START = '2010:11553';
+const safe = id => id.replace(':', '-');
+const img = id => `url(screens/${safe(id)}.webp)`;
+const wait = ms => new Promise(r => setTimeout(r, RM ? 0 : ms));
+const el = (tag, cls, css) => { const e = document.createElement(tag); if (cls) e.className = cls; if (css) Object.assign(e.style, css); return e; };
+
+const SECTIONS = [
+  ['onboarding', 'Onboarding', '2010:11553'],
+  ['signup', 'Sign up & login', '73:5869'],
+  ['tournaments', 'Tournaments', '1:79288'],
+  ['profile', 'Leaderboard & profile', '1:119926'],
+  ['settings', 'More & settings', '73:21265'],
+  ['delete', 'Delete account', '2023:37254'],
+  ['referee', 'Referee', '123:21661'],
+  ['alerts', 'System alerts', '246:12395']
+];
+const AUTH = new Set(['2010:11553', '2010:11567', '2013:11594', '73:5869', '73:50013', '73:8711', '73:11539', '73:13409', '73:14354', '73:19958', '123:21661', '128:11728']);
+const SHEET_FROM = {'2027:12575': 600};
+
+/* per-screen signature moments */
+const FX = {
+  '2010:11553': {merge: [357, 495, 'glow'], loader: [131, 734, 132, 4], corners: true, sparks: [0, 852], auto: ['2010:11567', 2900]},
+  '2010:11567': {first: 'kb', sweep: [0, 402], sparks: [0, 402]},
+  '2013:11594': {first: 'kb', sweep: [0, 515], sparks: [0, 515]},
+  '2027:13561': {spin: [196.5, 355], ping: [196.5, 355, 96]},
+  '1:107042': {glow: 1, sparks: [0, 460], confetti: 700},
+  '246:12395': {glow: 1, sparks: [0, 470]}, '246:13333': {glow: 1, sparks: [0, 470]}, '246:14271': {glow: 1, sparks: [0, 470]},
+  '246:15209': {glow: 1, sparks: [0, 470]}, '248:11521': {glow: 1, sparks: [0, 470]}, '248:12459': {glow: 1, sparks: [0, 470]},
+  '248:13397': {glow: 1, sparks: [0, 470]}, '249:14338': {glow: 1, sparks: [0, 470], red: 1}
+};
+
+/* ---------- refs ---------- */
+const vp = $('#vp'), phone = $('#phone'), wipeEl = $('#wipe'), toastEl = $('#toast');
+let cur = null, curView = null, stack = [], ov = null, lock = false, showHs = false;
+
+/* ---------- toast ---------- */
+let tt;
+function say(msg) { toastEl.textContent = msg; toastEl.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('show'), 2000); }
+
+/* ---------- phone scale ---------- */
+let K = 1;
+function fit() {
+  const dev = $('#dev'), w = dev.clientWidth, h = dev.clientHeight;
+  const small = innerWidth <= 520;
+  const pad = small ? 0 : 76;
+  K = Math.min((w - pad) / 393, (h - pad) / VH, small ? 9 : 1);
+  phone.style.setProperty('--k', K.toFixed(4));
+}
+addEventListener('resize', fit);
+
+/* ---------- building a screen from its slices ---------- */
+function band(y0, y1, kind, color, off = 0) {
+  const b = el('div', 'bd ' + kind, {top: (y0 - off) + 'px', height: (y1 - y0) + 'px'});
+  if (kind.includes('c') && color) b.style.backgroundColor = color;
+  const s = el('span'); s.style.setProperty('--by', (-y0) + 'px');
+  b.appendChild(s); b.dataset.y0 = y0; b.dataset.y1 = y1;
+  return b;
+}
+function label(a) {
+  const t = a[0], d = a.slice(1);
+  if (t === 'B') return 'Back';
+  if (t === 'X') return 'Close';
+  if (t === 'N') return 'Go to ' + S[d].n;
+  if (t === 'O') return 'Open ' + S[d].n;
+  return 'Interact';
+}
+function hotspot(h, off, view) {
+  const [x, y, w, hh, a, , drag] = h;
+  const b = el('button', 'hs' + (drag ? ' drag' : ''), {left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: hh + 'px'});
+  b.setAttribute('aria-label', drag ? 'Swipe to switch game' : label(a));
+  b._h = h; b._view = view; b._off = off;
+  return b;
+}
+function buildScreen(id) {
+  const d = S[id];
+  const root = el('div', 'scr');
+  root.style.setProperty('--img', img(id));
+  root.style.setProperty('--sw', d.w + 'px');
+  root.style.background = d.bg;
+  const sc = el('div', 'sc'), body = el('div', 'body', {height: d.h + 'px', background: d.bg});
+  const view = {id, d, root, sc, body, bands: []};
+  let bands = d.b.map(b => b.slice());
+  const fx = FX[id] || {};
+  if (fx.merge) {
+    const [m0, m1, cls] = fx.merge;
+    bands = bands.filter(b => b[1] <= m0 || b[0] >= m1);
+    bands.push([m0, m1, d.bg, 1, cls]);
+    bands.sort((a, b) => a[0] - b[0]);
+  }
+  const first = bands.length ? bands[0][0] : 0;
+  if (!d.top && first > 0) body.appendChild(band(0, first, 's'));
+  let firstContent = true;
+  for (const [y0, y1, col, c, extra] of bands) {
+    let k = c ? 'c' : 's';
+    if (c) {
+      if (y1 - y0 > 260) k += ' big';
+      if (extra) k += ' ' + extra;
+      if (firstContent && fx.first) k += ' ' + fx.first;
+      if (fx.spin && fx.spin[1] >= y0 && fx.spin[1] <= y1) k += ' spin';
+      firstContent = false;
+    }
+    const b = band(y0, y1, k, col);
+    if (k.includes('spin')) { b.style.setProperty('--ox', fx.spin[0] + 'px'); b.style.setProperty('--oy', (fx.spin[1] - y0) + 'px'); }
+    body.appendChild(b);
+    if (c) view.bands.push(b);
+  }
+  sc.appendChild(body);
+  root.appendChild(sc);
+  if (d.top) {
+    const t = el('div', 'fxt', {height: d.top + 'px'});
+    t.appendChild(band(0, d.top, 's'));
+    view.top = t; root.appendChild(t);
+  }
+  if (d.bot) {
+    const b = el('div', 'fxb', {height: d.bot + 'px'});
+    b.appendChild(band(d.h - d.bot, d.h, 's', null, d.h - d.bot));
+    view.bot = b; root.appendChild(b);
+  }
+  for (const h of d.hs) {
+    const layer = h[5];
+    if (layer === 't' && view.top) view.top.appendChild(hotspot(h, 0, view));
+    else if (layer === 'b' && view.bot) view.bot.appendChild(hotspot(h, d.h - d.bot, view));
+    else body.appendChild(hotspot(h, 0, view));
+  }
+  if (d.h > VH + 20) {
+    const p = el('i', 'prog', {top: (d.top || 0) + 'px'});
+    root.appendChild(p); view.prog = p;
+    sc.addEventListener('scroll', () => {
+      const max = sc.scrollHeight - sc.clientHeight;
+      const f = max > 0 ? sc.scrollTop / max : 0;
+      p.style.setProperty('--p', f.toFixed(4)); p.classList.toggle('on', sc.scrollTop > 4);
+    }, {passive: true});
+  }
+  dragScroll(sc);
+  return view;
+}
+
+/* ---------- reveal (website .rv system: lineUp / fadeUp / mask) ---------- */
+function reveal(view, opts = {}) {
+  if (RM) return;
+  const from = opts.from || 0, base = opts.delay || 0, soft = opts.soft;
+  const top = view.sc.scrollTop, bottom = top + VH;
+  let i = 0;
+  const below = [];
+  for (const b of view.bands) {
+    const y0 = +b.dataset.y0;
+    if (y0 < from) continue;
+    b.classList.add('pre');
+    if (soft) b.classList.add('soft');
+    if (y0 < bottom) { b.style.setProperty('--dl', Math.min(base + i * .055, base + .6).toFixed(3) + 's'); i++; }
+    else below.push(b);
+  }
+  void view.body.offsetWidth;
+  requestAnimationFrame(() => view.bands.forEach(b => { if (+b.dataset.y0 < bottom && +b.dataset.y0 >= from) b.classList.remove('pre'); }));
+  if (below.length) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.style.setProperty('--dl', '0s'); e.target.classList.remove('pre'); io.unobserve(e.target);
+    }), {root: view.sc, rootMargin: '0px 0px -6% 0px'});
+    below.forEach(b => io.observe(b));
+    view.io = io;
+  }
+  setTimeout(() => view.bands.forEach(b => b.classList.remove('soft')), 1600);
+}
+
+/* ---------- signature effects ---------- */
+function effects(view) {
+  const fx = FX[view.id]; if (!fx) return;
+  const body = view.body;
+  if (fx.loader) {
+    const [x, y, w, h] = fx.loader;
+    const l = el('div', 'loader', {left: x + 'px', top: (y - 1) + 'px', width: w + 'px', height: (h + 1) + 'px'});
+    l.appendChild(el('i')); body.appendChild(l);
+  }
+  if (fx.corners) {
+    body.appendChild(el('div', 'fx corner', {left: 'auto', right: '-130px', top: '-130px', width: '260px', background: 'radial-gradient(circle,rgba(105,210,255,.35),transparent 65%)'}));
+    body.appendChild(el('div', 'fx corner', {left: '-130px', top: '722px', width: '260px', background: 'radial-gradient(circle,rgba(235,0,139,.4),transparent 65%)', animationDelay: '-2s'}));
+  }
+  if (fx.glow) body.appendChild(el('div', 'fx glowtop', fx.red ? {background: 'radial-gradient(ellipse 60% 70% at 50% 0%,rgba(255,244,0,.18),transparent 70%)'} : null));
+  if (fx.sweep) body.appendChild(el('div', 'fx sweep', {top: fx.sweep[0] + 'px', height: (fx.sweep[1] - fx.sweep[0]) + 'px'}));
+  if (fx.sparks && !RM) sparks(view, fx.sparks[0], fx.sparks[1], fx.glow ? ['255,244,0', '208,233,80', '255,238,6'] : null);
+  if (fx.ping) {
+    const [cx, cy, s] = fx.ping;
+    for (const c of ['', ' b']) body.appendChild(el('i', 'ping' + c, {left: (cx - s / 2) + 'px', top: (cy - s / 2) + 'px', width: s + 'px', height: s + 'px'}));
+  }
+  if (fx.confetti) setTimeout(() => { if (cur === view.id) burst(); }, RM ? 0 : fx.confetti);
+  if (fx.auto) {
+    const [dest, ms] = fx.auto;
+    view.auto = setTimeout(() => { if (cur === view.id && !ov) nav(dest, {force: 'wipe'}); }, ms);
+  }
+}
+function sparks(view, y0, y1, pal) {
+  const cv = el('canvas', 'fx', {top: y0 + 'px', height: (y1 - y0) + 'px'});
+  view.body.appendChild(cv);
+  const ctx = cv.getContext('2d'), dpr = Math.min(2, devicePixelRatio || 1), w = 393, h = y1 - y0;
+  cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = pal || ['255,12,225', '255,238,6', '105,210,255', '255,238,6'];
+  const pts = Array.from({length: 34}, () => ({x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.5 + .4, s: Math.random() * .35 + .12, a: Math.random() * .5 + .15, p: Math.random() * 6.28, c: cols[Math.floor(Math.random() * cols.length)]}));
+  (function loop(t) {
+    if (!cv.isConnected) return;
+    requestAnimationFrame(loop);
+    ctx.clearRect(0, 0, w, h);
+    for (const p of pts) {
+      p.y -= p.s; p.x += Math.sin(t / 1600 + p.p) * .25;
+      if (p.y < -6) { p.y = h + 6; p.x = Math.random() * w; }
+      const tw = .55 + .45 * Math.sin(t / 700 + p.p * 3);
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283);
+      ctx.fillStyle = `rgba(${p.c},${(p.a * tw).toFixed(3)})`; ctx.fill();
+    }
+  })(0);
+}
+function burst() {
+  if (RM) return;
+  const cv = el('canvas', '', {position: 'absolute', inset: '0', zIndex: 70, pointerEvents: 'none'});
+  vp.appendChild(cv);
+  const dpr = Math.min(2, devicePixelRatio || 1); cv.width = 393 * dpr; cv.height = VH * dpr;
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cx = 196, cy = 300, cols = ['#eb008b', '#fff400', '#69d2ff', '#f7f6f5'];
+  const ps = Array.from({length: 110}, () => { const a = Math.random() * 6.283, v = Math.random() * 8 + 3; return {x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 4, s: Math.random() * 6 + 3, r: Math.random() * 6.28, vr: (Math.random() - .5) * .4, c: cols[Math.floor(Math.random() * 4)]}; });
+  const t0 = performance.now();
+  (function f(t) {
+    ctx.clearRect(0, 0, 393, VH);
+    const age = (t - t0) / 1000;
+    for (const p of ps) {
+      p.vy += .22; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = Math.max(0, 1 - age / 2.2); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore();
+    }
+    if (age < 2.3) requestAnimationFrame(f); else cv.remove();
+  })(t0);
+}
+
+/* ---------- transitions ---------- */
+function anim(e, kf, o) { return e.animate(kf, Object.assign({fill: 'both'}, o)).finished.catch(() => {}); }
+function preload(id) { const d = S[id]; if (!d) return; new Image().src = `screens/${safe(id)}.webp`; }
+function preloadNext(id) { for (const h of S[id].hs) if ('NO'.includes(h[4][0])) preload(h[4].slice(1)); }
+
+async function show(id, kind, opts = {}) {
+  lock = true;
+  const old = curView;
+  if (old && old.auto) clearTimeout(old.auto);
+  const v = buildScreen(id);
+  cur = id; curView = v;
+  preloadNext(id);
+  panelSync();
+  const dur = RM ? 1 : 560;
+  if (!old || kind === 'none') {
+    vp.appendChild(v.root); old && old.root.remove();
+    reveal(v, {delay: .15}); effects(v);
+  } else if (kind === 'push' || kind === 'swipeL') {
+    vp.appendChild(v.root);
+    v.root.style.boxShadow = '-24px 0 50px rgba(0,0,0,.55)';
+    reveal(v, {delay: .16, soft: true}); effects(v);
+    await Promise.all([
+      anim(v.root, [{transform: 'translateX(100%)'}, {transform: 'none'}], {duration: dur, easing: EASE}),
+      anim(old.root, [{transform: 'none', filter: 'brightness(1)'}, {transform: 'translateX(-28%)', filter: 'brightness(.4)'}], {duration: dur, easing: EASE})
+    ]);
+    v.root.style.boxShadow = '';
+  } else if (kind === 'pop' || kind === 'swipeR') {
+    vp.insertBefore(v.root, old.root);
+    old.root.style.boxShadow = '-24px 0 50px rgba(0,0,0,.55)';
+    if (kind === 'swipeR') { reveal(v, {delay: .12, soft: true}); }
+    effects(v);
+    await Promise.all([
+      anim(v.root, [{transform: 'translateX(-28%)', filter: 'brightness(.4)'}, {transform: 'none', filter: 'brightness(1)'}], {duration: dur - 40, easing: EASE}),
+      anim(old.root, [{transform: 'none'}, {transform: 'translateX(100%)'}], {duration: dur - 40, easing: EASE})
+    ]);
+  } else if (kind === 'tab') {
+    vp.appendChild(v.root);
+    reveal(v, {delay: .12}); effects(v);
+    await Promise.all([
+      anim(old.root, [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'scale(.985)'}], {duration: RM ? 1 : 220, easing: 'ease-out'}),
+      anim(v.root, [{opacity: 0}, {opacity: 1}], {duration: RM ? 1 : 300, delay: RM ? 0 : 80, easing: 'ease-out'})
+    ]);
+  } else if (kind === 'seg') {
+    const f = opts.from || 0;
+    await Promise.all($$('.bd', old.body).filter(b => +b.dataset.y0 >= f).map(b => anim(b, [{opacity: 1}, {opacity: 0}], {duration: RM ? 1 : 140, easing: 'ease-in'})));
+    vp.appendChild(v.root);
+    v.sc.scrollTop = Math.min(opts.keepScroll || 0, v.d.h - VH);
+    reveal(v, {from: f, delay: 0}); effects(v);
+  } else if (kind === 'wipe') {
+    if (!RM) { wipeEl.classList.remove('go'); void wipeEl.offsetWidth; wipeEl.classList.add('go'); }
+    await wait(430);
+    vp.appendChild(v.root); old.root.remove();
+    reveal(v, {delay: .2}); effects(v);
+    await wait(470);
+  } else if (kind === 'sheetin') {
+    vp.appendChild(v.root);
+    const from = SHEET_FROM[id];
+    const sheet = $$('.bd', v.body).filter(b => +b.dataset.y0 >= from);
+    if (v.bot) sheet.push(v.bot);
+    effects(v);
+    await Promise.all([
+      anim(v.root, [{opacity: 0}, {opacity: 1}], {duration: RM ? 1 : 280, easing: 'ease-out'}),
+      ...sheet.map(b => anim(b, [{transform: `translateY(${VH - from + 20}px)`}, {transform: 'none'}], {duration: RM ? 1 : 560, easing: EASE}))
+    ]);
+  } else if (kind === 'sheetout') {
+    vp.insertBefore(v.root, old.root);
+    const from = SHEET_FROM[old.id];
+    const sheet = $$('.bd', old.body).filter(b => +b.dataset.y0 >= from);
+    if (old.bot) sheet.push(old.bot);
+    effects(v);
+    await Promise.all(sheet.map(b => anim(b, [{transform: 'none'}, {transform: `translateY(${VH - from + 20}px)`}], {duration: RM ? 1 : 340, easing: 'cubic-bezier(.5,0,.75,0)'})));
+    await anim(old.root, [{opacity: 1}, {opacity: 0}], {duration: RM ? 1 : 180});
+  }
+  if (old && old.root.isConnected) old.root.remove();
+  if (old && old.io) old.io.disconnect();
+  v.root.getAnimations({subtree: true}).forEach(a => { if (a.constructor === Animation) a.cancel(); });
+  v.root.style.transform = ''; v.root.style.opacity = ''; v.root.style.filter = '';
+  lock = false;
+}
+
+function isTabTap(h, view) { return h && h[1] >= view.d.h - 92 && h[3] >= 48 && h[3] <= 56 && h[2] <= 64; }
+function family(n) { return n.replace(/\s*-.*$/, '').replace(/[’']s Tournaments$/, ' Tournaments').trim(); }
+function isSeg(src, dest, h) {
+  if (!h) return false;
+  const a = S[src], b = S[dest];
+  const small = h[3] <= 40 && h[2] <= 130;
+  return small && family(a.n) === family(b.n) && a.s === b.s;
+}
+
+async function nav(dest, info = {}) {
+  if (lock || !S[dest]) return;
+  if (ov) await closeOverlay(true);
+  const src = cur, h = info.h;
+  let kind = info.force;
+  let from = 0, keepScroll = 0;
+  if (!kind) {
+    if (AUTH.has(src) !== AUTH.has(dest) || src === '2027:13561') { kind = 'wipe'; stack = []; }
+    else if (SHEET_FROM[dest]) { kind = 'sheetin'; stack.push(src); }
+    else if (info.fromView && isTabTap(h, info.fromView)) { kind = 'tab'; stack = []; }
+    else if (info.fromView && isSeg(src, dest, h)) {
+      kind = 'seg';
+      from = h[1] + h[3]; keepScroll = curView.sc.scrollTop;
+      if (h[5] === 't') from = curView.d.top;
+    }
+    else if (info.fromOv && family(S[src].n) === family(S[dest].n)) { kind = 'seg'; from = 0; }
+    else if (stack.includes(dest)) { kind = 'pop'; stack = stack.slice(0, stack.lastIndexOf(dest)); }
+    else { kind = 'push'; stack.push(src); }
+  } else if (kind === 'wipe') stack = [];
+  await show(dest, kind, {from, keepScroll});
+}
+async function back() {
+  if (lock) return;
+  if (ov) return closeOverlay();
+  if (!stack.length) { flash(); return; }
+  const dest = stack.pop();
+  await show(dest, SHEET_FROM[cur] ? 'sheetout' : 'pop');
+}
+
+/* ---------- overlays: bottom sheets spring up, popups pop in ---------- */
+async function openOverlay(id) {
+  if (lock || ov) return;
+  lock = true;
+  const d = S[id];
+  const wrap = el('div', 'ov'), shade = el('div', 'shade');
+  const modal = d.ov === 'modal';
+  const card = el('div', 'card', {width: d.w + 'px', height: d.h + 'px', left: ((393 - d.w) / 2) + 'px'});
+  card.style.setProperty('--img', img(id));
+  if (modal) card.style.top = Math.round((VH - d.h) / 2) + 'px'; else card.style.bottom = '0';
+  const view = {id, d, root: card, body: card, ov: true};
+  for (const h of d.hs) card.appendChild(hotspot(h, 0, view));
+  if (!modal) {
+    const g = el('div', 'grab'); card.appendChild(g); sheetDrag(g, card);
+  }
+  wrap.append(shade, card);
+  vp.appendChild(wrap);
+  ov = {id, wrap, shade, card, modal};
+  shade.addEventListener('click', () => closeOverlay());
+  preloadNext(id);
+  panelSync();
+  const dur = RM ? 1 : 1;
+  await Promise.all([
+    anim(shade, [{opacity: 0}, {opacity: 1}], {duration: RM ? 1 : 320, easing: 'ease-out'}),
+    modal
+      ? anim(card, [{opacity: 0, transform: 'translateY(26px) scale(.9)'}, {opacity: 1, transform: 'none'}], {duration: RM ? 1 : 620, easing: SPRING})
+      : anim(card, [{transform: 'translateY(100%)'}, {transform: 'none'}], {duration: RM ? 1 : 560, easing: EASE})
+  ]);
+  void dur;
+  lock = false;
+}
+async function closeOverlay(fast) {
+  if (!ov) return;
+  const o = ov; ov = null; lock = true;
+  const d = fast ? 200 : 320;
+  await Promise.all([
+    anim(o.shade, [{opacity: 1}, {opacity: 0}], {duration: RM ? 1 : d}),
+    o.modal
+      ? anim(o.card, [{opacity: 1, transform: getComputedStyle(o.card).transform === 'none' ? 'none' : getComputedStyle(o.card).transform}, {opacity: 0, transform: 'translateY(20px) scale(.94)'}], {duration: RM ? 1 : d, easing: 'ease-in'})
+      : anim(o.card, [{transform: getComputedStyle(o.card).transform}, {transform: 'translateY(100%)'}], {duration: RM ? 1 : d, easing: 'cubic-bezier(.5,0,.75,0)'})
+  ]);
+  o.wrap.remove(); lock = false; panelSync();
+}
+function sheetDrag(g, card) {
+  let y0 = null, dy = 0;
+  g.addEventListener('pointerdown', e => { y0 = e.clientY; dy = 0; g.setPointerCapture(e.pointerId); card.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); }); });
+  g.addEventListener('pointermove', e => { if (y0 === null) return; dy = Math.max(0, (e.clientY - y0) / K); card.style.transform = `translateY(${dy}px)`; });
+  g.addEventListener('pointerup', () => {
+    if (y0 === null) return; y0 = null;
+    if (dy > 70) closeOverlay();
+    else card.animate([{transform: `translateY(${dy}px)`}, {transform: 'none'}], {duration: 450, easing: SPRING}).finished.then(() => card.style.transform = '');
+  });
+}
+
+/* ---------- taps ---------- */
+function local(e, b) {
+  const r = phone.getBoundingClientRect();
+  return {x: (e.clientX - r.left) / K, y: (e.clientY - r.top) / K};
+}
+function ripple(p) { const r = el('i', 'rip', {left: p.x + 'px', top: p.y + 'px'}); vp.appendChild(r); setTimeout(() => r.remove(), 800); }
+function flash() { vp.classList.remove('flash'); void vp.offsetWidth; vp.classList.add('flash'); clearTimeout(flash.t); flash.t = setTimeout(() => vp.classList.remove('flash'), 950); }
+
+function lift(b, view) {
+  const [x, y, w, h] = b._h;
+  if (w >= 380 || w * h > 140000 || w < 20) return null;
+  const host = b.parentNode, off = b._off;
+  const box = el('div', 'lift', {left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: h + 'px', borderRadius: Math.min(14, h / 3) + 'px'});
+  const fill = bandColorAt(view, y);
+  if (fill) box.style.background = fill;
+  const s = el('span'); s.style.backgroundPosition = `${-x}px ${-y}px`; s.style.borderRadius = 'inherit';
+  if (view.ov) { s.style.backgroundImage = img(view.id); s.style.backgroundSize = `${view.d.w}px ${view.d.h}px`; }
+  s.appendChild(el('i', 'shine'));
+  box.appendChild(s);
+  host.appendChild(box);
+  return box;
+}
+function bandColorAt(view, y) {
+  if (view.ov) return null;
+  for (const b of view.d.b) if (y >= b[0] && y < b[1]) return b[2];
+  return view.d.bg;
+}
+
+let pressed = null;
+vp.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.hs');
+  if (!b || lock || b.classList.contains('drag')) return;
+  const box = lift(b, b._view);
+  if (box) requestAnimationFrame(() => box.classList.add('down'));
+  pressed = {b, box, t: performance.now()};
+});
+addEventListener('pointerup', () => {
+  if (!pressed) return;
+  const {box} = pressed;
+  if (box) { box.classList.remove('down'); box.classList.add('up'); box._rm = setTimeout(() => box.remove(), 520); }
+});
+addEventListener('pointercancel', () => { if (pressed && pressed.box) pressed.box.remove(); pressed = null; });
+
+vp.addEventListener('click', async e => {
+  if (suppressClick) { suppressClick = false; return; }
+  const p = local(e);
+  if (e.target.closest('.island')) return;
+  const b = e.target.closest('.hs');
+  if (!b || b.classList.contains('drag')) { if (!e.target.closest('.shade')) flash(); return; }
+  if (lock) return;
+  ripple(p);
+  const h = b._h, view = b._view, a = h[4], t = a[0], dest = a.slice(1);
+  const box = pressed && pressed.b === b ? pressed.box : null;
+  pressed = null;
+  if (t === 'C') return component(b, view, box);
+  if (box && h[2] >= 150 && h[3] <= 56) { box.classList.add('shn'); }
+  const cta = t === 'N' && h[2] >= 300 && h[3] <= 48 && (h[5] === 'b' || h[1] > view.d.h - 160) && !view.ov;
+  if (cta && box && !RM) { clearTimeout(box._rm); box.classList.remove('up'); const l = el('i', 'load'); box.appendChild(l); box.classList.add('down', 'shn'); lock = true; await wait(900); lock = false; }
+  else await wait(120);
+  if (view.ov && t === 'X' && h[1] > 500) say(['Opening Snapchat…', 'Sharing to WhatsApp…', 'Profile card saved as PDF'][h[0] < 122 ? 0 : h[0] < 236 ? 1 : 2]);
+  if (t === 'N') nav(dest, {h, fromView: view.ov ? null : view, fromOv: !!view.ov});
+  else if (t === 'O') openOverlay(dest);
+  else if (t === 'B') back();
+  else if (t === 'X') closeOverlay();
+});
+
+/* component-level interactions Figma swaps variants for */
+function component(b, view, box) {
+  const [x, y, w, h] = b._h;
+  const host = b.parentNode, off = b._off;
+  if (box) box.remove();
+  if (w <= 26 && h <= 26 && w >= 20) {
+    const ex = host.querySelector(`.tick[data-k="${x},${y}"]`);
+    if (ex) { ex.remove(); return; }
+    const t = el('div', 'tick', {left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: h + 'px'});
+    t.dataset.k = x + ',' + y;
+    t.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#fff400" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    host.appendChild(t);
+    return;
+  }
+  if (h >= 40 && h <= 46 && w >= 150) {
+    $$('.focus', view.root).forEach(f => f.remove());
+    host.appendChild(el('div', 'focus', {left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: h + 'px'}));
+    return;
+  }
+  const p = el('div', 'pulse', {left: x + 'px', top: (y - off) + 'px', width: w + 'px', height: h + 'px'});
+  host.appendChild(p); setTimeout(() => p.remove(), 750);
+}
+
+/* drag-to-swipe between games (Figma "On drag") */
+let suppressClick = false;
+vp.addEventListener('pointerdown', e => {
+  const b = e.target.closest('.hs.drag');
+  if (!b || lock) return;
+  const x0 = e.clientX, y0 = e.clientY; let dx = 0, active = false;
+  const view = b._view;
+  const move = ev => {
+    dx = (ev.clientX - x0) / K; const dy = (ev.clientY - y0) / K;
+    if (!active && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) { active = true; b.setPointerCapture(ev.pointerId); }
+    if (active) view.body.style.transform = `translateX(${dx * .35}px)`;
+  };
+  const up = () => {
+    removeEventListener('pointermove', move); removeEventListener('pointerup', up);
+    if (!active) { flash(); return; }
+    suppressClick = true; setTimeout(() => suppressClick = false, 50);
+    if (Math.abs(dx) > 50) { view.body.style.transform = ''; nav(b._h[4].slice(1), {force: dx < 0 ? 'swipeL' : 'swipeR'}); }
+    else view.body.animate([{transform: view.body.style.transform}, {transform: 'none'}], {duration: 450, easing: SPRING}).finished.then(() => view.body.style.transform = '');
+  };
+  addEventListener('pointermove', move); addEventListener('pointerup', up);
+});
+
+/* mouse drag scrolling, like a Figma prototype */
+function dragScroll(sc) {
+  sc.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || e.target.closest('.hs.drag')) return;
+    const y0 = e.clientY, s0 = sc.scrollTop; let moved = false;
+    const move = ev => { const dy = (ev.clientY - y0) / K; if (Math.abs(dy) > 5) moved = true; if (moved) sc.scrollTop = s0 - dy; };
+    const up = () => { removeEventListener('pointermove', move); removeEventListener('pointerup', up); if (moved) { suppressClick = true; setTimeout(() => suppressClick = false, 50); if (pressed && pressed.box) pressed.box.remove(); pressed = null; } };
+    addEventListener('pointermove', move); addEventListener('pointerup', up);
+  });
+}
+
+/* ---------- panel / drawer ---------- */
+const nameCount = {};
+const LIST = SECTIONS.map(([k, label, first]) => {
+  const ids = Object.keys(S).filter(i => S[i].s === k && !S[i].ov);
+  const seen = {};
+  return {k, label, first, items: ids.map(i => { const n = S[i].n.replace(/\s+-\s+/g, ' · ').replace(/^login-forgot/, 'Login / forgot'); seen[n] = (seen[n] || 0) + 1; return [i, seen[n] > 1 ? `${n} (${seen[n]})` : n]; })};
+});
+void nameCount;
+function renderFlows(host) {
+  host.innerHTML = LIST.map((f, i) => `<div class="fl" data-k="${f.k}"><button type="button" data-first="${f.first}" aria-expanded="false"><span class="no">0${i + 1}</span><span class="nm">${f.label}</span><span class="ct">${f.items.length}</span><span class="chev"></span></button><ul>${f.items.map(([id, n]) => `<li><button type="button" data-go="${id}">${n}</button></li>`).join('')}</ul></div>`).join('');
+  host.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]');
+    if (go) { jump(go.dataset.go); closeDrawer(); return; }
+    const hd = e.target.closest('[data-first]');
+    if (hd) {
+      const fl = hd.parentNode, open = !fl.classList.contains('open');
+      $$('.fl', host).forEach(x => { x.classList.remove('open'); x.firstElementChild.setAttribute('aria-expanded', 'false'); });
+      if (open) { fl.classList.add('open'); hd.setAttribute('aria-expanded', 'true'); }
+    }
+  });
+}
+async function jump(id) {
+  if (lock) return;
+  if (ov) await closeOverlay(true);
+  if (id === cur) return;
+  stack = [];
+  await show(id, 'wipe');
+}
+const nowV = $('#nowV'), nowK = $('#nowK'), nowBar = $('#nowBar');
+const ORDER = LIST.flatMap(f => f.items.map(x => x[0]));
+function panelSync() {
+  const id = ov ? ov.id : cur, d = S[id];
+  const sec = LIST.find(f => f.k === S[cur].s);
+  if (nowK) nowK.textContent = (sec ? sec.label : '') + (ov ? ' · overlay' : '');
+  if (nowV) {
+    const txt = d.n.replace(/\s+-\s+/g, ' · ').replace(/^login-forgot/, 'Login / forgot');
+    if (nowV.textContent !== txt) { nowV.classList.add('out'); setTimeout(() => { nowV.textContent = txt; nowV.classList.remove('out'); }, RM ? 0 : 200); }
+  }
+  if (nowBar) nowBar.style.setProperty('--p', ((ORDER.indexOf(cur) + 1) / ORDER.length).toFixed(3));
+  $$('[data-go]').forEach(b => b.setAttribute('aria-current', b.dataset.go === cur ? 'true' : 'false'));
+  $$('.fl').forEach(f => f.classList.toggle('cur', f.dataset.k === S[cur].s));
+}
+$$('.flows').forEach(renderFlows);
+const drawer = $('#drawer');
+function openDrawer() { drawer.classList.add('open'); drawer.setAttribute('aria-hidden', 'false'); }
+function closeDrawer() { drawer.classList.remove('open'); drawer.setAttribute('aria-hidden', 'true'); }
+$('#island').addEventListener('click', e => { e.stopPropagation(); if (innerWidth <= 900) openDrawer(); else flash(); });
+$('.drawer .sh').addEventListener('click', closeDrawer);
+function toggleHs() {
+  showHs = !showHs; vp.classList.toggle('show-hs', showHs);
+  $$('[data-act="hs"]').forEach(b => b.setAttribute('aria-pressed', String(showHs)));
+}
+function restart() { closeDrawer(); stack = []; if (ov) { ov.wrap.remove(); ov = null; } lock = false; show(START, 'wipe'); }
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  if (a.dataset.act === 'hs') toggleHs();
+  if (a.dataset.act === 'back') { closeDrawer(); back(); }
+  if (a.dataset.act === 'restart') restart();
+});
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input,textarea')) return;
+  if (e.key === 'Escape') { if (drawer.classList.contains('open')) closeDrawer(); else if (ov) closeOverlay(); else back(); }
+  else if (e.key === 'Backspace' || e.key === 'ArrowLeft') back();
+  else if (e.key.toLowerCase() === 'h') toggleHs();
+  else if (e.key.toLowerCase() === 'r') restart();
+});
+
+/* ---------- boot ---------- */
+fit();
+addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)); if (S[h] && !S[h].ov && h !== cur) jump(h); });
+const deep = decodeURIComponent((location.hash || '').slice(1));
+show(S[deep] && !S[deep].ov ? deep : START, 'none');
+})();
+</script>
+</body>
+</html>

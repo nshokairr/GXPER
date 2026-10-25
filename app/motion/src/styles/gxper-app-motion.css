@@ -1,0 +1,14 @@
+/* ==========================================================================
+   GXPER App — Motion system entry file
+   Import this one file. Order matters: tokens → keyframes → components →
+   reduced-motion (last, so it can override everything).
+   ========================================================================== */
+@import "../tokens/app-motion-tokens.css";
+@import "./keyframes.css";
+@import "./components/transitions.css";
+@import "./components/reveal.css";
+@import "./components/press.css";
+@import "./components/feedback.css";
+@import "./components/overlays.css";
+@import "./components/signature.css";
+@import "./reduced-motion.css";
