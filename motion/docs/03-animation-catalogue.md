@@ -1,6 +1,7 @@
 # 03 · Animation catalogue
 
 Every animation on the site, with an ID you can quote in tickets and reviews.
+The Arabic (right-to-left) version mirrors the horizontal ones; see [07 · Arabic version](07-arabic-rtl.md).
 **Trigger** says what starts it. **Phone** says how it changes at ≤ 760px.
 
 Columns: ID · What the visitor sees · Trigger · Duration / curve · Phone behaviour · Where it lives

@@ -1,0 +1,92 @@
+/* ==========================================================================
+   Arabic / right-to-left  (html[dir="rtl"])
+   See docs/07-arabic-rtl.md.
+
+   Think of it as a mirror: everything that moves "forward" moves toward the
+   reading direction. In English forward is → , in Arabic forward is ← .
+   Timings, curves and distances do NOT change, only the direction.
+
+   Load after the components and before reduced-motion.css.
+   ========================================================================== */
+
+/* ---------- Type ----------------------------------------------------------
+   Letter-spacing pulls joined Arabic letters apart, so tracking is off in
+   Arabic. Animations that grow letter-spacing (H2 eyebrow "track in") fade
+   in instead.                                                              */
+html[lang="ar"] body * { letter-spacing: 0 !important; }
+html[lang="ar"] .gx-hero__eyebrow,
+html[lang="ar"] .gx-page-hero__eyebrow { animation-name: gx-fade-in; }
+@keyframes gx-fade-in { from { opacity: 0; } }
+
+/* Arabic letters sit higher and lower than League Gothic: give masked
+   headline lines a bit more room so the rise mask doesn't clip them.      */
+html[lang="ar"] .gx-hero__line,
+html[lang="ar"] .gx-page-hero__line { padding-block: .08em; margin-block: -.08em; }
+html[lang="ar"] [data-gx-reveal="mask"] { clip-path: inset(-25% -5% -25% -5%); }
+html[lang="ar"] [data-gx-reveal="mask"].is-pending { clip-path: inset(0 0 97% 0); }
+
+/* ---------- G1 / G5  Arrows point the reading direction ------------------ */
+[dir="rtl"] .gx-btn__icon,
+[dir="rtl"] .gx-arrow-link .gx-arrow,
+[dir="rtl"] .gx-back-link .gx-arrow { transform: scaleX(-1); }
+[dir="rtl"] .gx-btn:hover .gx-btn__icon,
+[dir="rtl"] .gx-arrow-link:hover .gx-arrow { transform: scaleX(-1) translateX(var(--gx-shift-sm)); }
+[dir="rtl"] .gx-btn::after { transform: translateX(120%); }          /* sheen sweeps ← */
+[dir="rtl"] .gx-btn:hover::after { transform: translateX(-120%); }
+[dir="rtl"] .gx-back-link:hover { transform: translateX(4px); }
+
+/* ---------- Hover nudges --------------------------------------------------- */
+[dir="rtl"] .gx-menu__link:hover,
+[dir="rtl"] .gx-metric:hover .gx-metric__title,
+[dir="rtl"] .gx-contact-card:hover { transform: translateX(-6px); }
+[dir="rtl"] .gx-journey__step:hover .gx-journey__label { transform: translateX(-4px); }
+@media (max-width: 760px) {
+  [dir="rtl"] .gx-card:hover { transform: translateX(calc(var(--gx-shift-sm) * -1)); }
+  [dir="rtl"] .gx-card__bar { left: 0; right: 66px; }   /* bar runs under the text column */
+}
+
+/* ---------- Lines draw from the right --------------------------------------
+   G2 nav underline, G4 progress bar, G7 line reveals, H5 hero rule,
+   C4 card bar, J6 journey rule, dividers.                                    */
+[dir="rtl"] .gx-progress,
+[dir="rtl"] [data-gx-reveal="line"],
+[dir="rtl"] [data-gx-reveal="divider"]::after,
+[dir="rtl"] .gx-hero__rule,
+[dir="rtl"] .gx-card__bar,
+[dir="rtl"] .gx-journey__rule { transform-origin: right; }
+[dir="rtl"] .gx-nav-link::after { transform-origin: left; }
+[dir="rtl"] .gx-nav-link:hover::after,
+[dir="rtl"] .gx-nav-link[aria-current="true"]::after { transform-origin: right; }
+
+/* Travelling lights run ← */
+[dir="rtl"] .gx-hero__rule::after { animation-direction: reverse; }
+[dir="rtl"] .gx-form-glint::before { animation-name: gx-top-run-rtl; }
+@keyframes gx-top-run-rtl { 0% { transform: translateX(100%); } 60%, 100% { transform: translateX(-100%); } }
+
+/* ---------- G6  Page wipe sweeps right → left ------------------------------ */
+[dir="rtl"] .gx-wipe { transform-origin: right; }
+[dir="rtl"] .gx-wipe.is-running { animation-name: gx-wipe-rtl; }
+@keyframes gx-wipe-rtl {
+  0%   { transform: scaleX(0); transform-origin: right; }
+  45%  { transform: scaleX(1); transform-origin: right; }
+  55%  { transform: scaleX(1); transform-origin: left; }
+  100% { transform: scaleX(0); transform-origin: left; }
+}
+
+/* ---------- H1  Hero photo + shade mirror (copy sits on the right) --------- */
+[dir="rtl"] .gx-hero__photo { scale: -1 1; }      /* `scale` composes with the zoom + parallax transforms */
+
+/* ---------- J1 / J2  Journey timeline fills right → left ------------------- */
+[dir="rtl"] .gx-journey__progress { left: auto; right: 0; }
+[dir="rtl"] .gx-journey__progress::after { right: auto; left: -4px; }  /* glowing head leads on the left */
+[dir="rtl"] .gx-journey__step { text-align: right; }
+[dir="rtl"] .gx-journey__title { clip-path: inset(-20% 0 -20% -2%); }
+[dir="rtl"] .gx-journey__title.is-out { clip-path: inset(0 0 0 100%); }  /* wipes out ← */
+
+/* ---------- A6  Swipe row starts at the right edge ------------------------
+   Native: with dir="rtl" the row scrolls from the right on its own. Nothing
+   else to do; scroll-snap and the peeking third phone mirror automatically. */
+
+/* ---------- Form dropdown arrow sits on the left --------------------------- */
+[dir="rtl"] .gx-field--select select { padding-right: 0; padding-left: 34px; }
+[dir="rtl"] .gx-field__chevron { right: auto; left: 14px; }

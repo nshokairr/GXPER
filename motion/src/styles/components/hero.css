@@ -28,6 +28,7 @@
   position: absolute;
   inset: -2%;                                       /* extra bleed so parallax never shows an edge */
   width: 104%; height: 104%;
+  max-width: none;                                  /* beat a global img{max-width:100%} reset, or one edge shows */
   object-fit: cover;
   object-position: center;
   animation: gx-zoom-settle 2.6s var(--gx-ease-out) both;

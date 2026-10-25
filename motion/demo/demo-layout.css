@@ -23,7 +23,7 @@ section { position: relative; }
 .muted { color: var(--muted); }
 
 /* catalogue tags (so the developer can map what they see to the docs) */
-.tag-id { position: absolute; z-index: 40; top: 12px; right: 12px; font: 600 10px/1 Poppins; letter-spacing: 1px; color: #0f0d0c; background: var(--gx-yellow); padding: 6px 8px; border-radius: 6px; opacity: .9; pointer-events: none; }
+.tag-id { position: absolute; z-index: 40; top: 12px; inset-inline-end: 12px; font: 600 10px/1 Poppins; letter-spacing: 1px; color: #0f0d0c; background: var(--gx-yellow); padding: 6px 8px; border-radius: 6px; opacity: .9; pointer-events: none; }
 .demo-note { font: 500 12px/1.5 Poppins; color: var(--dim); }
 
 /* buttons */
@@ -46,8 +46,9 @@ section { position: relative; }
 
 /* hero */
 .gx-hero { min-height: 900px; background: var(--ink2); }
+[dir=rtl] .hero-vig { scale: -1 1; }
 .hero-vig { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,13,12,.94) 0%, rgba(15,13,12,.28) 55%, rgba(15,13,12,.08) 100%); }
-.gx-hero__content { position: absolute; left: clamp(20px, 4.4vw, 64px); top: 168px; width: min(650px, calc(100% - 40px)); display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.gx-hero__content { position: absolute; inset-inline-start: clamp(20px, 4.4vw, 64px); top: 168px; width: min(650px, calc(100% - 40px)); display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
 .gx-hero h1 { font-size: clamp(54px, 6.7vw, 96px); line-height: .875; display: flex; flex-direction: column; }
 .gx-hero__lead { font-size: 20px; line-height: 30px; max-width: 560px; }
 .gx-hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -122,6 +123,8 @@ section { position: relative; }
 .gx-zap { font-size: 30px; color: var(--gx-yellow); }
 .gx-field { display: flex; flex-direction: column; gap: 6px; height: 62px; padding: 10px 14px; background: rgba(15,13,12,.66); border: 1px solid rgba(255,255,255,.22); border-radius: 10px; }
 .gx-field label { font: 500 10px Poppins; color: var(--muted); }
+.demo-rtl { height: 40px; padding: 0 14px; border: 1px solid rgba(255,255,255,.21); border-radius: 12px; font: 600 12px Poppins; color: var(--fg); margin-inline-start: auto; }
+.demo-rtl:hover { border-color: var(--gx-yellow); color: var(--gx-yellow); }
 .gx-field input, .gx-field select { all: unset; font: 400 14px Poppins; color: var(--fg); }
 .gx-field select { box-sizing: border-box; width: 100%; }
 .gx-field select option { background: #1a1716; }

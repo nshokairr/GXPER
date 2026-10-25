@@ -1,7 +1,7 @@
 /* ==========================================================================
    GXPER Motion — entry stylesheet
    Import this one file (or the pieces you need) after your base styles.
-   Order matters: tokens → keyframes → components → reduced-motion (last).
+   Order matters: tokens → keyframes → components → rtl → reduced-motion (last).
    ========================================================================== */
 @import url("../tokens/motion-tokens.css");
 @import url("./keyframes.css");
@@ -15,4 +15,5 @@
 @import url("./components/orbit.css");
 @import url("./components/sections.css");
 @import url("./components/overlays.css");
+@import url("./rtl.css");            /* Arabic / right-to-left (html[dir="rtl"]) */
 @import url("./reduced-motion.css");

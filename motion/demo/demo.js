@@ -58,4 +58,11 @@
     }, 950);
   });
   $('#f2').addEventListener('input', (e) => e.target.closest('.gx-field').classList.remove('is-error'));
+
+  // RTL preview: flips the page direction so you can see every motion mirror
+  // (docs/07). The real site also swaps the copy to Arabic and sets lang="ar".
+  $('[data-demo-rtl]').addEventListener('click', (e) => {
+    const h = document.documentElement, rtl = h.dir !== 'rtl';
+    M.pageTransition(() => { h.dir = rtl ? 'rtl' : 'ltr'; e.target.textContent = rtl ? 'LTR' : 'RTL'; });
+  });
 })();

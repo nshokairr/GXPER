@@ -801,6 +801,7 @@
   inset: -2%;
   width: 104%;
   height: 104%;
+  max-width: none;
   object-fit: cover;
   object-position: center;
   animation: gx-zoom-settle 2.6s var(--gx-ease-out) both;
@@ -1649,6 +1650,147 @@
   height: 100%;
   pointer-events: none;
   z-index: 130;
+}
+
+/* src/styles/rtl.css */
+html[lang=ar] body * {
+  letter-spacing: 0 !important;
+}
+html[lang=ar] .gx-hero__eyebrow,
+html[lang=ar] .gx-page-hero__eyebrow {
+  animation-name: gx-fade-in;
+}
+@keyframes gx-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+html[lang=ar] .gx-hero__line,
+html[lang=ar] .gx-page-hero__line {
+  padding-block: .08em;
+  margin-block: -.08em;
+}
+html[lang=ar] [data-gx-reveal=mask] {
+  clip-path: inset(-25% -5% -25% -5%);
+}
+html[lang=ar] [data-gx-reveal=mask].is-pending {
+  clip-path: inset(0 0 97% 0);
+}
+[dir=rtl] .gx-btn__icon,
+[dir=rtl] .gx-arrow-link .gx-arrow,
+[dir=rtl] .gx-back-link .gx-arrow {
+  transform: scaleX(-1);
+}
+[dir=rtl] .gx-btn:hover .gx-btn__icon,
+[dir=rtl] .gx-arrow-link:hover .gx-arrow {
+  transform: scaleX(-1) translateX(var(--gx-shift-sm));
+}
+[dir=rtl] .gx-btn::after {
+  transform: translateX(120%);
+}
+[dir=rtl] .gx-btn:hover::after {
+  transform: translateX(-120%);
+}
+[dir=rtl] .gx-back-link:hover {
+  transform: translateX(4px);
+}
+[dir=rtl] .gx-menu__link:hover,
+[dir=rtl] .gx-metric:hover .gx-metric__title,
+[dir=rtl] .gx-contact-card:hover {
+  transform: translateX(-6px);
+}
+[dir=rtl] .gx-journey__step:hover .gx-journey__label {
+  transform: translateX(-4px);
+}
+@media (max-width: 760px) {
+  [dir=rtl] .gx-card:hover {
+    transform: translateX(calc(var(--gx-shift-sm) * -1));
+  }
+  [dir=rtl] .gx-card__bar {
+    left: 0;
+    right: 66px;
+  }
+}
+[dir=rtl] .gx-progress,
+[dir=rtl] [data-gx-reveal=line],
+[dir=rtl] [data-gx-reveal=divider]::after,
+[dir=rtl] .gx-hero__rule,
+[dir=rtl] .gx-card__bar,
+[dir=rtl] .gx-journey__rule {
+  transform-origin: right;
+}
+[dir=rtl] .gx-nav-link::after {
+  transform-origin: left;
+}
+[dir=rtl] .gx-nav-link:hover::after,
+[dir=rtl] .gx-nav-link[aria-current=true]::after {
+  transform-origin: right;
+}
+[dir=rtl] .gx-hero__rule::after {
+  animation-direction: reverse;
+}
+[dir=rtl] .gx-form-glint::before {
+  animation-name: gx-top-run-rtl;
+}
+@keyframes gx-top-run-rtl {
+  0% {
+    transform: translateX(100%);
+  }
+  60%, 100% {
+    transform: translateX(-100%);
+  }
+}
+[dir=rtl] .gx-wipe {
+  transform-origin: right;
+}
+[dir=rtl] .gx-wipe.is-running {
+  animation-name: gx-wipe-rtl;
+}
+@keyframes gx-wipe-rtl {
+  0% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  45% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  55% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+}
+[dir=rtl] .gx-hero__photo {
+  scale: -1 1;
+}
+[dir=rtl] .gx-journey__progress {
+  left: auto;
+  right: 0;
+}
+[dir=rtl] .gx-journey__progress::after {
+  right: auto;
+  left: -4px;
+}
+[dir=rtl] .gx-journey__step {
+  text-align: right;
+}
+[dir=rtl] .gx-journey__title {
+  clip-path: inset(-20% 0 -20% -2%);
+}
+[dir=rtl] .gx-journey__title.is-out {
+  clip-path: inset(0 0 0 100%);
+}
+[dir=rtl] .gx-field--select select {
+  padding-right: 0;
+  padding-left: 34px;
+}
+[dir=rtl] .gx-field__chevron {
+  right: auto;
+  left: 14px;
 }
 
 /* src/styles/reduced-motion.css */

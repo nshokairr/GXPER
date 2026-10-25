@@ -120,7 +120,9 @@ export function initJourney(section) {
     return fn;
   });
   const onKey = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    // ← / → follow the reading direction: in Arabic (dir=rtl) ← is "next"
+    const rtl = getComputedStyle(section).direction === 'rtl';
+    const k = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
     if (!k || !e.target.matches('[data-gx-journey-step]')) return;
     e.preventDefault();
     go(index + k);

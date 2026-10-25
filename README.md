@@ -1,11 +1,11 @@
 # GXPER
 
-Design handoff for the GXPER website (desktop web + mobile web) and the GXPER mobile app.
+Design handoff for the GXPER website (desktop web + mobile web, **English + Arabic**) and the GXPER mobile app.
 
 | Folder | What it is |
 |---|---|
-| [`motion/`](motion/) | **Motion system for developers.** Every animation, transition, hover, timing and easing, with tokens, framework-agnostic CSS/JS modules, a working demo and 6 guides. Start with [`motion/README.md`](motion/README.md). |
-| [`prototype/`](prototype/) | **Approved web prototype.** One HTML file + assets. Open `prototype/index.html` in a browser to see the full site with all motion. Use it as the visual reference. |
+| [`motion/`](motion/) | **Motion system for developers.** Every animation, transition, hover, timing and easing, with tokens, framework-agnostic CSS/JS modules, a working demo and 7 guides. Start with [`motion/README.md`](motion/README.md). |
+| [`prototype/`](prototype/) | **Approved web prototype.** One HTML file + assets. Open `prototype/index.html` in a browser to see the full site with all motion. Press **عربي** in the header for the Arabic version (right-to-left). Use it as the visual reference. |
 | [`app/`](app/) | **Mobile app motion + prototype.** Every app transition and animation (same motion language as the website), extracted as tokens + CSS/JS modules + demo, the clickable 114-screen app prototype, its source and build tools. Start with [`app/README.md`](app/README.md). |
 
 ## Source of truth
@@ -17,6 +17,7 @@ Design handoff for the GXPER website (desktop web + mobile web) and the GXPER mo
 - Mobile web gets **the same animations** as desktop — only the layout re-flows. Hover effects play on tap.
 - Use the values in `motion/src/tokens/` — never hard-code durations or curves.
 - Keep the *Reduce motion* support (`motion/src/styles/reduced-motion.css`).
+- Arabic is a **mirror** of English: same timings, horizontal motion runs the other way. See `motion/docs/07-arabic-rtl.md` and `motion/src/styles/rtl.css`. The Arabic copy needs a native review before launch.
 - Questions about motion: quote the catalogue ID from `motion/docs/03-animation-catalogue.md` (e.g. "J2").
 
 ## Quick start

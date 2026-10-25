@@ -4,6 +4,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Poppins:wght@400;500;600;700&display=swap">
 <style>
+/* Arabic fonts: only Arabic letters use them (unicode-range), so English keeps League Gothic + Poppins.
+   size-adjust tunes Changa to sit at League Gothic's height, so every headline size works in both languages. */
+@font-face{font-family:'GX Arabic Display';src:url(assets/fonts/changa-arabic-600-normal.woff2) format('woff2');font-weight:100 650;font-display:swap;size-adjust:80%;unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'GX Arabic Display';src:url(assets/fonts/changa-arabic-700-normal.woff2) format('woff2');font-weight:651 1000;font-display:swap;size-adjust:80%;unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'GX Arabic Text';src:url(assets/fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2) format('woff2');font-weight:100 450;font-display:swap;size-adjust:104%;unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'GX Arabic Text';src:url(assets/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2) format('woff2');font-weight:451 550;font-display:swap;size-adjust:104%;unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'GX Arabic Text';src:url(assets/fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2) format('woff2');font-weight:551 1000;font-display:swap;size-adjust:104%;unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
 /* Layout concept: Figma "Desktop - 2" at 1440 is the source of truth. Flow sections use
    1240px content columns with 100px gutters; absolute-built pieces (journey stage, orbit)
    are scaled as a whole so their geometry never drifts. Single dark arena theme by design. */
@@ -11,8 +18,8 @@
   --ink:#0f0d0c; --ink2:#141110; --deep:#0a0908; --panel:#1a1716;
   --lime:#fff400; --volt:#fff400; --fg:#f7f6f5; --fg2:#f7f6f5; --muted:#a8a4a1; --muted2:#a09c99; --dim:#7b7673;
   --line:rgba(255,255,255,.14); --line2:rgba(255,255,255,.21); --line3:rgba(255,255,255,.22); --limeline:rgba(255,244,0,.31);
-  --display:'League Gothic','Oswald','Arial Narrow',Impact,sans-serif;
-  --body:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:'League Gothic','GX Arabic Display','Oswald','Arial Narrow',Impact,sans-serif;
+  --body:'Poppins','GX Arabic Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --grad:linear-gradient(90deg,#ff0ce1 0%,#ff945d 25%,#ffee06 45%,#d0e950 60%,#8ddac0 80%,#69d2ff 100%);
   --magenta:#eb008b;--warm:hue-rotate(-20deg) saturate(1.08); --cyan:#69d2ff;
   --pad:clamp(16px,6.944vw,100px);
@@ -85,6 +92,10 @@ img{display:block;max-width:100%}
 .menu-open .menu-btn span::before{transform:translateY(6px) rotate(45deg)}
 .menu-open .menu-btn span::after{transform:translateY(-6px) rotate(-45deg)}
 .hdr-right{display:flex;align-items:center;gap:12px}
+.lang{height:46px;min-width:46px;padding:0 14px;border:1px solid var(--line2);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;
+  font:600 14px/1 var(--body);color:var(--fg);transition:border-color .3s,color .3s,transform .35s var(--ease)}
+.lang:hover{border-color:var(--lime);color:var(--lime);transform:translateY(-2px)}
+.lang:active{transform:scale(.96)}
 .progress{--hh:82px;position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + var(--hh));transition:translate .45s var(--ease);height:2px;z-index:49;background:var(--grad);transform-origin:left;transform:scaleX(var(--p,0));pointer-events:none;box-shadow:0 0 12px rgba(255,140,120,.5)}
 .mnav{position:fixed;z-index:48;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 82px);background:rgba(15,13,12,.97);border-bottom:1px solid var(--line);
   padding:18px max(16px,env(safe-area-inset-right,0px)) 26px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:4px;
@@ -865,6 +876,86 @@ body.lock{overflow:hidden}
   .foot-bottom{order:6;margin-top:22px;gap:6px;font-size:8.5px}
 }
 @keyframes capGlow{50%{box-shadow:0 0 16px rgba(255,244,0,.4);border-color:rgba(255,244,0,.8);background-color:rgba(255,244,0,.12)}}
+/* ==========================================================================
+   ARABIC (RTL) — html[dir=rtl] is set by the language button.
+   Flex/grid layouts mirror on their own. The rules below handle what
+   doesn't: absolute-built pieces, arrows, and animations that travel
+   left → right (they travel right → left in Arabic).
+   ========================================================================== */
+[hidden]{display:none!important}
+html[lang=ar] body *{letter-spacing:0!important}            /* tracking breaks joined Arabic letters */
+html[lang=ar] .eyebrow{font-size:13px}
+html[lang=ar] .eyebrow.s12{font-size:12.5px}
+html[lang=ar] .d,html[lang=ar] .mn-main a{font-weight:700}
+/* Arabic letters reach higher and lower than League Gothic: give masked
+   headline lines a little room so the line-rise mask doesn't clip them */
+html[lang=ar] .ln{padding-block:.08em;margin-block:-.08em}
+html[lang=ar] .rv.mask{clip-path:inset(-25% -5% -25% -5%)}
+html[lang=ar] .rv.mask.pre{clip-path:inset(0 0 97% 0)}
+@keyframes fadeOnly{from{opacity:0}}
+html[lang=ar] .hero-content .eyebrow,html[lang=ar] .l-hero-c .eyebrow{animation-name:fadeOnly}
+
+/* arrows point the reading direction */
+[dir=rtl] .btn svg{transform:scaleX(-1)}
+[dir=rtl] .btn:hover svg{transform:scaleX(-1) translateX(4px)}
+[dir=rtl] .btn::after{transform:translateX(120%)}
+[dir=rtl] .btn:hover::after{transform:translateX(-120%)}
+[dir=rtl] .mail .arr{transform:scaleX(-1)}
+[dir=rtl] .mail:hover .arr{transform:scaleX(-1) translateX(6px)}
+[dir=rtl] .back .ar{display:inline-block;transform:scaleX(-1)}
+[dir=rtl] .back:hover{transform:translateX(4px)}
+
+/* lines draw from the right */
+[dir=rtl] .progress,[dir=rtl] .rv.line-draw,[dir=rtl] .hero-rule,[dir=rtl] .card .bar,[dir=rtl] .l-sec::after,[dir=rtl] .j-step::after{transform-origin:right}
+[dir=rtl] .nav a::after{transform-origin:left}
+[dir=rtl] .nav a:hover::after,[dir=rtl] .nav a[aria-current="true"]::after{transform-origin:right}
+[dir=rtl] .hero-rule::after{animation-direction:reverse}
+[dir=rtl] .form::before{animation-name:topRunR}
+@keyframes topRunR{0%{transform:translateX(100%)}60%,100%{transform:translateX(-100%)}}
+[dir=rtl] .wipe{transform-origin:right}
+[dir=rtl] .wipe.go{animation-name:wipeR}
+@keyframes wipeR{0%{transform:scaleX(0);transform-origin:right}45%{transform:scaleX(1);transform-origin:right}55%{transform:scaleX(1);transform-origin:left}100%{transform:scaleX(0);transform-origin:left}}
+
+/* hover nudges follow the reading direction */
+[dir=rtl] .mn-main a:hover{transform:translateX(-6px)}
+[dir=rtl] .c-card:hover{transform:translateX(-6px)}
+[dir=rtl] .m-tile:hover .t{transform:translateX(-6px)}
+[dir=rtl] .card:hover .card-top svg{transform:rotate(10deg) scale(1.15)}
+
+/* hero: photo and shade mirror, copy sits on the right */
+[dir=rtl] .hero-bg,[dir=rtl] .hero-vig,[dir=rtl] .hero-sweep{scale:-1 1}
+[dir=rtl] .hero-content{left:auto;right:max(clamp(16px,4.444vw,64px),env(safe-area-inset-right,0px))}
+
+/* form */
+[dir=rtl] .field .chev{right:auto;left:14px}
+[dir=rtl] .field select{padding-right:0;padding-left:34px}
+[dir=rtl] #fNameEn{text-align:right}
+[dir=rtl] #fNameEn::placeholder{text-align:right}
+
+/* journey: the stage is drawn with absolute pixels, so mirror it as one
+   piece (copy moves right, timeline fills right → left) and turn the text
+   and pictures back the right way round */
+[dir=rtl] .j-stage{direction:ltr;transform:translateX(-50%) scale(calc(-1 * var(--k,1)),var(--k,1))}
+[dir=rtl] .j-ghost,[dir=rtl] .j-eyebrow,[dir=rtl] .j-title,[dir=rtl] .j-desc,[dir=rtl] .j-arena,[dir=rtl] .j-step .n,[dir=rtl] .j-step .l{direction:rtl;text-align:start;scale:-1 1}
+[dir=rtl] .j-title{clip-path:inset(-20% 0 -20% -2%)}
+[dir=rtl] .j-title.j-swap.out{clip-path:inset(0 0 0 100%)}
+[dir=rtl] .j-step:hover .l{transform:translateX(4px)}
+@media (max-width:1100px){
+  [dir=rtl] .j-stage{transform:scaleX(-1)}
+}
+[dir=rtl] .j-eyebrow{width:auto}
+[dir=rtl] .loc-ctrl{right:auto;left:55px}
+[dir=rtl] .loc-mdl .head{padding-right:0;padding-left:150px}
+@media (max-width:760px){[dir=rtl] .loc-mdl .head{padding-left:0}}
+[dir=rtl] .j-rule{left:var(--rxd,585px)}
+@media (max-width:760px){
+  [dir=rtl] .card:hover{transform:translateX(-4px)}
+  [dir=rtl] .app{padding-left:0;padding-right:max(20px,env(safe-area-inset-right,0px))}
+  [dir=rtl] .app-copy{padding-right:0;padding-left:20px}
+  [dir=rtl] .phones{margin-left:0;margin-right:-20px}
+}
+.field select{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   .rv.pre,.ph.rv.pre,.orbit.pre .o-label{opacity:1!important;transform:none!important;clip-path:none!important}
@@ -907,6 +998,7 @@ body.lock{overflow:hidden}
     <a href="#contact" data-nav="contact">Contact Us</a>
   </nav>
   <div class="hdr-right">
+    <button class="lang" id="langBtn" type="button" lang="ar" aria-label="Switch to Arabic">عربي</button>
     <a class="btn sm" id="hdrCta" href="#request">Request a Tournament <svg><use href="#i-arrow"/></svg></a>
     <a class="back" id="hdrBack" href="#home" hidden aria-label="Back to the arena"><span class="ar">←</span><span class="tx">  Back to the arena</span></a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false"><span></span></button>
@@ -1090,12 +1182,12 @@ body.lock{overflow:hidden}
       </div>
       <form class="form rv" id="reqForm" novalidate style="--dl:.15s">
         <div class="f-title"><span class="bolt">ϟ</span><span class="t">START YOUR REQUEST</span></div>
-        <div class="field"><label for="fNameEn">Tournament name (English)</label><input id="fNameEn" name="nameEn" placeholder="e.g. Riyadh City Cup" autocomplete="off"></div>
-        <div class="field"><label for="fNameAr">Tournament name (Arabic)</label><input id="fNameAr" name="nameAr" dir="rtl" placeholder="مثال: كأس مدينة الرياض" autocomplete="off" style="text-align:left"></div>
+        <div class="field"><label for="fNameEn">Tournament name (English)</label><input id="fNameEn" name="nameEn" dir="ltr" placeholder="e.g. Riyadh City Cup" autocomplete="off"></div>
+        <div class="field"><label for="fNameAr">Tournament name (Arabic)</label><input id="fNameAr" name="nameAr" dir="rtl" placeholder="مثال: كأس مدينة الرياض" autocomplete="off"></div>
         <div class="field"><label for="fGame">Select game</label><select id="fGame" name="game"><option>VALORANT</option><option>EA SPORTS FC 26</option><option>TEKKEN 8</option><option>ROCKET LEAGUE</option><option>FORTNITE</option></select><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></div>
         <div class="f-row">
           <div class="field"><label for="fCount">Expected participants</label><input id="fCount" name="count" inputmode="numeric" value="64"></div>
-          <div class="field"><label for="fCountry">Country</label><select id="fCountry" name="country"><option>Saudi Arabia</option><option>United Arab Emirates</option></select><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></div>
+          <div class="field"><label for="fCountry">Country</label><select id="fCountry" name="country"><option value="Saudi Arabia">Saudi Arabia</option><option value="United Arab Emirates">United Arab Emirates</option></select><svg class="chev" aria-hidden="true"><use href="#i-chev"/></svg></div>
         </div>
         <div class="field"><label for="fCity">City</label><input id="fCity" name="city" value="Riyadh" autocomplete="off"></div>
         <button type="button" class="loc" id="openMap"><svg width="22" height="22"><use href="#i-pin22"/></svg><span><span class="k" id="locK">SELECT LOCATION ON MAP</span><span class="v" id="locV">Open interactive map</span></span></button>
@@ -1342,7 +1434,7 @@ STEPS.forEach((s, i) => {
   const b = document.createElement('button');
   b.className = 'j-step';
   b.style.left = s.x + 'px';
-  b.setAttribute('aria-label', `Step ${i + 1}: ${s.t}`);
+  b.setAttribute('aria-label', `Step ${i + 1}: ${s.t}`);  // translated by translate() via the AR table
   b.innerHTML = `<span class="n">0${i + 1}</span><span class="l">${s.t}</span>
    <span class="node">
      <svg class="idle" viewBox="0 0 18 18" width="18" height="18"><circle cx="9" cy="9" r="9" fill="#0f0d0c"/><circle cx="9" cy="9" r="8" fill="none" stroke="#a09c99" stroke-opacity="0.72" stroke-width="2"/></svg>
@@ -1359,7 +1451,7 @@ function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearT
 document.addEventListener('click', e => {
   const c = e.target.closest('.copy'); if (!c) return;
   const v = c.dataset.copy;
-  const ok = () => say('Email copied: ' + v);
+  const ok = () => say(T('Email copied: ') + v);
   try { navigator.clipboard.writeText(v).then(ok, () => say(v)); } catch { say(v); }
 });
 
@@ -1391,6 +1483,374 @@ function armReveals(root) {
     o3.observe(n);
   });
 }
+
+/* ---------------- Arabic copy (English → Arabic) ----------------
+   Keys are the English text exactly as it appears on the page (spaces
+   collapsed). Brand and game names stay in English on purpose.          */
+const AR = {
+  /* header + menu */
+  'Home': 'الرئيسية',
+  'About Us': 'من نحن',
+  'The App': 'التطبيق',
+  'Contact Us': 'تواصل معنا',
+  'Request a Tournament': 'اطلب بطولة',
+  'Back to the arena': 'العودة إلى الساحة',
+  'MENU': 'القائمة',
+  'Privacy': 'الخصوصية',
+  'Marketing': 'التسويق',
+  'Support': 'الدعم',
+  'Copyright': 'حقوق النشر',
+
+  /* hero */
+  'COMPETITION, CONNECTED.': 'المنافسة، متصلة.',
+  'BUILT FOR': 'صُممت من أجل',
+  'BETTER COMPETITION.': 'منافسة أفضل.',
+  'We’re building a smarter way to run tournaments, connect players, and manage every stage of competition — from registration to the final result.': 'نبني طريقة أذكى لإدارة البطولات وربط اللاعبين وإدارة كل مراحل المنافسة — من التسجيل حتى النتيجة النهائية.',
+  'Explore Tournaments': 'استكشف البطولات',
+  'Join the Competition': 'انضم إلى المنافسة',
+
+  /* app showcase */
+  'THE COMPETITION IN YOUR POCKET': 'المنافسة في جيبك',
+  'ONE PROFILE.': 'ملف واحد.',
+  'EVERY MATCH.': 'كل مباراة.',
+  'Discover tournaments, follow live brackets, and carry your competitive history wherever you play.': 'اكتشف البطولات، وتابع جداول المباريات مباشرة، واحمل سجلك التنافسي أينما لعبت.',
+
+  /* about */
+  'WHO WE ARE': 'من نحن',
+  'MORE THAN A': 'أكثر من مجرد',
+  'TOURNAMENT PLATFORM': 'منصة بطولات',
+  'We are a competitive gaming platform designed to bring players, organizers, referees, and partners together in one connected ecosystem.': 'نحن منصة ألعاب تنافسية صُممت لتجمع اللاعبين والمنظمين والحكام والشركاء في منظومة واحدة متصلة.',
+  'From discovering tournaments and registering players to managing matches, brackets, rankings, results, and rewards — everything is built to make competition simpler, faster, and more engaging.': 'من اكتشاف البطولات وتسجيل اللاعبين إلى إدارة المباريات وجداول البطولة والتصنيفات والنتائج والمكافآت — كل شيء مصمم ليجعل المنافسة أبسط وأسرع وأكثر متعة.',
+  'LAUNCHING ACROSS SAUDI ARABIA': 'ننطلق في   المملكة العربية السعودية',
+  'UNITED ARAB EMIRATES': 'الإمارات العربية المتحدة',
+
+  /* mission */
+  'OUR MISSION': 'مهمتنا',
+  'MAKING EVERY COMPETITION EASIER TO RUN — AND BETTER TO PLAY.': 'نجعل كل منافسة أسهل في الإدارة — وأمتع في اللعب.',
+  'Our mission is to remove the complexity behind tournament management while creating an experience players actually enjoy.': 'مهمتنا أن نزيل التعقيد من إدارة البطولات، وأن نصنع تجربة يستمتع بها اللاعبون فعلًا.',
+  'We give organizers the tools to manage competitions efficiently and give players one place to compete, track their progress, build their ranking, and grow through every tournament.': 'نمنح المنظمين الأدوات لإدارة المنافسات بكفاءة، ونمنح اللاعبين مكانًا واحدًا لينافسوا ويتابعوا تقدمهم ويبنوا تصنيفهم ويتطوروا مع كل بطولة.',
+
+  /* journey */
+  'THE TOURNAMENT JOURNEY': 'رحلة البطولة',
+  'CHOOSE THE GAME': 'اختر اللعبة',
+  'SET THE LOCATION': 'حدّد المكان',
+  'RALLY THE PLAYERS': 'اجمع اللاعبين',
+  'ENTER THE ARENA': 'ادخل الساحة',
+  'Pick the game and format that fits': 'اختر اللعبة والصيغة',
+  'your community.': 'التي تناسب مجتمعك.',
+  'Pick the game and format that fits <br>your community.': 'اختر اللعبة والصيغة <br>التي تناسب مجتمعك.',
+  'Choose your city and venue, or host it online.': 'اختر مدينتك ومكان البطولة، أو أقمها عبر الإنترنت.',
+  'Open registration and bring your community together.': 'افتح التسجيل واجمع مجتمعك.',
+  'Go live, compete, and create unforgettable moments.': 'ابدأ البث، نافس، واصنع لحظات لا تُنسى.',
+  'Step 1: CHOOSE THE GAME': 'الخطوة 1: اختر اللعبة',
+  'Step 2: SET THE LOCATION': 'الخطوة 2: حدّد المكان',
+  'Step 3: RALLY THE PLAYERS': 'الخطوة 3: اجمع اللاعبين',
+  'Step 4: ENTER THE ARENA': 'الخطوة 4: ادخل الساحة',
+  'The tournament journey': 'رحلة البطولة',
+  'Glowing game controller': 'يد تحكم مضيئة',
+
+  /* capabilities */
+  'WHAT WE DO': 'ماذا نقدّم',
+  'ONE ECOSYSTEM.': 'منظومة واحدة.',
+  'EVERY SIDE OF PLAY.': 'لكل جوانب اللعب.',
+  'Built to move a competition from first registration to final result—without losing the story in between.': 'مصممة لتنقل المنافسة من أول تسجيل إلى النتيجة النهائية — دون أن تضيع القصة بينهما.',
+  'FORMAT / BRACKETS / RESULTS': 'الصيغة / الجداول / النتائج',
+  'RUN TOURNAMENTS': 'أدِر البطولات',
+  'Create and manage tournaments, registrations, matches, brackets, standings, referees, and results from one platform.': 'أنشئ البطولات وأدِر التسجيلات والمباريات والجداول والترتيب والحكام والنتائج من منصة واحدة.',
+  'PROFILE / MATCHES / HISTORY': 'الملف / المباريات / السجل',
+  'CONNECT PLAYERS': 'اربط اللاعبين',
+  'Give players a central profile where they can join competitions, follow upcoming matches, and track their tournament history.': 'امنح اللاعبين ملفًا موحدًا ينضمون منه إلى المنافسات ويتابعون مبارياتهم القادمة وسجل بطولاتهم.',
+  'RANK / XP / ACHIEVEMENTS': 'التصنيف / XP / الإنجازات',
+  'TRACK PROGRESS': 'تابع التقدم',
+  "Rankings, XP, levels, statistics, and achievements turn every competition into part of a player's journey.": 'التصنيفات ونقاط الخبرة والمستويات والإحصائيات والإنجازات تجعل كل منافسة جزءًا من رحلة اللاعب.',
+  'CONTROL / INSIGHT / SCALE': 'تحكّم / رؤية / توسّع',
+  'POWER ORGANIZATIONS': 'مكّن المنظمات',
+  'Give organizers and partners the visibility and control they need to manage tournaments at scale.': 'امنح المنظمين والشركاء الرؤية والتحكم الذي يحتاجونه لإدارة البطولات على نطاق واسع.',
+
+  /* philosophy + orbit */
+  'PLATFORM PHILOSOPHY': 'فلسفة المنصة',
+  'EVERY MATCH SHOULD MEAN SOMETHING.': 'كل مباراة يجب أن تعني شيئًا.',
+  'Winning a match is only part of the journey.': 'الفوز بمباراة ليس إلا جزءًا من الرحلة.',
+  "Every tournament contributes to a player's record, ranking, XP, level, achievements, and competitive history — creating a persistent identity that grows with every competition.": 'كل بطولة تضيف إلى سجل اللاعب وتصنيفه ونقاط خبرته ومستواه وإنجازاته وتاريخه التنافسي — لتصنع هوية دائمة تكبر مع كل منافسة.',
+  'RANK': 'التصنيف',
+  'GROW': 'تقدّم',
+  'XP': 'نقاط الخبرة',
+  'EARN': 'اكسب',
+  'LEVEL': 'المستوى',
+  'CLIMB': 'اصعد',
+  'HISTORY': 'السجل',
+  'BUILD': 'ابنِ',
+
+  /* vision + metrics */
+  'OUR VISION': 'رؤيتنا',
+  'BUILDING THE HOME OF COMPETITIVE GAMING.': 'نبني موطن الألعاب التنافسية.',
+  'Our vision is to create a connected competitive ecosystem where players can build their identity, organizations can run professional tournaments, and every competition becomes part of a bigger journey.': 'رؤيتنا أن نصنع منظومة تنافسية متصلة، يبني فيها اللاعبون هويتهم، وتدير فيها المنظمات بطولات احترافية، وتصبح كل منافسة جزءًا من رحلة أكبر.',
+  'TOURNAMENTS HOSTED': 'بطولات مُقامة',
+  'ACTIVE PLAYERS': 'لاعبون نشطون',
+  'MATCHES PLAYED': 'مباريات لُعبت',
+  'GAMES SUPPORTED': 'ألعاب مدعومة',
+  'Metrics': 'الأرقام',
+
+  /* request */
+  'BRING IT TO YOUR CITY': 'أحضرها إلى مدينتك',
+  'REQUEST A': 'اطلب',
+  'TOURNAMENT.': 'بطولتك.',
+  'Tell us what you have in mind. From neighborhood meetups to city-wide events, we’ll help make it real.': 'أخبرنا بما تفكر فيه. من لقاءات الحي إلى فعاليات على مستوى المدينة، سنساعدك على تحقيقه.',
+  'Flexible': 'صيغ',
+  'formats': 'مرنة',
+  'Saudi + UAE': 'مدن السعودية',
+  'cities': 'والإمارات',
+  'A team that': 'فريق',
+  'backs you': 'يدعمك',
+  'START YOUR REQUEST': 'ابدأ طلبك',
+  'Tournament name (English)': 'اسم البطولة (بالإنجليزية)',
+  'Tournament name (Arabic)': 'اسم البطولة (بالعربية)',
+  'e.g. Riyadh City Cup': 'e.g. Riyadh City Cup',
+  'Select game': 'اختر اللعبة',
+  'Expected participants': 'عدد المشاركين المتوقع',
+  'Country': 'الدولة',
+  'Saudi Arabia': 'المملكة العربية السعودية',
+  'United Arab Emirates': 'الإمارات العربية المتحدة',
+  'City': 'المدينة',
+  'Riyadh': 'الرياض',
+  'SELECT LOCATION ON MAP': 'حدّد الموقع على الخريطة',
+  'Open interactive map': 'افتح الخريطة التفاعلية',
+  'LOCATION PINNED': 'تم تثبيت الموقع',
+  'change': 'تغيير',
+  'Request Tournament': 'اطلب البطولة',
+  'Sending request…': 'جارٍ إرسال الطلب…',
+  '✓ Your details stay private and are only used to review this request.': '✓ بياناتك تبقى خاصة، ونستخدمها فقط لمراجعة هذا الطلب.',
+  'Enter the expected number of participants': 'أدخل عدد المشاركين المتوقع',
+
+  /* regional + final CTA */
+  'CONTACT US': 'تواصل معنا',
+  'FROM THE GULF.': 'من الخليج.',
+  'BUILT TO CONNECT.': 'صُنعت لتجمعنا.',
+  'Serving Saudi Arabia and the United Arab Emirates': 'نخدم المملكة العربية السعودية والإمارات العربية المتحدة',
+  'Night map of the Gulf with connected city lights': 'خريطة ليلية للخليج تتصل فيها أضواء المدن',
+  'READY WHEN YOU ARE': 'جاهزون متى كنت جاهزًا',
+  'YOUR NEXT COMPETITION STARTS HERE.': 'منافستك القادمة تبدأ من هنا.',
+  'Discover tournaments. Compete against other players. Climb the rankings. Build your competitive journey.': 'اكتشف البطولات. نافس لاعبين آخرين. اصعد في التصنيف. ابنِ رحلتك التنافسية.',
+  'Join Now': 'انضم الآن',
+
+  /* contact page */
+  'LET’S BUILD THE NEXT': 'لنصنع معًا',
+  'COMPETITION.': 'المنافسة القادمة.',
+  'Talk to GXPER about tournaments, platform support, organizer partnerships, or competitive gaming opportunities across Saudi Arabia and the United Arab Emirates.': 'تحدّث مع GXPER عن البطولات أو دعم المنصة أو شراكات المنظمين أو فرص الألعاب التنافسية في المملكة العربية السعودية والإمارات العربية المتحدة.',
+  'CALL US': 'اتصل بنا',
+  'NUMBER COMING SOON': 'الرقم قريبًا',
+  'The official GXPER telephone number will appear here once confirmed.': 'سيظهر رقم هاتف GXPER الرسمي هنا فور اعتماده.',
+  'E-MAIL US': 'راسلنا',
+  'For tournaments, partnerships, media, platform questions, and general enquiries.': 'للبطولات والشراكات والإعلام وأسئلة المنصة والاستفسارات العامة.',
+  'LOCATION': 'الموقع',
+  'SAUDI ARABIA + UAE': 'السعودية + الإمارات',
+  'GXPER currently presents regional coverage rather than an unconfirmed office address.': 'تعرض GXPER حاليًا نطاق تغطيتها الإقليمية بدلًا من عنوان مكتب غير مؤكد.',
+  'NEED PLATFORM HELP?': 'تحتاج مساعدة في المنصة؟',
+  'COMPETITION SUPPORT, WHEN IT MATTERS.': 'دعم المنافسة، حين يهم.',
+  'For account, registration, bracket, ranking, or match issues, visit the': 'لمشاكل الحساب أو التسجيل أو الجداول أو التصنيف أو المباريات، تفضّل بزيارة',
+  'dedicated support page': 'صفحة الدعم المخصصة',
+  'Night map of Saudi Arabia and the UAE with connected city lights': 'خريطة ليلية للسعودية والإمارات تتصل فيها أضواء المدن',
+
+  /* legal pages: shared */
+  'NEED CLARIFICATION?': 'تحتاج توضيحًا؟',
+  'TALK TO GXPER.': 'تحدّث مع GXPER.',
+  'CONTACT': 'التواصل',
+
+  /* privacy */
+  'TRUST AND TRANSPARENCY': 'الثقة والشفافية',
+  'PRIVACY POLICY': 'سياسة الخصوصية',
+  'GXPER respects your privacy. This policy explains how personal information may be collected, used, protected, and shared when you use our website, app, tournament services, or support channels.': 'تحترم GXPER خصوصيتك. توضح هذه السياسة كيف يمكن جمع المعلومات الشخصية واستخدامها وحمايتها ومشاركتها عند استخدامك لموقعنا أو تطبيقنا أو خدمات البطولات أو قنوات الدعم.',
+  'CONSENT': 'الموافقة',
+  'By using GXPER’s website, app, and tournament services, you acknowledge the privacy notice in effect at that time and the choices presented when information is collected. Where consent is the appropriate legal basis, you may withdraw it through the available settings or by contacting us.': 'باستخدامك لموقع GXPER وتطبيقها وخدمات بطولاتها، فإنك تقرّ بإشعار الخصوصية المعمول به في حينه وبالخيارات المعروضة عند جمع المعلومات. وحيث تكون الموافقة هي الأساس القانوني المناسب، يمكنك سحبها من خلال الإعدادات المتاحة أو بالتواصل معنا.',
+  'WHAT IS PERSONAL DATA?': 'ما هي البيانات الشخصية؟',
+  'Personal data is information that identifies you directly or can reasonably be connected with you.': 'البيانات الشخصية هي المعلومات التي تحدد هويتك مباشرة أو يمكن ربطها بك بشكل معقول.',
+  '• Name, username, and date of birth': '• الاسم واسم المستخدم وتاريخ الميلاد',
+  '• Email address, telephone number, and location': '• البريد الإلكتروني ورقم الهاتف والموقع',
+  '• Account, device, and login information': '• معلومات الحساب والجهاز وتسجيل الدخول',
+  '• Tournament registrations, match records, rankings, and results': '• تسجيلات البطولات وسجلات المباريات والتصنيفات والنتائج',
+  '• Transaction, support, and communication details': '• تفاصيل المعاملات والدعم والتواصل',
+  'INFORMATION WE COLLECT AND HOW WE USE IT': 'المعلومات التي نجمعها وكيف نستخدمها',
+  'We may collect information you provide when creating an account, registering for a competition, requesting a tournament, contacting support, completing a transaction, responding to a survey, or applying to work with GXPER.': 'قد نجمع المعلومات التي تقدمها عند إنشاء حساب، أو التسجيل في منافسة، أو طلب بطولة، أو التواصل مع الدعم، أو إتمام معاملة، أو الإجابة على استبيان، أو التقدم للعمل مع GXPER.',
+  'We use relevant information to deliver and improve the platform, manage registrations and eligibility, operate brackets and results, maintain player records, protect accounts, respond to support requests, process permitted transactions, and provide service updates.': 'نستخدم المعلومات ذات الصلة لتقديم المنصة وتحسينها، وإدارة التسجيلات والأهلية، وتشغيل الجداول والنتائج، وحفظ سجلات اللاعبين، وحماية الحسابات، والرد على طلبات الدعم، ومعالجة المعاملات المسموح بها، وتقديم تحديثات الخدمة.',
+  '• Profile and contact details': '• بيانات الملف الشخصي والتواصل',
+  '• Tournament participation and competitive history': '• المشاركة في البطولات والسجل التنافسي',
+  '• Organizer, referee, and partner records': '• سجلات المنظمين والحكام والشركاء',
+  '• Device, diagnostic, analytics, and usage information': '• معلومات الجهاز والتشخيص والتحليلات والاستخدام',
+  '• Support correspondence and communication preferences': '• مراسلات الدعم وتفضيلات التواصل',
+  'OPT OUT': 'إلغاء الاشتراك',
+  'You can opt out of direct marketing by using the unsubscribe control in a message, changing available notification preferences, or contacting GXPER. Operational messages about account security, active competitions, registrations, or important service changes are handled separately from marketing.': 'يمكنك إلغاء الاشتراك في التسويق المباشر باستخدام رابط إلغاء الاشتراك في الرسالة، أو بتغيير تفضيلات الإشعارات المتاحة، أو بالتواصل مع GXPER. أما الرسائل التشغيلية المتعلقة بأمان الحساب أو المنافسات الجارية أو التسجيلات أو التغييرات المهمة في الخدمة فتُدار بشكل منفصل عن التسويق.',
+  'COOKIE POLICY': 'سياسة ملفات تعريف الارتباط',
+  'GXPER may use cookies and similar technologies to maintain secure sessions, remember preferences, protect accounts, understand website activity, and improve performance. Browser controls may allow you to limit optional cookies, although disabling essential cookies can affect access to some features.': 'قد تستخدم GXPER ملفات تعريف الارتباط والتقنيات المشابهة للحفاظ على جلسات آمنة، وتذكّر التفضيلات، وحماية الحسابات، وفهم نشاط الموقع، وتحسين الأداء. قد تتيح لك إعدادات المتصفح تقييد ملفات تعريف الارتباط الاختيارية، مع العلم أن تعطيل الأساسية منها قد يؤثر على الوصول إلى بعض الميزات.',
+  'THIRD PARTIES': 'الأطراف الثالثة',
+  'The platform may link to or work with third-party hosting, payments, analytics, maps, messaging, identity, or tournament services. Those providers may have their own privacy notices. GXPER limits service-provider access to what is reasonably needed to perform the requested function.': 'قد ترتبط المنصة أو تعمل مع خدمات أطراف ثالثة للاستضافة أو المدفوعات أو التحليلات أو الخرائط أو المراسلة أو الهوية أو البطولات. وقد تكون لهؤلاء المزودين إشعارات خصوصية خاصة بهم. وتقصر GXPER وصول مزودي الخدمة على ما يلزم بشكل معقول لأداء المهمة المطلوبة.',
+  'AGE RESTRICTIONS': 'قيود العمر',
+  'GXPER is not intended for children below the minimum age permitted by the applicable service, tournament rules, or local law. Where a participant is a minor, organizer or guardian requirements may apply. If information is found to have been provided without the required authorization, we will take reasonable steps to remove it.': 'GXPER غير موجهة للأطفال دون الحد الأدنى للعمر الذي تسمح به الخدمة أو قواعد البطولة أو القانون المحلي. وإذا كان المشارك قاصرًا، فقد تنطبق متطلبات المنظم أو ولي الأمر. وإذا تبيّن أن معلومات قُدمت دون الإذن المطلوب، فسنتخذ خطوات معقولة لحذفها.',
+  'DATA SECURITY AND RETENTION': 'أمن البيانات والاحتفاظ بها',
+  'No online transmission can be guaranteed to be completely secure. GXPER uses proportionate organizational and technical safeguards designed to reduce unauthorized access, loss, or misuse.': 'لا يمكن ضمان أمان أي نقل للبيانات عبر الإنترنت بشكل كامل. تستخدم GXPER ضمانات تنظيمية وتقنية متناسبة للحد من الوصول غير المصرح به أو الفقدان أو سوء الاستخدام.',
+  'Information is retained only as long as reasonably necessary to provide the service, maintain accurate competitive records, meet legal or contractual obligations, resolve disputes, enforce rights, and protect the platform.': 'نحتفظ بالمعلومات فقط للمدة اللازمة بشكل معقول لتقديم الخدمة، والحفاظ على دقة السجلات التنافسية، والوفاء بالالتزامات القانونية أو التعاقدية، وحل النزاعات، وإنفاذ الحقوق، وحماية المنصة.',
+  'DATA TRANSFER, SHARING AND DISCLOSURE': 'نقل البيانات ومشاركتها والإفصاح عنها',
+  'Information may be processed in Saudi Arabia, the United Arab Emirates, or other locations used by approved service providers, subject to appropriate safeguards. It may be shared when needed to operate a tournament or requested feature, comply with law, protect people or the platform, investigate misuse, or complete a business reorganization. GXPER does not treat the general sale of personal data as part of its business model.': 'قد تُعالج المعلومات في المملكة العربية السعودية أو الإمارات العربية المتحدة أو مواقع أخرى يستخدمها مزودو خدمة معتمدون، مع ضمانات مناسبة. وقد تُشارك عند الحاجة لتشغيل بطولة أو ميزة مطلوبة، أو للامتثال للقانون، أو لحماية الأشخاص أو المنصة، أو للتحقيق في سوء الاستخدام، أو لإتمام إعادة هيكلة تجارية. ولا تعتبر GXPER بيع البيانات الشخصية جزءًا من نموذج أعمالها.',
+  'ACCESS TO YOUR DATA': 'الوصول إلى بياناتك',
+  'Depending on applicable law, you may request access to, correction of, deletion of, restriction of, or information about the handling of your personal data. Some competition records may need to be retained for integrity, legal, fraud-prevention, or dispute-resolution reasons.': 'بحسب القانون المعمول به، يمكنك طلب الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها أو تقييد معالجتها، أو طلب معلومات عن كيفية التعامل معها. وقد يلزم الاحتفاظ ببعض سجلات المنافسات لأسباب تتعلق بالنزاهة أو المتطلبات القانونية أو منع الاحتيال أو حل النزاعات.',
+  'For privacy questions, data requests, general enquiries, or marketing opt-outs, email hello@scooring.com. This prototype policy must be reviewed against the final company details, data flows, and applicable Saudi and UAE requirements before launch.': 'لأسئلة الخصوصية أو طلبات البيانات أو الاستفسارات العامة أو إلغاء الاشتراك في التسويق، راسلنا على hello@scooring.com. يجب مراجعة هذه السياسة التجريبية وفق بيانات الشركة النهائية وتدفقات البيانات والمتطلبات المعمول بها في السعودية والإمارات قبل الإطلاق.',
+
+  /* marketing */
+  'YOUR CHOICES': 'خياراتك',
+  'MARKETING PREFERENCES': 'تفضيلات التسويق',
+  'GXPER uses marketing to share relevant tournament opportunities, platform news, and competitive gaming updates while keeping your communication choices under your control.': 'تستخدم GXPER التسويق لمشاركة فرص البطولات وأخبار المنصة وتحديثات الألعاب التنافسية ذات الصلة، مع إبقاء خيارات التواصل تحت تحكمك.',
+  'MARKETING COMMUNICATIONS': 'الرسائل التسويقية',
+  'We may share tournament announcements, registration openings, competition reminders, product releases, rewards, community stories, partner campaigns, and invitations to participate in surveys or events.': 'قد نشارك إعلانات البطولات، وفتح التسجيل، وتذكيرات المنافسات، وإصدارات المنتج، والمكافآت، وقصص المجتمع، وحملات الشركاء، ودعوات المشاركة في الاستبيانات أو الفعاليات.',
+  'CONSENT AND PREFERENCES': 'الموافقة والتفضيلات',
+  'Promotional communications are sent where you have asked to receive them or where otherwise permitted. Your available preferences will be shown at sign-up, within the app, or alongside the communication channel.': 'تُرسل الرسائل الترويجية عندما تطلب استلامها أو عندما يكون ذلك مسموحًا. وستظهر تفضيلاتك المتاحة عند التسجيل، أو داخل التطبيق، أو بجانب قناة التواصل.',
+  'COMMUNICATION CHANNELS': 'قنوات التواصل',
+  'Depending on the features you enable, GXPER may communicate through email, in-app messages, push notifications, or other channels you choose. Account, security, and active-tournament notices are service communications rather than marketing.': 'بحسب الميزات التي تفعّلها، قد تتواصل GXPER عبر البريد الإلكتروني أو الرسائل داخل التطبيق أو الإشعارات أو قنوات أخرى تختارها. أما إشعارات الحساب والأمان والبطولات الجارية فهي رسائل خدمة وليست تسويقًا.',
+  'CAMPAIGN MEASUREMENT': 'قياس الحملات',
+  'We may measure message delivery, opens, clicks, campaign interactions, and broad audience performance to understand whether communications are useful and to improve future campaigns. Optional analytics remain subject to the privacy choices provided to you.': 'قد نقيس وصول الرسائل وفتحها والنقر عليها والتفاعل مع الحملات والأداء العام للجمهور، لنفهم مدى فائدة الرسائل ونحسّن الحملات القادمة. وتبقى التحليلات الاختيارية خاضعة لخيارات الخصوصية المتاحة لك.',
+  'PARTNERS AND PROMOTIONS': 'الشركاء والعروض',
+  'A campaign may feature an organizer, game publisher, venue, sponsor, or other competition partner. When a partner separately collects personal information, the collection point should identify that partner and the notice that applies.': 'قد تتضمن الحملة منظمًا أو ناشر ألعاب أو مكانًا أو راعيًا أو شريكًا آخر في المنافسة. وعندما يجمع الشريك معلومات شخصية بشكل منفصل، يجب أن توضح نقطة الجمع هوية ذلك الشريك والإشعار المعمول به.',
+  'HOW TO OPT OUT': 'كيف تلغي الاشتراك',
+  'Use the unsubscribe control in a marketing email, change available app preferences, or email hello@scooring.com. A preference update may take a short period to apply across active systems, and it will not stop essential account or tournament communications.': 'استخدم رابط إلغاء الاشتراك في البريد التسويقي، أو غيّر تفضيلات التطبيق المتاحة، أو راسلنا على hello@scooring.com. قد يستغرق تحديث التفضيلات فترة قصيرة ليُطبّق على جميع الأنظمة، ولن يوقف رسائل الحساب أو البطولات الأساسية.',
+  'For questions about marketing preferences, campaign data, or a privacy request connected to marketing, contact hello@scooring.com.': 'لأسئلتك حول تفضيلات التسويق أو بيانات الحملات أو طلب خصوصية مرتبط بالتسويق، تواصل معنا على hello@scooring.com.',
+
+  /* support */
+  'WE ARE HERE TO HELP': 'نحن هنا لمساعدتك',
+  'WELCOME TO GXPER': 'مرحبًا بك في',
+  'SUPPORT': 'دعم GXPER',
+  'Welcome to GXPER Support. Get help with your account, tournament participation, competitive record, organizer tools, or the GXPER experience across Saudi Arabia and the United Arab Emirates.': 'مرحبًا بك في دعم GXPER. احصل على المساعدة في حسابك، أو مشاركتك في البطولات، أو سجلك التنافسي، أو أدوات المنظمين، أو تجربة GXPER في المملكة العربية السعودية والإمارات العربية المتحدة.',
+  'PLAYER SUPPORT': 'دعم اللاعبين',
+  'We can help with account access, profile information, tournament discovery, registration status, upcoming matches, brackets, standings, results, rankings, XP, levels, and achievements.': 'نساعدك في الدخول إلى الحساب، وبيانات الملف الشخصي، واكتشاف البطولات، وحالة التسجيل، والمباريات القادمة، والجداول، والترتيب، والنتائج، والتصنيفات، ونقاط الخبرة، والمستويات، والإنجازات.',
+  'ORGANIZER AND REFEREE SUPPORT': 'دعم المنظمين والحكام',
+  'Organizers and referees can request help with competition setup, registrations, formats, brackets, match administration, score reporting, standings, participant communication, and tournament completion.': 'يمكن للمنظمين والحكام طلب المساعدة في إعداد المنافسة، والتسجيلات، والصيغ، والجداول، وإدارة المباريات، وتسجيل النتائج، والترتيب، والتواصل مع المشاركين، وإنهاء البطولة.',
+  'REPORT A PROBLEM': 'الإبلاغ عن مشكلة',
+  'Email hello@scooring.com with a clear description, the affected account or tournament, the match or bracket reference where relevant, the device you used, and screenshots that help explain the issue. Never include your password or full payment credentials.': 'راسلنا على hello@scooring.com بوصف واضح، والحساب أو البطولة المتأثرة، ومرجع المباراة أو الجدول إن وُجد، والجهاز الذي استخدمته، ولقطات شاشة توضح المشكلة. لا ترسل أبدًا كلمة المرور أو بيانات الدفع الكاملة.',
+  'FAIR PLAY AND SAFETY': 'اللعب النظيف والأمان',
+  'Reports involving cheating, harassment, abuse, impersonation, unsafe conduct, or a disputed result should include enough detail for the competition organizer and GXPER team to review the concern fairly.': 'البلاغات المتعلقة بالغش أو المضايقة أو الإساءة أو انتحال الشخصية أو السلوك غير الآمن أو نتيجة متنازع عليها يجب أن تتضمن تفاصيل كافية ليراجعها منظم المنافسة وفريق GXPER بإنصاف.',
+  'REGIONAL COVERAGE': 'التغطية الإقليمية',
+  'GXPER currently presents services for Saudi Arabia and the United Arab Emirates. The regional map represents platform coverage and does not claim a physical office location.': 'تقدم GXPER حاليًا خدماتها في المملكة العربية السعودية والإمارات العربية المتحدة. وتمثل الخريطة الإقليمية نطاق تغطية المنصة ولا تشير إلى موقع مكتب فعلي.',
+  'CONTACT SUPPORT': 'تواصل مع الدعم',
+  'For general support, email hello@scooring.com. An official support telephone number and operating hours will be added when they are confirmed by the client.': 'للدعم العام، راسلنا على hello@scooring.com. سيُضاف رقم هاتف الدعم الرسمي وساعات العمل فور اعتمادها من العميل.',
+
+  /* copyright */
+  'CONTENT AND OWNERSHIP': 'المحتوى والملكية',
+  'COPYRIGHT NOTICE': 'إشعار حقوق النشر',
+  'The GXPER website, app, brand assets, software, and original platform content are protected works and remain the property of GXPER or their respective rights holders.': 'موقع GXPER وتطبيقها وأصول علامتها التجارية وبرمجياتها ومحتوى منصتها الأصلي أعمال محمية، وتبقى ملكًا لـ GXPER أو لأصحاب الحقوق المعنيين.',
+  'OWNERSHIP': 'الملكية',
+  'Unless clearly stated otherwise, GXPER owns or is authorized to use the text, interface designs, graphics, audiovisual material, files, databases, software, code, documentation, and other original material presented through the platform.': 'ما لم يُذكر خلاف ذلك بوضوح، تملك GXPER أو لديها إذن باستخدام النصوص وتصاميم الواجهات والرسومات والمواد السمعية والبصرية والملفات وقواعد البيانات والبرمجيات والأكواد والوثائق وغيرها من المواد الأصلية المعروضة على المنصة.',
+  'PERMITTED USE': 'الاستخدام المسموح',
+  'You may access the platform for its intended personal or organizational competition purposes. You may not copy, modify, republish, distribute, sell, scrape, reverse engineer, or create derivative works from protected content unless written permission or applicable law expressly allows it.': 'يمكنك استخدام المنصة لأغراض المنافسة الشخصية أو المؤسسية المقصودة منها. ولا يجوز لك نسخ المحتوى المحمي أو تعديله أو إعادة نشره أو توزيعه أو بيعه أو استخراجه آليًا أو الهندسة العكسية له أو إنشاء أعمال مشتقة منه، إلا بإذن كتابي أو إذا سمح القانون المعمول به بذلك صراحة.',
+  'PLAYER AND ORGANIZER CONTENT': 'محتوى اللاعبين والمنظمين',
+  'You remain responsible for the content you upload or submit. By providing content required to operate or promote an entered tournament, you grant GXPER the limited permission needed to host, format, display, and process it for those purposes, subject to the platform terms and privacy notice.': 'تبقى مسؤولًا عن المحتوى الذي ترفعه أو ترسله. وبتقديمك محتوى لازمًا لتشغيل بطولة شاركت فيها أو الترويج لها، فإنك تمنح GXPER الإذن المحدود اللازم لاستضافته وتنسيقه وعرضه ومعالجته لهذه الأغراض، وفق شروط المنصة وإشعار الخصوصية.',
+  'TRADEMARKS AND GAME RIGHTS': 'العلامات التجارية وحقوق الألعاب',
+  'GXPER names, logos, marks, and distinctive graphics may not be used in a way that suggests endorsement or partnership without written authorization. Game names, artwork, logos, and publisher marks belong to their respective rights holders; reference to a game does not by itself imply sponsorship.': 'لا يجوز استخدام أسماء GXPER أو شعاراتها أو علاماتها أو رسوماتها المميزة بطريقة توحي بتأييد أو شراكة دون إذن كتابي. أما أسماء الألعاب وأعمالها الفنية وشعاراتها وعلامات ناشريها فهي ملك لأصحاب حقوقها، والإشارة إلى لعبة لا تعني بحد ذاتها رعاية.',
+  'NO TRANSFER OF RIGHTS': 'لا نقل للحقوق',
+  'Accessing or using GXPER does not transfer ownership or grant a broader license in the platform, its content, brand, software, or other intellectual property.': 'الوصول إلى GXPER أو استخدامها لا ينقل الملكية ولا يمنح ترخيصًا أوسع في المنصة أو محتواها أو علامتها التجارية أو برمجياتها أو أي ملكية فكرية أخرى.',
+  'REPORTING INFRINGEMENT': 'الإبلاغ عن انتهاك',
+  'To report possible infringement, email hello@scooring.com with your contact details, identification of the protected work, the location of the material in question, the reason you believe the use is unauthorized, and any supporting evidence.': 'للإبلاغ عن انتهاك محتمل، راسلنا على hello@scooring.com مع بيانات التواصل الخاصة بك، وتحديد العمل المحمي، ومكان المادة المعنية، وسبب اعتقادك بأن الاستخدام غير مصرح به، وأي أدلة داعمة.',
+  'PERMISSIONS': 'الأذونات',
+  'For a permission or licensing request, contact hello@scooring.com and describe the material, proposed use, channels, audience, territory, and duration. No permission is granted until it is confirmed in writing.': 'لطلب إذن أو ترخيص، تواصل معنا على hello@scooring.com وصِف المادة والاستخدام المقترح والقنوات والجمهور والنطاق الجغرافي والمدة. لا يُمنح أي إذن قبل تأكيده كتابيًا.',
+
+  /* footer */
+  'GAMES. PEOPLE.': 'ألعاب. لاعبون.',
+  'BETTER TOGETHER.': 'أفضل معًا.',
+  'GET THE APP': 'حمّل التطبيق',
+  'DEVELOPED AND DESIGNED BY': 'تطوير وتصميم',
+  '© 2026 GXPER. ALL RIGHTS RESERVED.': '© 2026 GXPER. جميع الحقوق محفوظة.',
+
+  /* map picker + success */
+  'PIN YOUR ARENA': 'ثبّت ساحتك',
+  'CHOOSE A LOCATION': 'اختر الموقع',
+  'Click anywhere to move the pin': 'انقر في أي مكان لتحريك الدبوس',
+  'Tap a city to move the pin': 'اضغط على مدينة لتحريك الدبوس',
+  'Selected location': 'الموقع المختار',
+  'Confirm pin': 'تأكيد الموقع',
+  'REQUEST RECEIVED': 'تم استلام الطلب',
+  'YOUR ARENA STARTS': 'ساحتك',
+  'HERE.': 'تبدأ من هنا.',
+  'We’ve received your tournament request. Our team will review the details and get in touch soon.': 'استلمنا طلب بطولتك. سيراجع فريقنا التفاصيل ويتواصل معك قريبًا.',
+  'Perfect, thanks': 'رائع، شكرًا',
+  'Email copied: ': 'تم نسخ البريد: ',
+  'Pinned ': 'تم تثبيت ',
+
+  /* cities */
+  'Tabuk': 'تبوك', 'Hail': 'حائل', 'Buraydah': 'بريدة', 'Madinah': 'المدينة المنورة', 'Jeddah': 'جدة', 'Makkah': 'مكة المكرمة',
+  'Dammam': 'الدمام', 'Al Ahsa': 'الأحساء', 'Abha': 'أبها', 'Jazan': 'جازان', 'Najran': 'نجران',
+  'Abu Dhabi': 'أبوظبي', 'Dubai': 'دبي', 'Sharjah': 'الشارقة', 'Al Ain': 'العين', 'Ras Al Khaimah': 'رأس الخيمة', 'Fujairah': 'الفجيرة',
+
+  /* accessible names + image descriptions */
+  'GXPER home': 'GXPER الرئيسية',
+  'GXPER — Play, Earn, Rank': 'GXPER — العب، اكسب، تصدّر',
+  'Main': 'الرئيسية',
+  'Open menu': 'فتح القائمة',
+  'Menu': 'القائمة',
+  'Legal': 'القانونية',
+  'Footer': 'تذييل الصفحة',
+  'Download on the App Store': 'حمّله من App Store',
+  'Get it on Google Play': 'احصل عليه من Google Play',
+  'GXPER app home screen with featured tournaments': 'الشاشة الرئيسية لتطبيق GXPER مع البطولات المميزة',
+  'GXPER leaderboard screen': 'شاشة لوحة الصدارة في GXPER',
+  'GXPER player profile screen': 'شاشة ملف اللاعب في GXPER',
+  'Center the pin on the region hub': 'إعادة الدبوس إلى مركز المنطقة',
+  'Close map': 'إغلاق الخريطة',
+  'Map. Click anywhere to move the pin. Use arrow keys to nudge it.': 'خريطة. انقر في أي مكان لتحريك الدبوس، أو استخدم مفاتيح الأسهم لتحريكه بدقة.',
+  'Switch to Arabic': 'التبديل إلى العربية',
+  'Switch to English': 'التبديل إلى الإنجليزية',
+  'GXPER Website Prototype': 'GXPER — النموذج الأولي للموقع',
+};
+
+/* ---------------- language switch (EN ⇄ AR) ----------------
+   Like swapping the labels on jars: the jars (layout, motion) stay, only
+   the words and the reading direction change.                           */
+let LANG = 'en';
+const T = s => (LANG === 'ar' && AR[s] !== undefined ? AR[s] : s);
+const norm = s => s.replace(/\s+/g, ' ').trim();
+const AR_REV = {}; for (const [e, a] of Object.entries(AR)) { const k = norm(a); if (!(k in AR_REV)) AR_REV[k] = e; }
+function enOf(v) { const k = norm(v); return AR[k] === undefined && AR_REV[k] !== undefined ? {en: AR_REV[k], raw: null} : {en: k, raw: v}; }
+function swap(cur, st) {               // st = {set, en, raw}; returns new value or null
+  if (st.set !== cur) Object.assign(st, enOf(cur));          // changed by someone else: re-learn its English
+  if (AR[st.en] === undefined) { st.set = cur; return null; } // nothing to translate
+  const lead = cur.match(/^\s*/)[0], trail = cur.match(/\s*$/)[0];
+  const out = LANG === 'ar' ? lead + AR[st.en] + trail : (st.raw ?? lead + st.en + trail);
+  st.set = out; return out === cur ? null : out;
+}
+function translate(root = document.body) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => n.parentElement.closest('script,style,svg') ? 2 : 1});
+  let n; while ((n = w.nextNode())) { n.__i18n ??= {}; const v = swap(n.nodeValue, n.__i18n); if (v !== null) n.nodeValue = v; }
+  root.querySelectorAll('[placeholder],[alt],[aria-label],[title]').forEach(el => {
+    el.__i18a ??= {};
+    for (const a of ['placeholder', 'alt', 'aria-label', 'title']) {
+      if (!el.hasAttribute(a)) continue;
+      const st = (el.__i18a[a] ??= {}); const v = swap(el.getAttribute(a), st); if (v !== null) el.setAttribute(a, v);
+    }
+  });
+}
+const langBtn = $('#langBtn');
+function setLang(l, save) {
+  LANG = l === 'ar' ? 'ar' : 'en';
+  const h = document.documentElement;
+  h.lang = LANG; h.dir = LANG === 'ar' ? 'rtl' : 'ltr';
+  translate();
+  document.title = T('GXPER Website Prototype');
+  langBtn.textContent = LANG === 'ar' ? 'EN' : 'عربي';
+  langBtn.lang = LANG === 'ar' ? 'en' : 'ar';
+  langBtn.setAttribute('aria-label', LANG === 'ar' ? 'التبديل إلى الإنجليزية' : 'Switch to Arabic');
+  if (typeof J !== 'undefined') J.relabel();
+  if (typeof setCity === 'function') { selCity.textContent = cityLabel(chosen.name, chosen.country); if ($('#openMap').classList.contains('set')) $('#locV').textContent = pinnedLabel(); }
+  const city = $('#fCity'); if (city) { const c = enOf(city.value).en; if (AR[c] !== undefined || AR_REV[norm(city.value)]) city.value = T(c); }
+  // short country names in the half-width dropdown
+  $$('#fCountry option').forEach(o => o.textContent = LANG === 'ar' ? {'Saudi Arabia': 'السعودية', 'United Arab Emirates': 'الإمارات'}[o.value] : o.value);
+  if (typeof rescale === 'function') rescale();
+  if (save) try { localStorage.setItem('gxLang', LANG); } catch {}
+}
+const cityLabel = (name, country) => T(name) + (LANG === 'ar' ? '، ' : ', ') + T(country);
+const pinnedLabel = () => `${cityLabel(chosen.name, chosen.country)} · ${T('change')}`;
+langBtn.addEventListener('click', () => {
+  const next = LANG === 'ar' ? 'en' : 'ar';
+  closeMenu();
+  if (RM) { setLang(next, true); return; }
+  // the same gradient wipe used between pages covers the switch (G6)
+  wipe.classList.remove('go'); void wipe.offsetWidth; wipe.classList.add('go');
+  setTimeout(() => setLang(next, true), 430);
+});
 
 /* ---------------- router ---------------- */
 
@@ -1522,12 +1982,12 @@ const J = (() => {
     steps.forEach((s, k) => { s.classList.toggle('on', k === idx); s.classList.toggle('done', k < idx); });
     vis.forEach(v => v.classList.toggle('off', +v.dataset.v !== idx));
     const v = vis[idx]; v.classList.remove('flick'); void v.offsetWidth; if (animate && !RM) v.classList.add('flick');
-    if (!animate || RM) { title.textContent = STEPS[idx].t; desc.innerHTML = STEPS[idx].d; ghost.textContent = '0' + (idx + 1); return; }
+    if (!animate || RM) { title.textContent = T(STEPS[idx].t); desc.innerHTML = T(STEPS[idx].d); ghost.textContent = '0' + (idx + 1); return; }
     title.classList.add('out'); desc.classList.add('out');
     ghost.style.transform = 'translateY(-100%)';
     rule.style.animation = 'none'; void rule.offsetWidth; rule.style.animation = '';
     setTimeout(() => {
-      title.textContent = STEPS[idx].t; desc.innerHTML = STEPS[idx].d; ghost.textContent = '0' + (idx + 1);
+      title.textContent = T(STEPS[idx].t); desc.innerHTML = T(STEPS[idx].d); ghost.textContent = '0' + (idx + 1);
       ghost.style.transition = 'none'; ghost.style.transform = 'translateY(100%)'; void ghost.offsetWidth;
       ghost.style.transition = ''; ghost.style.transform = '';
       title.classList.remove('out'); setTimeout(() => desc.classList.remove('out'), 120);
@@ -1551,7 +2011,8 @@ const J = (() => {
   sec.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') paused = true; });
   sec.addEventListener('pointerleave', () => paused = false);
   requestAnimationFrame(loop);
-  return {go, active: v => on = v};
+  const relabel = () => { title.textContent = T(STEPS[i].t); desc.innerHTML = T(STEPS[i].d); };
+  return {go, active: v => on = v, relabel};
 })();
 
 /* ---------------- scaling for absolute-built pieces ---------------- */
@@ -1560,6 +2021,7 @@ function rescale() {
   $('#journey').style.setProperty('--k', Math.min(1, w / 1440).toFixed(4));
   const ob = $('#orbitBox'), base = w <= 760 ? 350 : 670; $('#orbit').style.setProperty('--os', Math.min(w <= 760 ? 1.3 : 1, ob.clientWidth / base).toFixed(4));
   const eb = $('.j-eyebrow'); if (w <= 760 && eb) $('#journey').style.setProperty('--rx', (20 + eb.offsetWidth + 12) + 'px');
+  if (eb) $('#journey').style.setProperty('--rxd', (235 + eb.offsetWidth + 16) + 'px');   // Arabic: rule follows the shorter eyebrow
   const ar = $('#jArena'); if (ar) ar.style.setProperty('--ak', (ar.clientWidth / 585).toFixed(4));
 }
 addEventListener('resize', rescale); rescale();
@@ -1591,7 +2053,7 @@ function placePin(x, y, animate) {
 function nearest(x, y) { let best, bd = 1e9; for (const c of CITIES) { const d = (c[2] - x) ** 2 + (c[3] - y) ** 2; if (d < bd) { bd = d; best = c; } } return best; }
 function setCity(name, country) {
   chosen = {name, country};
-  const txt = `${name}, ${country}`;
+  const txt = cityLabel(name, country);
   if (selCity.textContent === txt) return;
   selCity.classList.add('out');
   setTimeout(() => { selCity.textContent = txt; selCity.classList.remove('out'); }, RM ? 0 : 220);
@@ -1625,12 +2087,12 @@ $('#openMap').addEventListener('click', () => { openOv(locOv); requestAnimationF
 $('#locClose').addEventListener('click', () => closeOv(locOv));
 $('#locConfirm').addEventListener('click', () => {
   $('#openMap').classList.add('set');
-  $('#locK').textContent = 'LOCATION PINNED';
-  $('#locV').textContent = `${chosen.name}, ${chosen.country} · change`;
-  $('#fCity').value = chosen.name;
+  $('#locK').textContent = T('LOCATION PINNED');
+  $('#locV').textContent = pinnedLabel();
+  $('#fCity').value = T(chosen.name);
   $('#fCountry').value = chosen.country;
   closeOv(locOv);
-  say('Pinned ' + chosen.name);
+  say(T('Pinned ') + T(chosen.name));
 });
 addEventListener('resize', () => { if (!locOv.hidden) placePin(pinPos.x, pinPos.y, false); });
 document.addEventListener('keydown', e => {
@@ -1646,16 +2108,16 @@ form.addEventListener('submit', e => {
   const count = $('#fCount');
   const bad = !/^\d{1,5}$/.test(count.value.trim());
   count.closest('.field').classList.toggle('err', bad);
-  if (bad) { say('Enter the expected number of participants'); count.focus(); return; }
-  submitBtn.classList.add('busy'); $('#submitTxt').textContent = 'Sending request…';
+  if (bad) { say(T('Enter the expected number of participants')); count.focus(); return; }
+  submitBtn.classList.add('busy'); $('#submitTxt').textContent = T('Sending request…');
   setTimeout(() => {
-    submitBtn.classList.remove('busy'); $('#submitTxt').textContent = 'Request Tournament';
+    submitBtn.classList.remove('busy'); $('#submitTxt').textContent = T('Request Tournament');
     openOv(succOv); burst();
     setTimeout(() => $('#succClose').focus({preventScroll: true}), 400);
   }, RM ? 0 : 950);
 });
 $('#fCount').addEventListener('input', e => e.target.closest('.field').classList.remove('err'));
-$('#succClose').addEventListener('click', () => { closeOv(succOv); form.reset(); $('#openMap').classList.remove('set'); $('#locK').textContent = 'SELECT LOCATION ON MAP'; $('#locV').textContent = 'Open interactive map'; });
+$('#succClose').addEventListener('click', () => { closeOv(succOv); form.reset(); $('#openMap').classList.remove('set'); $('#locK').textContent = T('SELECT LOCATION ON MAP'); $('#locV').textContent = T('Open interactive map'); $('#fCity').value = T('Riyadh'); });
 
 /* ---------------- confetti burst ---------------- */
 function burst() {
@@ -1679,6 +2141,9 @@ function burst() {
 }
 
 /* ---------------- boot ---------------- */
+let startLang = new URLSearchParams(location.search).get('lang');
+if (!startLang) try { startLang = localStorage.getItem('gxLang'); } catch {}
+if (startLang === 'ar') setLang('ar', false);
 route(true);
 onScroll();
 })();

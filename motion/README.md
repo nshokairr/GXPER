@@ -40,6 +40,7 @@ gxper-motion-handoff/
 │   ├── styles/
 │   │   ├── gxper-motion.css   ← entry file: imports everything in the right order
 │   │   ├── keyframes.css      ← every @keyframes, named gx-*
+│   │   ├── rtl.css            ← Arabic / right-to-left mirroring (docs/07)
 │   │   ├── reduced-motion.css ← accessibility override (must load last)
 │   │   └── components/
 │   │       ├── interactions.css    G1–G5, G9, G10, G12  buttons, links, header (+ auto-hide), progress, menu, toast, fields, dropdown arrow
@@ -77,7 +78,8 @@ gxper-motion-handoff/
     ├── 03-animation-catalogue.md      every animation, ID, trigger, timing, phone behaviour
     ├── 04-responsive-behaviour.md     breakpoints, touch vs hover, phone changes, test list
     ├── 05-integration-guide.md        React/Next, Vue/Nuxt, SSR, API reference
-    └── 06-accessibility-performance.md reduced motion, keyboard, performance budget
+    ├── 06-accessibility-performance.md reduced motion, keyboard, performance budget
+    └── 07-arabic-rtl.md               Arabic version: what mirrors, fonts, language switch
 ```
 
 ### Architecture in one paragraph
