@@ -27,7 +27,7 @@ Poppins. This is done with `unicode-range`, so a mixed line like
 | Role | English | Arabic | File |
 |---|---|---|---|
 | Headlines | League Gothic | **Changa** 600 / 700 | `prototype/assets/fonts/changa-arabic-*.woff2` |
-| Body | Poppins | **IBM Plex Sans Arabic** 400 / 500 / 600 | `prototype/assets/fonts/ibm-plex-sans-arabic-*.woff2` |
+| Body | Poppins | **Readex Pro** 400 / 500 / 600 | `prototype/assets/fonts/readex-pro-arabic-*.woff2` |
 
 ```css
 @font-face {
@@ -89,3 +89,16 @@ What does **not** mirror:
 - Submit the form with letters in "عدد المشاركين": the Arabic error toast appears.
 - Phone width: the swipe row starts at the right and the third phone peeks in from the left.
 - Turn on Reduce Motion: the switch is instant and nothing animates.
+
+## 5. Arabic in Figma
+The Figma file has the Arabic design next to the English one:
+
+| Page | What's on it |
+|---|---|
+| `05 Desktop — Arabic` | Every desktop screen in Arabic (home, contact, 4 legal pages, map picker, success, page wipes) with its own clickable prototype ("GXPER Website (Arabic)") |
+| `06 Mobile — Arabic` | Every mobile screen in Arabic, including the menu, with its own prototype ("GXPER Mobile (Arabic)") |
+| `02 Components` | Arabic versions of the shared components, below the originals, named "… (AR)" (button, form field, metric tile, capability card, desktop/mobile header and footer) |
+
+Fonts in Figma match the site: **Changa Bold** for headlines, **Readex Pro** for body text.
+The **EN / عربي** button is drawn in every header. Figma can't link between pages, so in
+Figma it's a visual guide; on the site it switches language (section 1).
